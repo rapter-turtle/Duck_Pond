@@ -47,7 +47,7 @@ def plot_inputs(t, reference, states, inputs, Fmax):
     plt.tight_layout()
     plt.show()
 
-def animateASV(states, inputs, ref, yref, mpc_result):
+def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
     # Define the geometry of the twin-hull ASV
     hullLength = 0.7  # Length of the hull
     hullWidth = 0.2   # Width of each hull
@@ -131,12 +131,11 @@ def animateASV(states, inputs, ref, yref, mpc_result):
 
         theta = np.linspace( 0 , 2 * np.pi , 150 )
         
-        radius = 0.5
-        
-        a = radius * np.cos( theta )
-        b = radius * np.sin( theta )
-        
-        ax.plot(a, b)
+        for i in range(5):
+            radius = obs_pos[frame][3*i+2]        
+            a = obs_pos[frame][3*i+0] + radius * np.cos( theta )
+            b = obs_pos[frame][3*i+1] + radius * np.sin( theta )    
+            ax.plot(a, b)
 
         ax.set_xlim(-8, 8)  # Adjust these limits as needed
         ax.set_ylim(-6, 6)  # Adjust these limits as needed

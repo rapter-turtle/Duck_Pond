@@ -45,11 +45,19 @@
         "idxsg": [],
         "idxsg_e": [],
         "idxsh": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4
         ],
         "idxsh_0": [],
         "idxsh_e": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4
         ],
         "idxsphi": [],
         "idxsphi_0": [],
@@ -59,10 +67,10 @@
             -9.0
         ],
         "lbx": [
-            -1.0,
-            -0.5,
-            -45.0,
-            -45.0
+            -1,
+            -1,
+            -45,
+            -45
         ],
         "lbx_0": [
             0.0,
@@ -77,11 +85,19 @@
         "lg": [],
         "lg_e": [],
         "lh": [
-            0
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
         ],
         "lh_0": [],
         "lh_e": [
-            0
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
         ],
         "lphi": [],
         "lphi_0": [],
@@ -92,10 +108,18 @@
         "lsg": [],
         "lsg_e": [],
         "lsh": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "lsh_0": [],
         "lsh_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "lsphi": [],
@@ -106,10 +130,10 @@
             9.0
         ],
         "ubx": [
-            2.0,
-            0.5,
-            45.0,
-            45.0
+            2,
+            1,
+            45,
+            45
         ],
         "ubx_0": [
             0.0,
@@ -124,10 +148,18 @@
         "ug": [],
         "ug_e": [],
         "uh": [
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
             10000000000.0
         ],
         "uh_0": [],
         "uh_e": [
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
             10000000000.0
         ],
         "uphi": [],
@@ -139,10 +171,18 @@
         "usg": [],
         "usg_e": [],
         "ush": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "ush_0": [],
         "ush_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "usphi": [],
@@ -159,7 +199,7 @@
         "Vz_0": [],
         "W": [
             [
-                4.0,
+                2.0,
                 0.0,
                 0.0,
                 0.0,
@@ -171,7 +211,7 @@
             ],
             [
                 0.0,
-                4.0,
+                2.0,
                 0.0,
                 0.0,
                 0.0,
@@ -183,7 +223,7 @@
             [
                 0.0,
                 0.0,
-                100.0,
+                40.0,
                 0.0,
                 0.0,
                 0.0,
@@ -243,7 +283,7 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-06,
+                2e-08,
                 0.0
             ],
             [
@@ -255,12 +295,12 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-06
+                2e-08
             ]
         ],
         "W_0": [
             [
-                4.0,
+                2.0,
                 0.0,
                 0.0,
                 0.0,
@@ -272,7 +312,7 @@
             ],
             [
                 0.0,
-                4.0,
+                2.0,
                 0.0,
                 0.0,
                 0.0,
@@ -284,7 +324,7 @@
             [
                 0.0,
                 0.0,
-                100.0,
+                40.0,
                 0.0,
                 0.0,
                 0.0,
@@ -344,7 +384,7 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-06,
+                2e-08,
                 0.0
             ],
             [
@@ -356,12 +396,12 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-06
+                2e-08
             ]
         ],
         "W_e": [
             [
-                4.0,
+                2.0,
                 0.0,
                 0.0,
                 0.0,
@@ -371,7 +411,7 @@
             ],
             [
                 0.0,
-                4.0,
+                2.0,
                 0.0,
                 0.0,
                 0.0,
@@ -381,7 +421,7 @@
             [
                 0.0,
                 0.0,
-                100.0,
+                40.0,
                 0.0,
                 0.0,
                 0.0,
@@ -425,18 +465,34 @@
             ]
         ],
         "Zl": [
-            1000000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "Zl_0": [],
         "Zl_e": [
-            1000000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "Zu": [
-            1000000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "Zu_0": [],
         "Zu_e": [
-            1000000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "cost_ext_fun_type": "casadi",
         "cost_ext_fun_type_0": "casadi",
@@ -476,18 +532,34 @@
             0.0
         ],
         "zl": [
-            10000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "zl_0": [],
         "zl_e": [
-            10000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "zu": [
-            10000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "zu_0": [],
         "zu_e": [
-            10000.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ]
     },
     "cython_include_dirs": [
@@ -495,7 +567,7 @@
         "/usr/include/python3.8"
     ],
     "dims": {
-        "N": 40,
+        "N": 20,
         "nbu": 2,
         "nbx": 4,
         "nbx_0": 7,
@@ -503,27 +575,27 @@
         "nbxe_0": 7,
         "ng": 0,
         "ng_e": 0,
-        "nh": 1,
+        "nh": 5,
         "nh_0": 0,
-        "nh_e": 1,
-        "np": 0,
+        "nh_e": 5,
+        "np": 15,
         "nphi": 0,
         "nphi_0": 0,
         "nphi_e": 0,
         "nr": 0,
         "nr_0": 0,
         "nr_e": 0,
-        "ns": 1,
+        "ns": 5,
         "ns_0": 0,
-        "ns_e": 1,
+        "ns_e": 5,
         "nsbu": 0,
         "nsbx": 0,
         "nsbx_e": 0,
         "nsg": 0,
         "nsg_e": 0,
-        "nsh": 1,
+        "nsh": 5,
         "nsh_0": 0,
-        "nsh_e": 1,
+        "nsh_e": 5,
         "nsphi": 0,
         "nsphi_0": 0,
         "nsphi_e": 0,
@@ -536,9 +608,9 @@
     },
     "json_file": "acados_ocp_heron.json",
     "model": {
-        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegmcaaaaaaaaaaaaaachaaaaaaaaaaaaanpd",
+        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
         "con_h_expr_0": null,
-        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegmcaaaaaaaaaaaaaachaaaaaaaaaaaaanpd",
+        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
         "con_phi_expr": null,
         "con_phi_expr_0": null,
         "con_phi_expr_e": null,
@@ -580,7 +652,7 @@
         },
         "name": "heron",
         "nu_original": null,
-        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdbaaaaaaaaaaaaaapaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaakaaaaaaaaaaaaaaalaaaaaaaaaaaaaaamaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaoaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihbdegpcaaaaaaaaaaaaaadaaaaaaapgjhbdegpcaaaaaaaaaaaaaadaaaaaaapgchbdegpcaaaaaaaaaaaaaadaaaaaaapgihcdegpcaaaaaaaaaaaaaadaaaaaaapgjhcdegpcaaaaaaaaaaaaaadaaaaaaapgchcdegpcaaaaaaaaaaaaaadaaaaaaapgihddegpcaaaaaaaaaaaaaadaaaaaaapgjhddegpcaaaaaaaaaaaaaadaaaaaaapgchddegpcaaaaaaaaaaaaaadaaaaaaapgihedegpcaaaaaaaaaaaaaadaaaaaaapgjhedegpcaaaaaaaaaaaaaadaaaaaaapgchedegpcaaaaaaaaaaaaaadaaaaaaapgihfdegpcaaaaaaaaaaaaaadaaaaaaapgjhfdegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
         "t": [],
         "t0": null,
         "t_label": "$t$ [s]",
@@ -603,12 +675,28 @@
         "z": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     },
     "name": "heron",
-    "parameter_values": [],
+    "parameter_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
     "problem_class": "OCP",
     "shared_lib_ext": ".so",
     "simulink_opts": null,
     "solver_options": {
-        "Tsim": 0.1,
+        "Tsim": 0.2,
         "adaptive_levenberg_marquardt_lam": 5.0,
         "adaptive_levenberg_marquardt_mu0": 0.001,
         "adaptive_levenberg_marquardt_mu_min": 1e-16,
@@ -652,7 +740,7 @@
         "num_threads_in_batch_solve": 1,
         "print_level": 0,
         "qp_solver": "PARTIAL_CONDENSING_HPIPM",
-        "qp_solver_cond_N": 40,
+        "qp_solver_cond_N": 20,
         "qp_solver_cond_ric_alg": 1,
         "qp_solver_iter_max": 50,
         "qp_solver_ric_alg": 1,
@@ -666,46 +754,26 @@
         "rti_log_residuals": 0,
         "shooting_nodes": [
             0.0,
-            0.1,
             0.2,
-            0.30000000000000004,
             0.4,
-            0.5,
-            0.6,
-            0.7,
-            0.7999999999999999,
-            0.8999999999999999,
-            0.9999999999999999,
-            1.0999999999999999,
+            0.6000000000000001,
+            0.8,
+            1.0,
             1.2,
-            1.3,
-            1.4000000000000001,
-            1.5000000000000002,
-            1.6000000000000003,
-            1.7000000000000004,
-            1.8000000000000005,
-            1.9000000000000006,
-            2.0000000000000004,
-            2.1000000000000005,
-            2.2000000000000006,
-            2.3000000000000007,
-            2.400000000000001,
-            2.500000000000001,
-            2.600000000000001,
-            2.700000000000001,
-            2.800000000000001,
-            2.9000000000000012,
-            3.0000000000000013,
-            3.1000000000000014,
-            3.2000000000000015,
-            3.3000000000000016,
-            3.4000000000000017,
-            3.5000000000000018,
-            3.600000000000002,
-            3.700000000000002,
-            3.800000000000002,
-            3.900000000000002,
-            4.000000000000002
+            1.4,
+            1.5999999999999999,
+            1.7999999999999998,
+            1.9999999999999998,
+            2.1999999999999997,
+            2.4,
+            2.6,
+            2.8000000000000003,
+            3.0000000000000004,
+            3.2000000000000006,
+            3.400000000000001,
+            3.600000000000001,
+            3.800000000000001,
+            4.000000000000001
         ],
         "sim_method_jac_reuse": [
             0,
@@ -727,51 +795,11 @@
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
             0
         ],
-        "sim_method_newton_iter": 20,
+        "sim_method_newton_iter": 50,
         "sim_method_newton_tol": 0.0,
         "sim_method_num_stages": [
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
-            4,
             4,
             4,
             4,
@@ -813,70 +841,30 @@
             1,
             1,
             1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
             1
         ],
         "tf": 4,
         "time_steps": [
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
         ],
         "with_adaptive_levenberg_marquardt": false,
         "with_solution_sens_wrt_params": false,

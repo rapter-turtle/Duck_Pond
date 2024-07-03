@@ -74,7 +74,7 @@ int heron_acados_sim_create(heron_sim_solver_capsule * capsule)
     bool tmp_bool;
 
     
-    double Tsim = 0.1;
+    double Tsim = 0.2;
 
     
     capsule->sim_impl_dae_fun = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi));
@@ -127,7 +127,7 @@ int heron_acados_sim_create(heron_sim_solver_capsule * capsule)
     // sim opts
     sim_opts *heron_sim_opts = sim_opts_create(heron_sim_config, heron_sim_dims);
     capsule->acados_sim_opts = heron_sim_opts;
-    int tmp_int = 20;
+    int tmp_int = 50;
     sim_opts_set(heron_sim_config, heron_sim_opts, "newton_iter", &tmp_int);
     double tmp_double = 0;
     sim_opts_set(heron_sim_config, heron_sim_opts, "newton_tol", &tmp_double);
@@ -165,6 +165,13 @@ int heron_acados_sim_create(heron_sim_solver_capsule * capsule)
                                                heron_sim_dims, heron_sim_opts);
     capsule->acados_sim_solver = heron_sim_solver;
 
+
+    /* initialize parameter values */
+    double* p = calloc(np, sizeof(double));
+    
+
+    heron_acados_sim_update_params(capsule, p, np);
+    free(p);
 
 
     /* initialize input */

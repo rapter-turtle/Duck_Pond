@@ -37,14 +37,14 @@ def main():
 
     Fmax = 45
     Tf = 4
-    N_horizon = 40
-    Nsim = 400
+    N_horizon = 20
+    Nsim = 2000
 
     con_dt = (Tf/N_horizon)
     ref_dt = 0.01
     ref_iter = int(con_dt/ref_dt)
 
-    reference = generate_figure_eight_trajectory((Nsim+N_horizon+1)*con_dt, ref_dt)
+    reference = generate_figure_eight_trajectory((Nsim+N_horizon*2)*con_dt, ref_dt)
     # reference = generate_figure_eight_trajectory_con(100, ref_dt)
     reference = reference[::ref_iter,:]
 
@@ -55,9 +55,10 @@ def main():
     nu = ocp_solver.acados_ocp.dims.nu
 
     simX = np.zeros((Nsim+1, nx))
-    simU = np.zeros((Nsim, nu))
+    simU = np.zeros((Nsim+1, nu))
     simX[0,:] = x0
     yref_list = []
+    obs_list = []
     mpc_pred_list = []
 
     t_preparation = np.zeros((Nsim))
@@ -74,13 +75,36 @@ def main():
 
         for j in range(N_horizon):
             yref = np.hstack((reference[i+j,:],0,0,0,0))
-            ocp_solver.set(j, "yref", yref)
+            ocp_solver.cost_set(j, "yref", yref)
         
         yref = np.hstack((reference[i:i + N_horizon+1, :], np.zeros((N_horizon+1, 2))))
         yref_list.append(yref)
 
         yref_N = np.hstack((reference[i+N_horizon,:],0,0))
-        ocp_solver.set(N_horizon, "yref", yref_N)
+        ocp_solver.cost_set(N_horizon, "yref", yref_N)
+
+        rad = 1
+        obs_pos = np.array([0.0, 0.1, 0.5, 
+                            6.0, -1.0*np.sin(i/10), 0.6, 
+                            3.0, 1.0, 0.4, 
+                            -3.0, 1.0, 0.4,
+                            -6.0, 1.0*np.sin(i/10), 0.5])
+        obs_list.append(obs_pos)
+
+        for j in range(N_horizon):
+            obs_pos = np.array([0.0, 0.1, 0.5, 
+                                6.0, -1.0*np.sin((i+j*con_dt)/10), 0.6, 
+                                3.0, 1.0, 0.4, 
+                                -3.0, 1.0, 0.4,
+                                -6.0, 1.0*np.sin((i+j*con_dt)/10), 0.5])
+            ocp_solver.set(j, "p", obs_pos)
+        obs_pos = np.array([0.0, 0.1, 0.5, 
+                            6.0, -1.0*np.sin((i+j*con_dt)/10), 0.6, 
+                            3.0, 1.0, 0.4, 
+                            -3.0, 1.0, 0.4,
+                            -6.0, 1.0*np.sin((i+N_horizon*con_dt)/10), 0.5])
+        ocp_solver.set(N_horizon, "p", obs_pos)
+
 
         # preparation phase
         ocp_solver.options_set('rti_phase', 1)
@@ -112,6 +136,9 @@ def main():
 
         # print(simX[i, 3])
         # print(simU[i, :])
+    simU[i+1, :] = simU[i, :]
+    yref_list.append(yref)
+    mpc_pred_list.append(mpc_pred_array)
 
     # evaluate timings
     # scale to milliseconds
@@ -122,10 +149,11 @@ def main():
     print(f'Computation time in feedback phase in ms:    \
             min {np.min(t_feedback):.3f} median {np.median(t_feedback):.3f} max {np.max(t_feedback):.3f}')
     yref_array = np.array(yref_list)
+    obs_array = np.array(obs_list)
 
     ocp_solver = None
-    plot_iter = 5
-    animateASV(simX[::plot_iter,:], simU[::plot_iter,:], reference, yref_array[::plot_iter],mpc_pred_list[::plot_iter])
+    plot_iter = 3
+    animateASV(simX[::plot_iter,:], simU[::plot_iter,:], reference, yref_array[::plot_iter],mpc_pred_list[::plot_iter], obs_array)
 
     t = np.arange(0, con_dt*Nsim, con_dt)
     plot_inputs(t, reference, simX, simU, Fmax)

@@ -325,7 +325,7 @@ void heron_acados_create_3_create_and_set_functions(heron_solver_capsule* capsul
         capsule->__CAPSULE_FNC__.casadi_sparsity_in = & __MODEL_BASE_FNC__ ## _sparsity_in; \
         capsule->__CAPSULE_FNC__.casadi_sparsity_out = & __MODEL_BASE_FNC__ ## _sparsity_out; \
         capsule->__CAPSULE_FNC__.casadi_work = & __MODEL_BASE_FNC__ ## _work; \
-        external_function_param_casadi_create(&capsule->__CAPSULE_FNC__ , 0); \
+        external_function_param_casadi_create(&capsule->__CAPSULE_FNC__ , 15); \
     } while(false)
     // constraints.constr_type == "BGH" and dims.nh > 0
     capsule->nl_constr_h_fun_jac = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*(N-1));
@@ -393,7 +393,14 @@ void heron_acados_create_3_create_and_set_functions(heron_solver_capsule* capsul
  * Internal function for heron_acados_create: step 4
  */
 void heron_acados_create_4_set_default_parameters(heron_solver_capsule* capsule) {
-    // no parameters defined
+    const int N = capsule->nlp_solver_plan->N;
+    // initialize parameters to nominal value
+    double* p = calloc(NP, sizeof(double));
+
+    for (int i = 0; i <= N; i++) {
+        heron_acados_update_params(capsule, i, p, NP);
+    }
+    free(p);
 }
 
 
@@ -422,7 +429,7 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
         heron_acados_update_time_steps(capsule, N, new_time_steps);
     }
     else
-    {double time_step = 0.1;
+    {double time_step = 0.2;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
@@ -448,15 +455,15 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
-    W_0[0+(NY0) * 0] = 4;
-    W_0[1+(NY0) * 1] = 4;
-    W_0[2+(NY0) * 2] = 100;
+    W_0[0+(NY0) * 0] = 2;
+    W_0[1+(NY0) * 1] = 2;
+    W_0[2+(NY0) * 2] = 40;
     W_0[3+(NY0) * 3] = 20;
     W_0[4+(NY0) * 4] = 10;
     W_0[5+(NY0) * 5] = 0.0002;
     W_0[6+(NY0) * 6] = 0.0002;
-    W_0[7+(NY0) * 7] = 0.000002;
-    W_0[8+(NY0) * 8] = 0.000002;
+    W_0[7+(NY0) * 7] = 0.00000002;
+    W_0[8+(NY0) * 8] = 0.00000002;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -469,15 +476,15 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     free(yref);
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
-    W[0+(NY) * 0] = 4;
-    W[1+(NY) * 1] = 4;
-    W[2+(NY) * 2] = 100;
+    W[0+(NY) * 0] = 2;
+    W[1+(NY) * 1] = 2;
+    W[2+(NY) * 2] = 40;
     W[3+(NY) * 3] = 20;
     W[4+(NY) * 4] = 10;
     W[5+(NY) * 5] = 0.0002;
     W[6+(NY) * 6] = 0.0002;
-    W[7+(NY) * 7] = 0.000002;
-    W[8+(NY) * 8] = 0.000002;
+    W[7+(NY) * 7] = 0.00000002;
+    W[8+(NY) * 8] = 0.00000002;
 
     for (int i = 1; i < N; i++)
     {
@@ -491,9 +498,9 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
-    W_e[0+(NYN) * 0] = 4;
-    W_e[1+(NYN) * 1] = 4;
-    W_e[2+(NYN) * 2] = 100;
+    W_e[0+(NYN) * 0] = 2;
+    W_e[1+(NYN) * 1] = 2;
+    W_e[2+(NYN) * 2] = 40;
     W_e[3+(NYN) * 3] = 20;
     W_e[4+(NYN) * 4] = 10;
     W_e[5+(NYN) * 5] = 0.0002;
@@ -522,10 +529,26 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* zl = zlumem+NS*2;
     double* zu = zlumem+NS*3;
     // change only the non-zero elements:
-    Zl[0] = 1000000;
-    Zu[0] = 1000000;
-    zl[0] = 10000;
-    zu[0] = 10000;
+    Zl[0] = 100000;
+    Zl[1] = 100000;
+    Zl[2] = 100000;
+    Zl[3] = 100000;
+    Zl[4] = 100000;
+    Zu[0] = 100000;
+    Zu[1] = 100000;
+    Zu[2] = 100000;
+    Zu[3] = 100000;
+    Zu[4] = 100000;
+    zl[0] = 100000;
+    zl[1] = 100000;
+    zl[2] = 100000;
+    zl[3] = 100000;
+    zl[4] = 100000;
+    zu[0] = 100000;
+    zu[1] = 100000;
+    zu[2] = 100000;
+    zu[3] = 100000;
+    zu[4] = 100000;
 
     for (int i = 1; i < N; i++)
     {
@@ -546,16 +569,32 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     // change only the non-zero elements:
     
-    Zl_e[0] = 1000000;
+    Zl_e[0] = 100000;
+    Zl_e[1] = 100000;
+    Zl_e[2] = 100000;
+    Zl_e[3] = 100000;
+    Zl_e[4] = 100000;
 
     
-    Zu_e[0] = 1000000;
+    Zu_e[0] = 100000;
+    Zu_e[1] = 100000;
+    Zu_e[2] = 100000;
+    Zu_e[3] = 100000;
+    Zu_e[4] = 100000;
 
     
-    zl_e[0] = 10000;
+    zl_e[0] = 100000;
+    zl_e[1] = 100000;
+    zl_e[2] = 100000;
+    zl_e[3] = 100000;
+    zl_e[4] = 100000;
 
     
-    zu_e[0] = 10000;
+    zu_e[0] = 100000;
+    zu_e[1] = 100000;
+    zu_e[2] = 100000;
+    zu_e[3] = 100000;
+    zu_e[4] = 100000;
 
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zl", Zl_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zu", Zu_e);
@@ -641,6 +680,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     int* idxsh = malloc(NSH * sizeof(int));
     
     idxsh[0] = 0;
+    idxsh[1] = 1;
+    idxsh[2] = 2;
+    idxsh[3] = 3;
+    idxsh[4] = 4;
     double* lush = calloc(2*NSH, sizeof(double));
     double* lsh = lush;
     double* ush = lush + NSH;
@@ -671,8 +714,8 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     
     lbx[0] = -1;
     ubx[0] = 2;
-    lbx[1] = -0.5;
-    ubx[1] = 0.5;
+    lbx[1] = -1;
+    ubx[1] = 1;
     lbx[2] = -45;
     ubx[2] = 45;
     lbx[3] = -45;
@@ -699,6 +742,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     
     uh[0] = 10000000000;
+    uh[1] = 10000000000;
+    uh[2] = 10000000000;
+    uh[3] = 10000000000;
+    uh[4] = 10000000000;
 
     for (int i = 1; i < N; i++)
     {
@@ -724,6 +771,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     int* idxsh_e = malloc(NSHN * sizeof(int));
     
     idxsh_e[0] = 0;
+    idxsh_e[1] = 1;
+    idxsh_e[2] = 2;
+    idxsh_e[3] = 3;
+    idxsh_e[4] = 4;
     double* lush_e = calloc(2*NSHN, sizeof(double));
     double* lsh_e = lush_e;
     double* ush_e = lush_e + NSHN;
@@ -750,6 +801,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     
     uh_e[0] = 10000000000;
+    uh_e[1] = 10000000000;
+    uh_e[2] = 10000000000;
+    uh_e[3] = 10000000000;
+    uh_e[4] = 10000000000;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, N, "nl_constr_h_fun_jac", &capsule->nl_constr_h_e_fun_jac);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, N, "nl_constr_h_fun", &capsule->nl_constr_h_e_fun);
@@ -801,7 +856,7 @@ int fixed_hess = 0;
     for (int i = 0; i < N; i++)
         ocp_nlp_solver_opts_set_at_stage(nlp_config, nlp_opts, i, "dynamics_num_stages", &sim_method_num_stages);
 
-    int newton_iter_val = 20;
+    int newton_iter_val = 50;
     for (int i = 0; i < N; i++)
         ocp_nlp_solver_opts_set_at_stage(nlp_config, nlp_opts, i, "dynamics_newton_iter", &newton_iter_val);
 
@@ -817,7 +872,7 @@ int fixed_hess = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "levenberg_marquardt", &levenberg_marquardt);
 
     /* options QP solver */
-    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 40;
+    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 20;
     qp_solver_cond_N = N < qp_solver_cond_N_ori ? N : qp_solver_cond_N_ori; // use the minimum value here
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_N", &qp_solver_cond_N);
 
@@ -1039,7 +1094,7 @@ int heron_acados_update_params(heron_solver_capsule* capsule, int stage, double 
 {
     int solver_status = 0;
 
-    int casadi_np = 0;
+    int casadi_np = 15;
     if (casadi_np != np) {
         printf("acados_update_params: trying to set %i parameters for external functions."
             " External function has %i parameters. Exiting.\n", np, casadi_np);
@@ -1098,7 +1153,7 @@ int heron_acados_update_params_sparse(heron_solver_capsule * capsule, int stage,
 {
     int solver_status = 0;
 
-    int casadi_np = 0;
+    int casadi_np = 15;
     if (casadi_np < n_update) {
         printf("heron_acados_update_params_sparse: trying to set %d parameters for external functions."
             " External function has %d parameters. Exiting.\n", n_update, casadi_np);
@@ -1113,6 +1168,50 @@ int heron_acados_update_params_sparse(heron_solver_capsule * capsule, int stage,
     //     }
     //     printf("param %d value %e\n", idx[i], p[i]);
     // }
+    const int N = capsule->nlp_solver_plan->N;
+    if (stage < N && stage >= 0)
+    {
+        capsule->impl_dae_fun[stage].set_param_sparse(capsule->impl_dae_fun+stage, n_update, idx, p);
+        capsule->impl_dae_fun_jac_x_xdot_z[stage].set_param_sparse(capsule->impl_dae_fun_jac_x_xdot_z+stage, n_update, idx, p);
+        capsule->impl_dae_jac_x_xdot_u_z[stage].set_param_sparse(capsule->impl_dae_jac_x_xdot_u_z+stage, n_update, idx, p);
+
+        // constraints
+        if (stage == 0)
+        {
+        }
+        else
+        {
+            capsule->nl_constr_h_fun_jac[stage-1].set_param_sparse(capsule->nl_constr_h_fun_jac+stage-1, n_update, idx, p);
+            capsule->nl_constr_h_fun[stage-1].set_param_sparse(capsule->nl_constr_h_fun+stage-1, n_update, idx, p);
+        }
+
+        // cost
+        if (stage == 0)
+        {
+            capsule->cost_y_0_fun.set_param_sparse(&capsule->cost_y_0_fun, n_update, idx, p);
+            capsule->cost_y_0_fun_jac_ut_xt.set_param_sparse(&capsule->cost_y_0_fun_jac_ut_xt, n_update, idx, p);
+            capsule->cost_y_0_hess.set_param_sparse(&capsule->cost_y_0_hess, n_update, idx, p);
+        }
+        else // 0 < stage < N
+        {
+            capsule->cost_y_fun[stage-1].set_param_sparse(capsule->cost_y_fun+stage-1, n_update, idx, p);
+            capsule->cost_y_fun_jac_ut_xt[stage-1].set_param_sparse(capsule->cost_y_fun_jac_ut_xt+stage-1, n_update, idx, p);
+            capsule->cost_y_hess[stage-1].set_param_sparse(capsule->cost_y_hess+stage-1, n_update, idx, p);
+        }
+    }
+
+    else // stage == N
+    {
+        // terminal shooting node has no dynamics
+        // cost
+        capsule->cost_y_e_fun.set_param_sparse(&capsule->cost_y_e_fun, n_update, idx, p);
+        capsule->cost_y_e_fun_jac_ut_xt.set_param_sparse(&capsule->cost_y_e_fun_jac_ut_xt, n_update, idx, p);
+        capsule->cost_y_e_hess.set_param_sparse(&capsule->cost_y_e_hess, n_update, idx, p);
+        // constraints
+        capsule->nl_constr_h_e_fun_jac.set_param_sparse(&capsule->nl_constr_h_e_fun_jac, n_update, idx, p);
+        capsule->nl_constr_h_e_fun.set_param_sparse(&capsule->nl_constr_h_e_fun, n_update, idx, p);
+    }
+
 
     return solver_status;
 }
