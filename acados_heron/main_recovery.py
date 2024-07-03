@@ -7,15 +7,14 @@ def main():
     Fmax = 45
     Tf = 4
     N_horizon = 20
-    Nsim = 1000
+    Nsim = 250
 
     con_dt = (Tf/N_horizon)
     ref_dt = 0.01
-    ref_iter = int(con_dt/ref_dt)
 
-    x_tship = np.array([10.0, 10.0, 0.0, 1]) # x,y,psi,u
+    x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u
 
-    x0 = np.array([0.0, 2.0, 0.0 , 0.5, 0.0, 0, 0])
+    x0 = np.array([0.0, 2.0, 0.0 , 1, 0.0, 0, 0])
     ocp_solver, integrator = setup_recovery(x0, Fmax, N_horizon, Tf)
 
     nx = ocp_solver.acados_ocp.dims.nx
@@ -56,7 +55,17 @@ def main():
                            x_tship[2], x_tship[3], 0, 0, 0])
         ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
-       
+
+
+        dist = 2.5
+        oa = np.tan(x_tship[2]) 
+        ob = -1
+        oc = (x_tship[1]-dist*np.cos(x_tship[2])) - (x_tship[0]+dist*np.sin(x_tship[2]))*np.tan(x_tship[2]) 
+        con_pos = np.array([oa, ob, oc])
+        for j in range(N_horizon):
+            ocp_solver.set(j, "p", con_pos)
+        ocp_solver.set(N_horizon, "p", con_pos)
+
         # preparation phase
         ocp_solver.options_set('rti_phase', 1)
         status = ocp_solver.solve()
@@ -110,7 +119,7 @@ def main():
 
     ocp_solver = None
     plot_iter = 3
-    animateASV_recovery(simX[::plot_iter,:], simU[::plot_iter,:], simX_tship[::plot_iter,:], mpc_pred_list[::plot_iter])
+    animateASV_recovery(simX[::plot_iter,:], simU[::plot_iter,:], simX_tship[::plot_iter,:], mpc_pred_list[::plot_iter], con_pos)
 
     t = np.arange(0, con_dt*Nsim, con_dt)
     plot_inputs_recovery(t, simX, simU, Fmax)

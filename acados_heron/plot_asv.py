@@ -147,7 +147,7 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
 
 
 
-def animateASV_recovery(states, inputs, tship, mpc_result):
+def animateASV_recovery(states, inputs, tship, mpc_result, con_pos):
     # Define the geometry of the twin-hull ASV
     hullLength = 0.7  # Length of the hull
     hullWidth = 0.2   # Width of each hull
@@ -232,8 +232,8 @@ def animateASV_recovery(states, inputs, tship, mpc_result):
 
         # 회전 행렬 생성
         rotation_matrix = np.array([
-            [np.cos(tship[frame,2]), -np.sin(tship[frame,2])],
-            [np.sin(tship[frame,2]), np.cos(tship[frame,2])]
+            [np.cos(-tship[frame,2]), -np.sin(-tship[frame,2])],
+            [np.sin(-tship[frame,2]), np.cos(-tship[frame,2])]
         ])
 
         # 사각형의 원래 꼭지점 좌표
@@ -247,6 +247,19 @@ def animateASV_recovery(states, inputs, tship, mpc_result):
         ])
 
 
+
+        oa = con_pos[0]
+        ob = con_pos[1]
+        oc = con_pos[2]
+
+        oxx = np.linspace( tship[frame,0]-5 , tship[frame,0]+5 , 20 )
+        oyy = (-oa*oxx-oc)/ob
+        ax.plot(oxx, oyy, 'k--', linewidth=2)
+
+        oxx = np.linspace( tship[frame,0]-0.2 , tship[frame,0] + 0.2 , 20 )
+        oyy = (-oa*oxx-oc)/ob
+        ax.plot(oxx, oyy, 'c', linewidth=40, alpha=0.3)
+
         # 회전 및 이동 적용
         rotated_coords = np.dot(rectangle_coords, rotation_matrix)
         rotated_coords[:, 0] += tship[frame,0]
@@ -255,7 +268,7 @@ def animateASV_recovery(states, inputs, tship, mpc_result):
         ax.fill(rotated_coords[:, 0], rotated_coords[:, 1], 'blue', alpha=0.2)
         ax.scatter(tship[frame,0], tship[frame,1], color='red')  # 중심점 표시
 
-        ax.set_xlim(tship[frame,0]-18, tship[frame,0]+8)  # Adjust these limits as needed
+        ax.set_xlim(tship[frame,0]-28, tship[frame,0]+8)  # Adjust these limits as needed
         ax.set_ylim(tship[frame,1]-10, tship[frame,1]+5)  # Adjust these limits as needed
         # ax.autoscale(enable=True, axis='x', tight=True)
         # ax.autoscale(enable=True, axis='y', tight=True)
