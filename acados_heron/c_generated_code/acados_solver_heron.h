@@ -36,36 +36,36 @@
 #include "acados_c/ocp_nlp_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define HERON_NX     5
+#define HERON_NX     7
 #define HERON_NZ     0
 #define HERON_NU     2
 #define HERON_NP     0
-#define HERON_NBX    0
-#define HERON_NBX0   5
+#define HERON_NBX    4
+#define HERON_NBX0   7
 #define HERON_NBU    2
 #define HERON_NSBX   0
 #define HERON_NSBU   0
-#define HERON_NSH    0
+#define HERON_NSH    1
 #define HERON_NSH0   0
 #define HERON_NSG    0
 #define HERON_NSPHI  0
-#define HERON_NSHN   0
+#define HERON_NSHN   1
 #define HERON_NSGN   0
 #define HERON_NSPHIN 0
 #define HERON_NSPHI0 0
 #define HERON_NSBXN  0
-#define HERON_NS     0
+#define HERON_NS     1
 #define HERON_NS0    0
-#define HERON_NSN    0
+#define HERON_NSN    1
 #define HERON_NG     0
 #define HERON_NBXN   0
 #define HERON_NGN    0
-#define HERON_NY0    7
-#define HERON_NY     7
-#define HERON_NYN    5
+#define HERON_NY0    9
+#define HERON_NY     9
+#define HERON_NYN    7
 #define HERON_N      40
-#define HERON_NH     0
-#define HERON_NHN    0
+#define HERON_NH     1
+#define HERON_NHN    1
 #define HERON_NH0    0
 #define HERON_NPHI0  0
 #define HERON_NPHI   0
@@ -123,12 +123,16 @@ typedef struct heron_solver_capsule
 
 
     // constraints
+    external_function_param_casadi *nl_constr_h_fun_jac;
+    external_function_param_casadi *nl_constr_h_fun;
 
 
 
 
 
 
+    external_function_param_casadi nl_constr_h_e_fun_jac;
+    external_function_param_casadi nl_constr_h_e_fun;
 
 } heron_solver_capsule;
 

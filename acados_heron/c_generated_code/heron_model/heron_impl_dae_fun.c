@@ -52,11 +52,11 @@ extern "C" {
 
 casadi_real casadi_sq(casadi_real x) { return x*x;}
 
-static const casadi_int casadi_s0[9] = {5, 1, 0, 5, 0, 1, 2, 3, 4};
+static const casadi_int casadi_s0[11] = {7, 1, 0, 7, 0, 1, 2, 3, 4, 5, 6};
 static const casadi_int casadi_s1[6] = {2, 1, 0, 2, 0, 1};
 static const casadi_int casadi_s2[3] = {0, 0, 0};
 
-/* heron_impl_dae_fun:(i0[5],i1[5],i2[2],i3[],i4[],i5[])->(o0[5]) */
+/* heron_impl_dae_fun:(i0[7],i1[7],i2[2],i3[],i4[],i5[])->(o0[7]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3, a4, a5, a6, a7, a8, a9;
   a0=arg[1]? arg[1][0] : 0;
@@ -76,8 +76,8 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a0=(a0-a2);
   if (res[0]!=0) res[0][2]=a0;
   a0=arg[1]? arg[1][3] : 0;
-  a3=arg[2]? arg[2][0] : 0;
-  a4=arg[2]? arg[2][1] : 0;
+  a3=arg[0]? arg[0][5] : 0;
+  a4=arg[0]? arg[0][6] : 0;
   a5=(a3+a4);
   a6=10.;
   a7=1.6899999999999999e+01;
@@ -112,6 +112,14 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a5=(a5/a4);
   a0=(a0-a5);
   if (res[0]!=0) res[0][4]=a0;
+  a0=arg[1]? arg[1][5] : 0;
+  a5=arg[2]? arg[2][0] : 0;
+  a0=(a0-a5);
+  if (res[0]!=0) res[0][5]=a0;
+  a0=arg[1]? arg[1][6] : 0;
+  a5=arg[2]? arg[2][1] : 0;
+  a0=(a0-a5);
+  if (res[0]!=0) res[0][6]=a0;
   return 0;
 }
 

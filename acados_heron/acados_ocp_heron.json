@@ -1,7 +1,7 @@
 {
     "acados_include_path": "/home/leeck/catkin_ws/src/acados/include",
     "acados_lib_path": "/home/leeck/catkin_ws/src/acados/lib",
-    "code_export_directory": "/home/leeck/catkin_ws/src/acados_heron/c_generated_code",
+    "code_export_directory": "/home/leeck/catkin_ws/src/Duck_Pond/acados_heron/c_generated_code",
     "constraints": {
         "C": [],
         "C_e": [],
@@ -14,13 +14,20 @@
             0,
             1
         ],
-        "idxbx": [],
+        "idxbx": [
+            3,
+            4,
+            5,
+            6
+        ],
         "idxbx_0": [
             0,
             1,
             2,
             3,
-            4
+            4,
+            5,
+            6
         ],
         "idxbx_e": [],
         "idxbxe_0": [
@@ -28,37 +35,54 @@
             1,
             2,
             3,
-            4
+            4,
+            5,
+            6
         ],
         "idxsbu": [],
         "idxsbx": [],
         "idxsbx_e": [],
         "idxsg": [],
         "idxsg_e": [],
-        "idxsh": [],
+        "idxsh": [
+            0
+        ],
         "idxsh_0": [],
-        "idxsh_e": [],
+        "idxsh_e": [
+            0
+        ],
         "idxsphi": [],
         "idxsphi_0": [],
         "idxsphi_e": [],
         "lbu": [
-            -45,
-            -45
+            -9.0,
+            -9.0
         ],
-        "lbx": [],
+        "lbx": [
+            -1.0,
+            -0.5,
+            -45.0,
+            -45.0
+        ],
         "lbx_0": [
             0.0,
+            2.0,
             0.0,
             0.5,
-            0.9,
+            0.0,
+            0.0,
             0.0
         ],
         "lbx_e": [],
         "lg": [],
         "lg_e": [],
-        "lh": [],
+        "lh": [
+            0
+        ],
         "lh_0": [],
-        "lh_e": [],
+        "lh_e": [
+            0
+        ],
         "lphi": [],
         "lphi_0": [],
         "lphi_e": [],
@@ -67,30 +91,45 @@
         "lsbx_e": [],
         "lsg": [],
         "lsg_e": [],
-        "lsh": [],
+        "lsh": [
+            0.0
+        ],
         "lsh_0": [],
-        "lsh_e": [],
+        "lsh_e": [
+            0.0
+        ],
         "lsphi": [],
         "lsphi_0": [],
         "lsphi_e": [],
         "ubu": [
-            45,
-            45
+            9.0,
+            9.0
         ],
-        "ubx": [],
+        "ubx": [
+            2.0,
+            0.5,
+            45.0,
+            45.0
+        ],
         "ubx_0": [
             0.0,
+            2.0,
             0.0,
             0.5,
-            0.9,
+            0.0,
+            0.0,
             0.0
         ],
         "ubx_e": [],
         "ug": [],
         "ug_e": [],
-        "uh": [],
+        "uh": [
+            10000000000.0
+        ],
         "uh_0": [],
-        "uh_e": [],
+        "uh_e": [
+            10000000000.0
+        ],
         "uphi": [],
         "uphi_0": [],
         "uphi_e": [],
@@ -99,9 +138,13 @@
         "usbx_e": [],
         "usg": [],
         "usg_e": [],
-        "ush": [],
+        "ush": [
+            0.0
+        ],
         "ush_0": [],
-        "ush_e": [],
+        "ush_e": [
+            0.0
+        ],
         "usphi": [],
         "usphi_0": [],
         "usphi_e": []
@@ -116,7 +159,20 @@
         "Vz_0": [],
         "W": [
             [
-                2.0,
+                4.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                4.0,
+                0.0,
                 0.0,
                 0.0,
                 0.0,
@@ -126,7 +182,20 @@
             ],
             [
                 0.0,
-                2.0,
+                0.0,
+                100.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                20.0,
                 0.0,
                 0.0,
                 0.0,
@@ -135,28 +204,12 @@
             ],
             [
                 0.0,
-                0.0,
-                200.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0
-            ],
-            [
                 0.0,
                 0.0,
                 0.0,
                 10.0,
                 0.0,
                 0.0,
-                0.0
-            ],
-            [
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
                 0.0,
                 0.0
             ],
@@ -166,7 +219,9 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-05,
+                0.0002,
+                0.0,
+                0.0,
                 0.0
             ],
             [
@@ -176,12 +231,49 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-05
+                0.0002,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                2e-06,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                2e-06
             ]
         ],
         "W_0": [
             [
-                2.0,
+                4.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                4.0,
+                0.0,
                 0.0,
                 0.0,
                 0.0,
@@ -191,7 +283,20 @@
             ],
             [
                 0.0,
-                2.0,
+                0.0,
+                100.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                20.0,
                 0.0,
                 0.0,
                 0.0,
@@ -200,28 +305,12 @@
             ],
             [
                 0.0,
-                0.0,
-                200.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0
-            ],
-            [
                 0.0,
                 0.0,
                 0.0,
                 10.0,
                 0.0,
                 0.0,
-                0.0
-            ],
-            [
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
                 0.0,
                 0.0
             ],
@@ -231,7 +320,9 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-05,
+                0.0002,
+                0.0,
+                0.0,
                 0.0
             ],
             [
@@ -241,52 +332,112 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-05
+                0.0002,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                2e-06,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                2e-06
             ]
         ],
         "W_e": [
             [
-                2,
-                0,
-                0,
-                0,
-                0
+                4.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
             ],
             [
-                0,
-                2,
-                0,
-                0,
-                0
+                0.0,
+                4.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
             ],
             [
-                0,
-                0,
-                200,
-                0,
-                0
+                0.0,
+                0.0,
+                100.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
             ],
             [
-                0,
-                0,
-                0,
-                10,
-                0
+                0.0,
+                0.0,
+                0.0,
+                20.0,
+                0.0,
+                0.0,
+                0.0
             ],
             [
-                0,
-                0,
-                0,
-                0,
-                0
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                10.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0002,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0002
             ]
         ],
-        "Zl": [],
+        "Zl": [
+            1000000.0
+        ],
         "Zl_0": [],
-        "Zl_e": [],
-        "Zu": [],
+        "Zl_e": [
+            1000000.0
+        ],
+        "Zu": [
+            1000000.0
+        ],
         "Zu_0": [],
-        "Zu_e": [],
+        "Zu_e": [
+            1000000.0
+        ],
         "cost_ext_fun_type": "casadi",
         "cost_ext_fun_type_0": "casadi",
         "cost_ext_fun_type_e": "casadi",
@@ -294,6 +445,8 @@
         "cost_type_0": "NONLINEAR_LS",
         "cost_type_e": "NONLINEAR_LS",
         "yref": [
+            0.0,
+            0.0,
             0.0,
             0.0,
             0.0,
@@ -309,6 +462,8 @@
             0.0,
             0.0,
             0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "yref_e": [
@@ -316,14 +471,24 @@
             0.0,
             0.0,
             0.0,
+            0.0,
+            0.0,
             0.0
         ],
-        "zl": [],
+        "zl": [
+            10000.0
+        ],
         "zl_0": [],
-        "zl_e": [],
-        "zu": [],
+        "zl_e": [
+            10000.0
+        ],
+        "zu": [
+            10000.0
+        ],
         "zu_0": [],
-        "zu_e": []
+        "zu_e": [
+            10000.0
+        ]
     },
     "cython_include_dirs": [
         "/home/leeck/.local/lib/python3.8/site-packages/numpy/core/include",
@@ -332,15 +497,15 @@
     "dims": {
         "N": 40,
         "nbu": 2,
-        "nbx": 0,
-        "nbx_0": 5,
+        "nbx": 4,
+        "nbx_0": 7,
         "nbx_e": 0,
-        "nbxe_0": 5,
+        "nbxe_0": 7,
         "ng": 0,
         "ng_e": 0,
-        "nh": 0,
+        "nh": 1,
         "nh_0": 0,
-        "nh_e": 0,
+        "nh_e": 1,
         "np": 0,
         "nphi": 0,
         "nphi_0": 0,
@@ -348,32 +513,32 @@
         "nr": 0,
         "nr_0": 0,
         "nr_e": 0,
-        "ns": 0,
+        "ns": 1,
         "ns_0": 0,
-        "ns_e": 0,
+        "ns_e": 1,
         "nsbu": 0,
         "nsbx": 0,
         "nsbx_e": 0,
         "nsg": 0,
         "nsg_e": 0,
-        "nsh": 0,
+        "nsh": 1,
         "nsh_0": 0,
-        "nsh_e": 0,
+        "nsh_e": 1,
         "nsphi": 0,
         "nsphi_0": 0,
         "nsphi_e": 0,
         "nu": 2,
-        "nx": 5,
-        "ny": 7,
-        "ny_0": 7,
-        "ny_e": 5,
+        "nx": 7,
+        "ny": 9,
+        "ny_0": 9,
+        "ny_e": 7,
         "nz": 0
     },
     "json_file": "acados_ocp_heron.json",
     "model": {
-        "con_h_expr": null,
+        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegmcaaaaaaaaaaaaaachaaaaaaaaaaaaanpd",
         "con_h_expr_0": null,
-        "con_h_expr_e": null,
+        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegmcaaaaaaaaaaaaaachaaaaaaaaaaaaanpd",
         "con_phi_expr": null,
         "con_phi_expr_0": null,
         "con_phi_expr_e": null,
@@ -398,17 +563,17 @@
         "cost_r_in_psi_expr": null,
         "cost_r_in_psi_expr_0": null,
         "cost_r_in_psi_expr_e": null,
-        "cost_y_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaachegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcd",
-        "cost_y_expr_0": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaachegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcd",
-        "cost_y_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaach",
+        "cost_y_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegnaaaaaaaaaaaaaaajaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaajaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaachegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcdegpcaaaaaaaaaaaaaadaaaaaaaogbdegegpcaaaaaaaaaaaaaadaaaaaaaogcdeg",
+        "cost_y_expr_0": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegnaaaaaaaaaaaaaaajaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaajaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaachegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcdegpcaaaaaaaaaaaaaadaaaaaaaogbdegegpcaaaaaaaaaaaaaadaaaaaaaogcdeg",
+        "cost_y_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaachegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcd",
         "disc_dyn_expr": null,
         "dyn_disc_fun": null,
         "dyn_disc_fun_jac": null,
         "dyn_disc_fun_jac_hess": null,
         "dyn_ext_fun_type": "casadi",
         "dyn_generic_source": null,
-        "f_expl_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaaghegoaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegdaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegnaaaaaaaaaaaaaaachcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaachegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcdegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgkaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachgggggggggggoadaeegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachbpigdoiiflipeoodchbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgecaaaaaaegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegeaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachmfpicmfpicmfhopdegcaaaaaaaaaaaaaaachjaaaaaaaaaaaaaaachiaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgcaaaaaaaegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgfaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgnaaaaaaaegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachhaaaaaaaaaaaaaaachoaaaaaaaaaaaaaaachhaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachdddddddddddlacae",
-        "f_impl_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaaihogpfegpgehegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaaghegoaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaajhogpfegpgehegdaaaaaaaaaaaaaaachcaaaaaaaaaaaaaaaegnaaaaaaaaaaaaaaachdaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaahaaaaaaaahdhjgpfegpgehegpcaaaaaaaaaaaaaabaaaaaaachegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaafhpfegpgehegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcdegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgkaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachgggggggggggoadaeegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachcaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachbpigdoiiflipeoodchcaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgecaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaachpfegpgehegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegeaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachmfpicmfpicmfhopdegcaaaaaaaaaaaaaaachabaaaaaaaaaaaaaachpaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgcaaaaaaaegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgfaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgnaaaaaaaegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachmaaaaaaaaaaaaaaachfbaaaaaaaaaaaaaachmaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachdddddddddddlacae",
+        "f_expl_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaaghegoaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegdaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegnaaaaaaaaaaaaaaachcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaachegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcdegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgkaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachgggggggggggoadaeegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachbpigdoiiflipeoodchbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgecaaaaaaegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegeaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachmfpicmfpicmfhopdegcaaaaaaaaaaaaaaachjaaaaaaaaaaaaaaachiaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgcaaaaaaaegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgfaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgnaaaaaaaegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachhaaaaaaaaaaaaaaachoaaaaaaaaaaaaaaachhaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachdddddddddddlacaeegpcaaaaaaaaaaaaaadaaaaaaaogbdegegpcaaaaaaaaaaaaaadaaaaaaaogcdeg",
+        "f_impl_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaaihogpfegpgehegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaabaaaaaaaghegoaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaajhogpfegpgehegdaaaaaaaaaaaaaaachcaaaaaaaaaaaaaaaegnaaaaaaaaaaaaaaachdaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaahaaaaaaaahdhjgpfegpgehegpcaaaaaaaaaaaaaabaaaaaaachegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaafhpfegpgehegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcdegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgkaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachgggggggggggoadaeegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachcaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachbpigdoiiflipeoodchcaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgecaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaafaaaaaaachpfegpgehegeaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegeaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachmfpicmfpicmfhopdegcaaaaaaaaaaaaaaachabaaaaaaaaaaaaaachpaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgcaaaaaaaegdaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgfaaaaaaaegdaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaajgnaaaaaaaegkaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaachmaaaaaaaaaaaaaaachfbaaaaaaaaaaaaaachmaaaaaaaaaaaaaaaegmcaaaaaaaaaaaaaachdddddddddddlacaeegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaaogbdpfegpgehegpcaaaaaaaaaaaaaadaaaaaaaogbdegegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaaogcdpfegpgehegpcaaaaaaaaaaaaaadaaaaaaaogcdeg",
         "gnsf": {
             "nontrivial_f_LO": 1,
             "purely_linear": 0
@@ -419,20 +584,22 @@
         "t": [],
         "t0": null,
         "t_label": "$t$ [s]",
-        "u": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeggaaaaaaaaaaaaaaacaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcd",
+        "u": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeggaaaaaaaaaaaaaaacaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaaogbdegegpcaaaaaaaaaaaaaadaaaaaaaogcdeg",
         "u_labels": [
-            "$n_1$ [N]",
-            "$n_2$ [N]"
+            "$n_1_d$ [N/s]",
+            "$n_2_d$ [N/s]"
         ],
-        "x": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaach",
+        "x": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaaahdhjgegpcaaaaaaaaaaaaaabaaaaaaaghegpcaaaaaaaaaaaaaabaaaaaaachegpcaaaaaaaaaaaaaacaaaaaaaogbdegpcaaaaaaaaaaaaaacaaaaaaaogcd",
         "x_labels": [
             "$x$ [m]",
             "$y$ [m]",
             "$psi$ [rad]",
             "$u$ [m/s]",
-            "$r$ [rad/s]"
+            "$r$ [rad/s]",
+            "$n_1$ [N]",
+            "$n_2$ [N]"
         ],
-        "xdot": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaaihogpfegpgehegpcaaaaaaaaaaaaaagaaaaaaajhogpfegpgehegpcaaaaaaaaaaaaaahaaaaaaaahdhjgpfegpgehegpcaaaaaaaaaaaaaafaaaaaaafhpfegpgehegpcaaaaaaaaaaaaaafaaaaaaachpfegpgeh",
+        "xdot": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaahaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaagaaaaaaaihogpfegpgehegpcaaaaaaaaaaaaaagaaaaaaajhogpfegpgehegpcaaaaaaaaaaaaaahaaaaaaaahdhjgpfegpgehegpcaaaaaaaaaaaaaafaaaaaaafhpfegpgehegpcaaaaaaaaaaaaaafaaaaaaachpfegpgehegpcaaaaaaaaaaaaaagaaaaaaaogbdpfegpgehegpcaaaaaaaaaaaaaagaaaaaaaogcdpfegpgeh",
         "z": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     },
     "name": "heron",
@@ -441,7 +608,7 @@
     "shared_lib_ext": ".so",
     "simulink_opts": null,
     "solver_options": {
-        "Tsim": 0.2,
+        "Tsim": 0.1,
         "adaptive_levenberg_marquardt_lam": 5.0,
         "adaptive_levenberg_marquardt_mu0": 0.001,
         "adaptive_levenberg_marquardt_mu_min": 1e-16,
@@ -499,46 +666,46 @@
         "rti_log_residuals": 0,
         "shooting_nodes": [
             0.0,
+            0.1,
             0.2,
+            0.30000000000000004,
             0.4,
-            0.6000000000000001,
-            0.8,
-            1.0,
+            0.5,
+            0.6,
+            0.7,
+            0.7999999999999999,
+            0.8999999999999999,
+            0.9999999999999999,
+            1.0999999999999999,
             1.2,
-            1.4,
-            1.5999999999999999,
-            1.7999999999999998,
-            1.9999999999999998,
-            2.1999999999999997,
-            2.4,
-            2.6,
-            2.8000000000000003,
-            3.0000000000000004,
-            3.2000000000000006,
-            3.400000000000001,
-            3.600000000000001,
-            3.800000000000001,
-            4.000000000000001,
-            4.200000000000001,
-            4.400000000000001,
-            4.600000000000001,
-            4.800000000000002,
-            5.000000000000002,
-            5.200000000000002,
-            5.400000000000002,
-            5.600000000000002,
-            5.8000000000000025,
-            6.000000000000003,
-            6.200000000000003,
-            6.400000000000003,
-            6.600000000000003,
-            6.800000000000003,
-            7.0000000000000036,
-            7.200000000000004,
-            7.400000000000004,
-            7.600000000000004,
-            7.800000000000004,
-            8.000000000000004
+            1.3,
+            1.4000000000000001,
+            1.5000000000000002,
+            1.6000000000000003,
+            1.7000000000000004,
+            1.8000000000000005,
+            1.9000000000000006,
+            2.0000000000000004,
+            2.1000000000000005,
+            2.2000000000000006,
+            2.3000000000000007,
+            2.400000000000001,
+            2.500000000000001,
+            2.600000000000001,
+            2.700000000000001,
+            2.800000000000001,
+            2.9000000000000012,
+            3.0000000000000013,
+            3.1000000000000014,
+            3.2000000000000015,
+            3.3000000000000016,
+            3.4000000000000017,
+            3.5000000000000018,
+            3.600000000000002,
+            3.700000000000002,
+            3.800000000000002,
+            3.900000000000002,
+            4.000000000000002
         ],
         "sim_method_jac_reuse": [
             0,
@@ -668,48 +835,48 @@
             1,
             1
         ],
-        "tf": 8,
+        "tf": 4,
         "time_steps": [
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1
         ],
         "with_adaptive_levenberg_marquardt": false,
         "with_solution_sens_wrt_params": false,

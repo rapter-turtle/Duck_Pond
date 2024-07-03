@@ -2,7 +2,52 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-def animateASV(positions, headings, inputs, ref, yref, mpc_result):
+
+def plot_inputs(t, reference, states, inputs, Fmax):
+    FS = 18
+    fig, axs = plt.subplots(2, 2, figsize=(12, 10))
+    # Plot the figure-eight trajectory
+    axs[0, 0].plot(t, states[0:-1,3], 'k', linewidth=2) 
+    axs[0, 0].plot(t, reference[0:len(t),3], 'b--', alpha=0.7)
+    axs[0, 0].set_xlabel("Time", fontsize=FS)
+    axs[0, 0].set_ylabel("Speed [m/s]", fontsize=FS)
+    axs[0, 0].grid(True)
+    axs[0, 0].autoscale(enable=True, axis='x', tight=True)
+    axs[0, 0].autoscale(enable=True, axis='y', tight=True)
+
+    # Plot the headings
+    axs[0, 1].plot(t, states[0:-1,4], 'k', linewidth=2) 
+    axs[0, 1].plot(t, reference[0:len(t),4], 'b--', alpha=0.7)
+    axs[0, 1].set_xlabel("Time", fontsize=FS)
+    axs[0, 1].set_ylabel("Rot. Speed [rad/s]", fontsize=FS)
+    axs[0, 1].grid(True)
+    axs[0, 1].autoscale(enable=True, axis='x', tight=True)
+    axs[0, 1].autoscale(enable=True, axis='y', tight=True)
+
+    # Plot the figure-eight trajectory
+    axs[1, 0].plot(t, states[0:-1,5], 'k')
+    axs[1, 0].plot(t, states[0:-1,5]*0 + Fmax, 'r--')
+    axs[1, 0].plot(t, states[0:-1,5]*0 - Fmax, 'r--')
+    axs[1, 0].set_xlabel("Time", fontsize=FS)
+    axs[1, 0].set_ylabel("Left Thrust", fontsize=FS)
+    axs[1, 0].grid(True)
+    axs[1, 0].autoscale(enable=True, axis='x', tight=True)
+    axs[1, 0].set_ylim(-Fmax-1, Fmax+1)
+
+    # Plot the headings
+    axs[1, 1].plot(t, states[0:-1,6], 'k')
+    axs[1, 1].plot(t, states[0:-1,6]*0 + Fmax, 'r--')
+    axs[1, 1].plot(t, states[0:-1,6]*0 - Fmax, 'r--')
+    axs[1, 1].set_xlabel("Time", fontsize=FS)
+    axs[1, 1].set_ylabel("Right Thrust", fontsize=FS)
+    axs[1, 1].grid(True)
+    axs[1, 1].autoscale(enable=True, axis='x', tight=True)
+    axs[1, 1].set_ylim(-Fmax-1, Fmax+1)
+
+    plt.tight_layout()
+    plt.show()
+
+def animateASV(states, inputs, ref, yref, mpc_result):
     # Define the geometry of the twin-hull ASV
     hullLength = 0.7  # Length of the hull
     hullWidth = 0.2   # Width of each hull
@@ -13,12 +58,12 @@ def animateASV(positions, headings, inputs, ref, yref, mpc_result):
     fig, ax = plt.subplots()
 
     def update(frame):
-        position = positions[frame]
-        heading = headings[frame]
+        position = states[frame,0:2]
+        heading = states[frame,2]
         print(inputs[frame,0:2])
         print()
-        force_left = inputs[frame,0]/100
-        force_right = inputs[frame,1]/100
+        force_left = states[frame,5]/100
+        force_right = states[frame,6]/100
         # Clear the previous plot
         ax.clear()
         
@@ -83,8 +128,20 @@ def animateASV(positions, headings, inputs, ref, yref, mpc_result):
         ax.plot(yref[frame,:,0], yref[frame,:,1], 'mo')
         ax.plot(mpc_result[frame][:,0], mpc_result[frame][:,1], 'c.')
 
-        ax.set_xlim(-4, 4)  # Adjust these limits as needed
-        ax.set_ylim(-4, 4)  # Adjust these limits as needed
 
-    anim = FuncAnimation(fig, update, frames=len(positions), repeat=False)
+        theta = np.linspace( 0 , 2 * np.pi , 150 )
+        
+        radius = 0.5
+        
+        a = radius * np.cos( theta )
+        b = radius * np.sin( theta )
+        
+        ax.plot(a, b)
+
+        ax.set_xlim(-8, 8)  # Adjust these limits as needed
+        ax.set_ylim(-6, 6)  # Adjust these limits as needed
+        # ax.autoscale(enable=True, axis='x', tight=True)
+        # ax.autoscale(enable=True, axis='y', tight=True)
+
+    anim = FuncAnimation(fig, update, frames=len(states), repeat=False)
     plt.show()

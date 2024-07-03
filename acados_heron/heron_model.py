@@ -52,11 +52,14 @@ def export_heron_model() -> AcadosModel:
     v    = SX.sym('v')
     r    = SX.sym('r')
 
-    x = vertcat(xn, yn, psi, v, r)
-
     n1  = SX.sym('n1')
     n2  = SX.sym('n2')
-    u   = vertcat(n1, n2)
+
+    x = vertcat(xn, yn, psi, v, r, n1, n2)
+
+    n1d  = SX.sym('n1d')
+    n2d  = SX.sym('n2d')
+    u   = vertcat(n1d, n2d)
 
     # xdot
     xn_dot  = SX.sym('xn_dot')
@@ -64,8 +67,10 @@ def export_heron_model() -> AcadosModel:
     psi_dot = SX.sym('psi_dot')
     u_dot   = SX.sym('u_dot')
     r_dot   = SX.sym('r_dot')
+    n1_dot   = SX.sym('n1_dot')
+    n2_dot   = SX.sym('n2_dot')
 
-    xdot = vertcat(xn_dot, yn_dot, psi_dot, u_dot, r_dot)
+    xdot = vertcat(xn_dot, yn_dot, psi_dot, u_dot, r_dot, n1_dot, n2_dot)
 
     eps = 0.00001
     # dynamics
@@ -73,7 +78,9 @@ def export_heron_model() -> AcadosModel:
                      v*sin(psi),
                      r,
                      ((n1+n2)-(Xu + Xuu*sqrt(v*v+eps))*v)/M,
-                     ((-n1+n2)*L/2 - (Nr + Nrr*sqrt(r*r+eps))*r)/I
+                     ((-n1+n2)*L/2 - (Nr + Nrr*sqrt(r*r+eps))*r)/I,
+                     n1d,
+                     n2d
                      )
 
     f_impl = xdot - f_expl
@@ -88,8 +95,8 @@ def export_heron_model() -> AcadosModel:
     model.name = model_name
 
     # store meta information
-    model.x_labels = ['$x$ [m]', '$y$ [m]',  '$psi$ [rad]',  '$u$ [m/s]', '$r$ [rad/s]']
-    model.u_labels = ['$n_1$ [N]', '$n_2$ [N]']
+    model.x_labels = ['$x$ [m]', '$y$ [m]',  '$psi$ [rad]',  '$u$ [m/s]', '$r$ [rad/s]', '$n_1$ [N]', '$n_2$ [N]']
+    model.u_labels = ['$n_1_d$ [N/s]', '$n_2_d$ [N/s]']
     model.t_label = '$t$ [s]'
 
     return model

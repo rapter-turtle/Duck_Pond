@@ -49,11 +49,11 @@ extern "C" {
   #endif
 #endif
 
-static const casadi_int casadi_s0[9] = {5, 1, 0, 5, 0, 1, 2, 3, 4};
+static const casadi_int casadi_s0[11] = {7, 1, 0, 7, 0, 1, 2, 3, 4, 5, 6};
 static const casadi_int casadi_s1[3] = {0, 0, 0};
-static const casadi_int casadi_s2[8] = {5, 5, 0, 0, 0, 0, 0, 0};
+static const casadi_int casadi_s2[10] = {7, 7, 0, 0, 0, 0, 0, 0, 0, 0};
 
-/* heron_cost_y_e_hess:(i0[5],i1[],i2[],i3[5],i4[],i5[])->(o0[5x5,0nz]) */
+/* heron_cost_y_e_hess:(i0[7],i1[],i2[],i3[7],i4[],i5[])->(o0[7x7,0nz]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   return 0;
 }
