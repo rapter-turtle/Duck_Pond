@@ -15,6 +15,7 @@
             1
         ],
         "idxbx": [
+            1,
             3,
             4,
             5,
@@ -44,21 +45,9 @@
         "idxsbx_e": [],
         "idxsg": [],
         "idxsg_e": [],
-        "idxsh": [
-            0,
-            1,
-            2,
-            3,
-            4
-        ],
+        "idxsh": [],
         "idxsh_0": [],
-        "idxsh_e": [
-            0,
-            1,
-            2,
-            3,
-            4
-        ],
+        "idxsh_e": [],
         "idxsphi": [],
         "idxsphi_0": [],
         "idxsphi_e": [],
@@ -67,6 +56,7 @@
             -9.0
         ],
         "lbx": [
+            -1000,
             -1,
             -1,
             -45,
@@ -84,21 +74,9 @@
         "lbx_e": [],
         "lg": [],
         "lg_e": [],
-        "lh": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
+        "lh": [],
         "lh_0": [],
-        "lh_e": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
+        "lh_e": [],
         "lphi": [],
         "lphi_0": [],
         "lphi_e": [],
@@ -107,21 +85,9 @@
         "lsbx_e": [],
         "lsg": [],
         "lsg_e": [],
-        "lsh": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
+        "lsh": [],
         "lsh_0": [],
-        "lsh_e": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
+        "lsh_e": [],
         "lsphi": [],
         "lsphi_0": [],
         "lsphi_e": [],
@@ -130,6 +96,7 @@
             9.0
         ],
         "ubx": [
+            7,
             2,
             1,
             45,
@@ -147,21 +114,9 @@
         "ubx_e": [],
         "ug": [],
         "ug_e": [],
-        "uh": [
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0
-        ],
+        "uh": [],
         "uh_0": [],
-        "uh_e": [
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0
-        ],
+        "uh_e": [],
         "uphi": [],
         "uphi_0": [],
         "uphi_e": [],
@@ -170,21 +125,9 @@
         "usbx_e": [],
         "usg": [],
         "usg_e": [],
-        "ush": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
+        "ush": [],
         "ush_0": [],
-        "ush_e": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
+        "ush_e": [],
         "usphi": [],
         "usphi_0": [],
         "usphi_e": []
@@ -464,36 +407,12 @@
                 0.0002
             ]
         ],
-        "Zl": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
+        "Zl": [],
         "Zl_0": [],
-        "Zl_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
-        "Zu": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
+        "Zl_e": [],
+        "Zu": [],
         "Zu_0": [],
-        "Zu_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
+        "Zu_e": [],
         "cost_ext_fun_type": "casadi",
         "cost_ext_fun_type_0": "casadi",
         "cost_ext_fun_type_e": "casadi",
@@ -531,36 +450,12 @@
             0.0,
             0.0
         ],
-        "zl": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
+        "zl": [],
         "zl_0": [],
-        "zl_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
-        "zu": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ],
+        "zl_e": [],
+        "zu": [],
         "zu_0": [],
-        "zu_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0
-        ]
+        "zu_e": []
     },
     "cython_include_dirs": [
         "/home/leeck/.local/lib/python3.8/site-packages/numpy/core/include",
@@ -569,33 +464,33 @@
     "dims": {
         "N": 20,
         "nbu": 2,
-        "nbx": 4,
+        "nbx": 5,
         "nbx_0": 7,
         "nbx_e": 0,
         "nbxe_0": 7,
         "ng": 0,
         "ng_e": 0,
-        "nh": 5,
+        "nh": 0,
         "nh_0": 0,
-        "nh_e": 5,
-        "np": 15,
+        "nh_e": 0,
+        "np": 0,
         "nphi": 0,
         "nphi_0": 0,
         "nphi_e": 0,
         "nr": 0,
         "nr_0": 0,
         "nr_e": 0,
-        "ns": 5,
+        "ns": 0,
         "ns_0": 0,
-        "ns_e": 5,
+        "ns_e": 0,
         "nsbu": 0,
         "nsbx": 0,
         "nsbx_e": 0,
         "nsg": 0,
         "nsg_e": 0,
-        "nsh": 5,
+        "nsh": 0,
         "nsh_0": 0,
-        "nsh_e": 5,
+        "nsh_e": 0,
         "nsphi": 0,
         "nsphi_0": 0,
         "nsphi_e": 0,
@@ -608,9 +503,9 @@
     },
     "json_file": "acados_ocp_heron.json",
     "model": {
-        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
+        "con_h_expr": null,
         "con_h_expr_0": null,
-        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
+        "con_h_expr_e": null,
         "con_phi_expr": null,
         "con_phi_expr_0": null,
         "con_phi_expr_e": null,
@@ -652,7 +547,7 @@
         },
         "name": "heron",
         "nu_original": null,
-        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdbaaaaaaaaaaaaaapaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaakaaaaaaaaaaaaaaalaaaaaaaaaaaaaaamaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaoaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihbdegpcaaaaaaaaaaaaaadaaaaaaapgjhbdegpcaaaaaaaaaaaaaadaaaaaaapgchbdegpcaaaaaaaaaaaaaadaaaaaaapgihcdegpcaaaaaaaaaaaaaadaaaaaaapgjhcdegpcaaaaaaaaaaaaaadaaaaaaapgchcdegpcaaaaaaaaaaaaaadaaaaaaapgihddegpcaaaaaaaaaaaaaadaaaaaaapgjhddegpcaaaaaaaaaaaaaadaaaaaaapgchddegpcaaaaaaaaaaaaaadaaaaaaapgihedegpcaaaaaaaaaaaaaadaaaaaaapgjhedegpcaaaaaaaaaaaaaadaaaaaaapgchedegpcaaaaaaaaaaaaaadaaaaaaapgihfdegpcaaaaaaaaaaaaaadaaaaaaapgjhfdegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
+        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "t": [],
         "t0": null,
         "t_label": "$t$ [s]",
@@ -675,23 +570,7 @@
         "z": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     },
     "name": "heron",
-    "parameter_values": [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-    ],
+    "parameter_values": [],
     "problem_class": "OCP",
     "shared_lib_ext": ".so",
     "simulink_opts": null,

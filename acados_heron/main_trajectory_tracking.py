@@ -1,34 +1,3 @@
-# -*- coding: future_fstrings -*-
-#
-# Copyright (c) The acados authors.
-#
-# This file is part of acados.
-#
-# The 2-Clause BSD License
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice,
-# this list of conditions and the following disclaimer.
-#
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.;
-#
-
 from plot_asv import animateASV, plot_inputs
 from gen_ref import *
 from acados_setting import *
@@ -38,7 +7,7 @@ def main():
     Fmax = 45
     Tf = 4
     N_horizon = 20
-    Nsim = 2000
+    Nsim = 1000
 
     con_dt = (Tf/N_horizon)
     ref_dt = 0.01
@@ -49,7 +18,7 @@ def main():
     reference = reference[::ref_iter,:]
 
     x0 = np.array([0.0, 2.0, 0.0 , 0.5, 0.0, 0, 0])
-    ocp_solver, integrator = setup(x0, Fmax, N_horizon, Tf)
+    ocp_solver, integrator = setup_trajectory_tracking(x0, Fmax, N_horizon, Tf)
 
     nx = ocp_solver.acados_ocp.dims.nx
     nu = ocp_solver.acados_ocp.dims.nu
