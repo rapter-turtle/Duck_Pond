@@ -5,9 +5,9 @@ from acados_setting import *
 def main():
 
     Fmax = 45
-    Tf = 4
+    Tf = 1
     N_horizon = 20
-    Nsim = 250
+    Nsim = 1000
 
     con_dt = (Tf/N_horizon)
     ref_dt = 0.01
@@ -118,7 +118,7 @@ def main():
 
 
     ocp_solver = None
-    plot_iter = 3
+    plot_iter = 10
     animateASV_recovery(simX[::plot_iter,:], simU[::plot_iter,:], simX_tship[::plot_iter,:], mpc_pred_list[::plot_iter], con_pos)
 
     t = np.arange(0, con_dt*Nsim, con_dt)

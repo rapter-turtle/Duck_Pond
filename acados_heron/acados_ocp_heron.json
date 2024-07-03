@@ -45,19 +45,11 @@
         "idxsg": [],
         "idxsg_e": [],
         "idxsh": [
-            0,
-            1,
-            2,
-            3,
-            4
+            0
         ],
         "idxsh_0": [],
         "idxsh_e": [
-            0,
-            1,
-            2,
-            3,
-            4
+            0
         ],
         "idxsphi": [],
         "idxsphi_0": [],
@@ -76,7 +68,7 @@
             0.0,
             2.0,
             0.0,
-            0.5,
+            1.0,
             0.0,
             0.0,
             0.0
@@ -85,18 +77,10 @@
         "lg": [],
         "lg_e": [],
         "lh": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
             0.0
         ],
         "lh_0": [],
         "lh_e": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
             0.0
         ],
         "lphi": [],
@@ -108,18 +92,10 @@
         "lsg": [],
         "lsg_e": [],
         "lsh": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
             0.0
         ],
         "lsh_0": [],
         "lsh_e": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
             0.0
         ],
         "lsphi": [],
@@ -139,7 +115,7 @@
             0.0,
             2.0,
             0.0,
-            0.5,
+            1.0,
             0.0,
             0.0,
             0.0
@@ -148,19 +124,11 @@
         "ug": [],
         "ug_e": [],
         "uh": [
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0
+            1000000.0
         ],
         "uh_0": [],
         "uh_e": [
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0,
-            10000000000.0
+            1000000.0
         ],
         "uphi": [],
         "uphi_0": [],
@@ -171,18 +139,10 @@
         "usg": [],
         "usg_e": [],
         "ush": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
             0.0
         ],
         "ush_0": [],
         "ush_e": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
             0.0
         ],
         "usphi": [],
@@ -283,7 +243,7 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-08,
+                0.002,
                 0.0
             ],
             [
@@ -295,7 +255,7 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-08
+                0.002
             ]
         ],
         "W_0": [
@@ -384,7 +344,7 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-08,
+                0.002,
                 0.0
             ],
             [
@@ -396,7 +356,7 @@
                 0.0,
                 0.0,
                 0.0,
-                2e-08
+                0.002
             ]
         ],
         "W_e": [
@@ -465,33 +425,17 @@
             ]
         ],
         "Zl": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "Zl_0": [],
         "Zl_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "Zu": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "Zu_0": [],
         "Zu_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "cost_ext_fun_type": "casadi",
@@ -532,33 +476,17 @@
             0.0
         ],
         "zl": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "zl_0": [],
         "zl_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "zu": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ],
         "zu_0": [],
         "zu_e": [
-            100000.0,
-            100000.0,
-            100000.0,
-            100000.0,
             100000.0
         ]
     },
@@ -575,27 +503,27 @@
         "nbxe_0": 7,
         "ng": 0,
         "ng_e": 0,
-        "nh": 5,
+        "nh": 1,
         "nh_0": 0,
-        "nh_e": 5,
-        "np": 15,
+        "nh_e": 1,
+        "np": 3,
         "nphi": 0,
         "nphi_0": 0,
         "nphi_e": 0,
         "nr": 0,
         "nr_0": 0,
         "nr_e": 0,
-        "ns": 5,
+        "ns": 1,
         "ns_0": 0,
-        "ns_e": 5,
+        "ns_e": 1,
         "nsbu": 0,
         "nsbx": 0,
         "nsbx_e": 0,
         "nsg": 0,
         "nsg_e": 0,
-        "nsh": 5,
+        "nsh": 1,
         "nsh_0": 0,
-        "nsh_e": 5,
+        "nsh_e": 1,
         "nsphi": 0,
         "nsphi_0": 0,
         "nsphi_e": 0,
@@ -608,9 +536,9 @@
     },
     "json_file": "acados_ocp_heron.json",
     "model": {
-        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
+        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaapgbgegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
         "con_h_expr_0": null,
-        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
+        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaapgbgegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
         "con_phi_expr": null,
         "con_phi_expr_0": null,
         "con_phi_expr_e": null,
@@ -652,7 +580,7 @@
         },
         "name": "heron",
         "nu_original": null,
-        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdbaaaaaaaaaaaaaapaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaakaaaaaaaaaaaaaaalaaaaaaaaaaaaaaamaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaoaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihbdegpcaaaaaaaaaaaaaadaaaaaaapgjhbdegpcaaaaaaaaaaaaaadaaaaaaapgchbdegpcaaaaaaaaaaaaaadaaaaaaapgihcdegpcaaaaaaaaaaaaaadaaaaaaapgjhcdegpcaaaaaaaaaaaaaadaaaaaaapgchcdegpcaaaaaaaaaaaaaadaaaaaaapgihddegpcaaaaaaaaaaaaaadaaaaaaapgjhddegpcaaaaaaaaaaaaaadaaaaaaapgchddegpcaaaaaaaaaaaaaadaaaaaaapgihedegpcaaaaaaaaaaaaaadaaaaaaapgjhedegpcaaaaaaaaaaaaaadaaaaaaapgchedegpcaaaaaaaaaaaaaadaaaaaaapgihfdegpcaaaaaaaaaaaaaadaaaaaaapgjhfdegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
+        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeghaaaaaaaaaaaaaaadaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaapgbgegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
         "t": [],
         "t0": null,
         "t_label": "$t$ [s]",
@@ -678,25 +606,13 @@
     "parameter_values": [
         0.0,
         0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
         0.0
     ],
     "problem_class": "OCP",
     "shared_lib_ext": ".so",
     "simulink_opts": null,
     "solver_options": {
-        "Tsim": 0.2,
+        "Tsim": 0.05,
         "adaptive_levenberg_marquardt_lam": 5.0,
         "adaptive_levenberg_marquardt_mu0": 0.001,
         "adaptive_levenberg_marquardt_mu_min": 1e-16,
@@ -754,26 +670,26 @@
         "rti_log_residuals": 0,
         "shooting_nodes": [
             0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
             0.2,
-            0.4,
-            0.6000000000000001,
-            0.8,
-            1.0,
-            1.2,
-            1.4,
-            1.5999999999999999,
-            1.7999999999999998,
-            1.9999999999999998,
-            2.1999999999999997,
-            2.4,
-            2.6,
-            2.8000000000000003,
-            3.0000000000000004,
-            3.2000000000000006,
-            3.400000000000001,
-            3.600000000000001,
-            3.800000000000001,
-            4.000000000000001
+            0.25,
+            0.3,
+            0.35,
+            0.39999999999999997,
+            0.44999999999999996,
+            0.49999999999999994,
+            0.5499999999999999,
+            0.6,
+            0.65,
+            0.7000000000000001,
+            0.7500000000000001,
+            0.8000000000000002,
+            0.8500000000000002,
+            0.9000000000000002,
+            0.9500000000000003,
+            1.0000000000000002
         ],
         "sim_method_jac_reuse": [
             0,
@@ -843,28 +759,28 @@
             1,
             1
         ],
-        "tf": 4,
+        "tf": 1,
         "time_steps": [
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2,
-            0.2
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05
         ],
         "with_adaptive_levenberg_marquardt": false,
         "with_solution_sens_wrt_params": false,
