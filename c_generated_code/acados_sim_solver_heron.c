@@ -127,7 +127,7 @@ int heron_acados_sim_create(heron_sim_solver_capsule * capsule)
     // sim opts
     sim_opts *heron_sim_opts = sim_opts_create(heron_sim_config, heron_sim_dims);
     capsule->acados_sim_opts = heron_sim_opts;
-    int tmp_int = 20;
+    int tmp_int = 50;
     sim_opts_set(heron_sim_config, heron_sim_opts, "newton_iter", &tmp_int);
     double tmp_double = 0;
     sim_opts_set(heron_sim_config, heron_sim_opts, "newton_tol", &tmp_double);
@@ -166,11 +166,18 @@ int heron_acados_sim_create(heron_sim_solver_capsule * capsule)
     capsule->acados_sim_solver = heron_sim_solver;
 
 
+    /* initialize parameter values */
+    double* p = calloc(np, sizeof(double));
+    
+
+    heron_acados_sim_update_params(capsule, p, np);
+    free(p);
+
 
     /* initialize input */
     // x
-    double x0[5];
-    for (int ii = 0; ii < 5; ii++)
+    double x0[7];
+    for (int ii = 0; ii < 7; ii++)
         x0[ii] = 0.0;
 
     sim_in_set(heron_sim_config, heron_sim_dims,
@@ -186,11 +193,11 @@ int heron_acados_sim_create(heron_sim_solver_capsule * capsule)
                heron_sim_in, "u", u0);
 
     // S_forw
-    double S_forw[35];
-    for (int ii = 0; ii < 35; ii++)
+    double S_forw[63];
+    for (int ii = 0; ii < 63; ii++)
         S_forw[ii] = 0.0;
-    for (int ii = 0; ii < 5; ii++)
-        S_forw[ii + ii * 5 ] = 1.0;
+    for (int ii = 0; ii < 7; ii++)
+        S_forw[ii + ii * 7 ] = 1.0;
 
 
     sim_in_set(heron_sim_config, heron_sim_dims,
