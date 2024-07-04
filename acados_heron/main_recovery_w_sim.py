@@ -9,7 +9,7 @@ def main():
     Fmax = 45
     Tf = 1
     N_horizon = 20
-    Nsim = 10
+    Nsim = 10000
     simulation_dt = 0.01
 
     con_dt = (Tf/N_horizon)
