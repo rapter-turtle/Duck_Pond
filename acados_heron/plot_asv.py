@@ -147,7 +147,7 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
 
 
 
-def animateASV_recovery(states, inputs, tship, mpc_result, con_pos):
+def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, disturb):
     # Define the geometry of the twin-hull ASV
     hullLength = 0.7  # Length of the hull
     hullWidth = 0.2   # Width of each hull
@@ -155,18 +155,30 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos):
     bodyLength = hullLength  # Length of the body connecting the hulls
     bodyWidth = 0.25  # Width of the body connecting the hulls
 
-    fig, ax = plt.subplots()
+    fig = plt.figure(figsize=(18, 10))
+    gs = fig.add_gridspec(2, 4)
+    
+    
+    ax_big = fig.add_subplot(gs[:, 0:2])
+    ax_speed = fig.add_subplot(gs[0, 2])
+    ax_rot_speed = fig.add_subplot(gs[0, 3])
+    ax_thrust = fig.add_subplot(gs[1, 2])
+    ax_disturb = fig.add_subplot(gs[1, 3])
 
     def update(frame):
         position = states[frame,0:2]
         heading = states[frame,2]
         print(inputs[frame,0:2])
-        print()
         force_left = states[frame,5]/100
         force_right = states[frame,6]/100
-        # Clear the previous plot
-        ax.clear()
-        
+
+        # Clear the previous plots
+        ax_big.clear()
+        ax_speed.clear()
+        ax_rot_speed.clear()
+        ax_thrust.clear()
+        ax_disturb.clear()
+                
         # Define the vertices of the two hulls
         hull1 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
                           [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
@@ -207,26 +219,25 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos):
 
         # Plot the force vectors
         if force_left > 0:
-            ax.arrow(force_left_position[0], force_left_position[1], force_left*np.cos(heading), force_left*np.sin(heading), head_width=0.1, head_length=0.1, fc='b', ec='b')
+            ax_big.arrow(force_left_position[0], force_left_position[1], force_left*np.cos(heading), force_left*np.sin(heading), head_width=0.1, head_length=0.1, fc='b', ec='b')
         else:
-            ax.arrow(force_left_position[0], force_left_position[1], force_left*np.cos(heading), force_left*np.sin(heading), head_width=0.1, head_length=0.1, fc='r', ec='r')
+            ax_big.arrow(force_left_position[0], force_left_position[1], force_left*np.cos(heading), force_left*np.sin(heading), head_width=0.1, head_length=0.1, fc='r', ec='r')
         
         if force_right > 0:
-            ax.arrow(force_right_position[0], force_right_position[1], force_right*np.cos(heading), force_right*np.sin(heading), head_width=0.1, head_length=0.1, fc='b', ec='b')
+            ax_big.arrow(force_right_position[0], force_right_position[1], force_right*np.cos(heading), force_right*np.sin(heading), head_width=0.1, head_length=0.1, fc='b', ec='b')
         else:
-            ax.arrow(force_right_position[0], force_right_position[1], force_right*np.cos(heading), force_right*np.sin(heading), head_width=0.1, head_length=0.1, fc='r', ec='r')
+            ax_big.arrow(force_right_position[0], force_right_position[1], force_right*np.cos(heading), force_right*np.sin(heading), head_width=0.1, head_length=0.1, fc='r', ec='r')
 
         # Plot the ASV
-        ax.fill(hull1[0, :], hull1[1, :], 'b', alpha=0.3)
-        ax.fill(hull2[0, :], hull2[1, :], 'b', alpha=0.3)
-        ax.fill(body[0, :], body[1, :], 'b', alpha=0.3)
-        ax.plot(position[0], position[1], 'go')  # Mark the position with a red dot
-        ax.arrow(position[0], position[1], direction[0], direction[1], head_width=0.1, head_length=0.1, fc='k', ec='k')
-        ax.axis('equal')
+        ax_big.fill(hull1[0, :], hull1[1, :], 'b', alpha=0.3)
+        ax_big.fill(hull2[0, :], hull2[1, :], 'b', alpha=0.3)
+        ax_big.fill(body[0, :], body[1, :], 'b', alpha=0.3)
+        ax_big.plot(position[0], position[1], 'go')  # Mark the position with a red dot
+        ax_big.arrow(position[0], position[1], direction[0], direction[1], head_width=0.1, head_length=0.1, fc='k', ec='k')
+        ax_big.axis('equal')
 
-        ax.plot(mpc_result[frame][:,0], mpc_result[frame][:,1], 'c.')
-
-        ax.plot(tship[0:frame,0], tship[0:frame,1], 'r--')  # Mark the position with a red dot
+        ax_big.plot(mpc_result[frame][:,0], mpc_result[frame][:,1], 'c.')
+        ax_big.plot(tship[0:frame,0], tship[0:frame,1], 'r--')  # Mark the position with a red dot
         dx = 10 / 2
         dy = 4 / 2
 
@@ -254,71 +265,82 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos):
 
         oxx = np.linspace( tship[frame,0]-5 , tship[frame,0]+5 , 20 )
         oyy = (-oa*oxx-oc)/ob
-        ax.plot(oxx, oyy, 'k--', linewidth=2)
+        ax_big.plot(oxx, oyy, 'k--', linewidth=2)
 
         oxx = np.linspace( tship[frame,0]-0.2 , tship[frame,0] + 0.2 , 20 )
         oyy = (-oa*oxx-oc)/ob
-        ax.plot(oxx, oyy, 'c', linewidth=40, alpha=0.3)
+        ax_big.plot(oxx, oyy, 'c', linewidth=40, alpha=0.3)
 
         # 회전 및 이동 적용
         rotated_coords = np.dot(rectangle_coords, rotation_matrix)
         rotated_coords[:, 0] += tship[frame,0]
         rotated_coords[:, 1] += tship[frame,1]
-        ax.plot(rotated_coords[:, 0], rotated_coords[:, 1], 'b-')
-        ax.fill(rotated_coords[:, 0], rotated_coords[:, 1], 'blue', alpha=0.2)
-        ax.scatter(tship[frame,0], tship[frame,1], color='red')  # 중심점 표시
+        ax_big.plot(rotated_coords[:, 0], rotated_coords[:, 1], 'b-')
+        ax_big.fill(rotated_coords[:, 0], rotated_coords[:, 1], 'blue', alpha=0.2)
+        ax_big.scatter(tship[frame,0], tship[frame,1], color='red')  # 중심점 표시
+        ax_big.set_xlim(tship[frame,0]-15, tship[frame,0]+8)  # Adjust these limits as needed
+        ax_big.set_ylim(tship[frame,1]-10, tship[frame,1]+5)  # Adjust these limits as needed
+        ax_big.grid(True)
+        FS = 14
 
-        ax.set_xlim(tship[frame,0]-28, tship[frame,0]+8)  # Adjust these limits as needed
-        ax.set_ylim(tship[frame,1]-10, tship[frame,1]+5)  # Adjust these limits as needed
-        # ax.autoscale(enable=True, axis='x', tight=True)
-        # ax.autoscale(enable=True, axis='y', tight=True)
+        ax_big.set_xlabel("x [m]", fontsize=FS)
+        ax_big.set_ylabel("y [m]", fontsize=FS)
+
+        # ax_big.autoscale(enable=True, axis='x', tight=True)
+        # ax_big.autoscale(enable=True, axis='y', tight=True)
+
+
+        # Plot the figure-eight trajectory
+        ax_speed.plot(t[0:frame], states[0:frame,3], 'k', linewidth=2) 
+        ax_speed.set_xlabel("Time", fontsize=FS)
+        ax_speed.set_title("Speed [m/s]", fontsize=FS)
+        ax_speed.grid(True)
+        ax_speed.autoscale(enable=True, axis='x', tight=True)
+        ax_speed.autoscale(enable=True, axis='y', tight=True)
+
+        # Plot the headings
+        ax_rot_speed.plot(t[0:frame], states[0:frame,4], 'k', linewidth=2) 
+        ax_rot_speed.set_xlabel("Time", fontsize=FS)
+        ax_rot_speed.set_title("Rot. Speed [rad/s]", fontsize=FS)
+        ax_rot_speed.grid(True)
+        ax_rot_speed.autoscale(enable=True, axis='x', tight=True)
+        ax_rot_speed.autoscale(enable=True, axis='y', tight=True)
+
+        # Plot the figure-eight trajectory
+        ax_thrust.plot(t[0:frame], states[0:frame,5], 'g--', label='Left (MPC)')
+        ax_thrust.plot(t[0:frame], states[0:frame,6], 'b--', label='Right (MPC)')
+        
+        ax_thrust.plot(t[0:frame], states[0:frame,5]+disturb[0:frame,2], 'g', label='Left (MPC+L1)')
+        ax_thrust.plot(t[0:frame], states[0:frame,6]+disturb[0:frame,3], 'b', label='Right (MPC+L1)')
+        
+        ax_thrust.plot(t[0:frame], states[0:frame,5]*0 + Fmax, 'r--')
+        ax_thrust.plot(t[0:frame], states[0:frame,5]*0 - Fmax, 'r--')
+        ax_thrust.set_xlabel("Time", fontsize=FS)
+        ax_thrust.set_title("Left Thrust", fontsize=FS)
+        ax_thrust.grid(True)
+        ax_thrust.legend()
+        ax_thrust.autoscale(enable=True, axis='x', tight=True)
+        ax_thrust.set_ylim(-Fmax-1, Fmax+1)
+
+       
+        # (n1+n2)
+        # (-n1+n2)*L/2
+            
+
+        ax_disturb.plot(t[0:frame], -disturb[0:frame,0], label='(-) Disturb. X')
+        ax_disturb.plot(t[0:frame], -disturb[0:frame,1], label='(-) Disturb. N')
+        ax_disturb.plot(t[0:frame], disturb[0:frame,4], label='L1 X')
+        ax_disturb.plot(t[0:frame], disturb[0:frame,5], label='L1 N')
+        ax_disturb.set_xlabel("Time", fontsize=FS)
+        ax_disturb.set_title("Disturbance vs L1 Control", fontsize=FS)
+        ax_disturb.grid(True)
+        ax_disturb.legend()
+        ax_disturb.autoscale(enable=True, axis='x', tight=True)
+
+       
 
     anim = FuncAnimation(fig, update, frames=len(states), repeat=False)
     plt.show()
 
 
 
-
-
-
-def plot_inputs_recovery(t, states, inputs, Fmax):
-    FS = 18
-    fig, axs = plt.subplots(2, 2, figsize=(12, 10))
-    # Plot the figure-eight trajectory
-    axs[0, 0].plot(t, states[0:-1,3], 'k', linewidth=2) 
-    axs[0, 0].set_xlabel("Time", fontsize=FS)
-    axs[0, 0].set_ylabel("Speed [m/s]", fontsize=FS)
-    axs[0, 0].grid(True)
-    axs[0, 0].autoscale(enable=True, axis='x', tight=True)
-    axs[0, 0].autoscale(enable=True, axis='y', tight=True)
-
-    # Plot the headings
-    axs[0, 1].plot(t, states[0:-1,4], 'k', linewidth=2) 
-    axs[0, 1].set_xlabel("Time", fontsize=FS)
-    axs[0, 1].set_ylabel("Rot. Speed [rad/s]", fontsize=FS)
-    axs[0, 1].grid(True)
-    axs[0, 1].autoscale(enable=True, axis='x', tight=True)
-    axs[0, 1].autoscale(enable=True, axis='y', tight=True)
-
-    # Plot the figure-eight trajectory
-    axs[1, 0].plot(t, states[0:-1,5], 'k')
-    axs[1, 0].plot(t, states[0:-1,5]*0 + Fmax, 'r--')
-    axs[1, 0].plot(t, states[0:-1,5]*0 - Fmax, 'r--')
-    axs[1, 0].set_xlabel("Time", fontsize=FS)
-    axs[1, 0].set_ylabel("Left Thrust", fontsize=FS)
-    axs[1, 0].grid(True)
-    axs[1, 0].autoscale(enable=True, axis='x', tight=True)
-    axs[1, 0].set_ylim(-Fmax-1, Fmax+1)
-
-    # Plot the headings
-    axs[1, 1].plot(t, states[0:-1,6], 'k')
-    axs[1, 1].plot(t, states[0:-1,6]*0 + Fmax, 'r--')
-    axs[1, 1].plot(t, states[0:-1,6]*0 - Fmax, 'r--')
-    axs[1, 1].set_xlabel("Time", fontsize=FS)
-    axs[1, 1].set_ylabel("Right Thrust", fontsize=FS)
-    axs[1, 1].grid(True)
-    axs[1, 1].autoscale(enable=True, axis='x', tight=True)
-    axs[1, 1].set_ylim(-Fmax-1, Fmax+1)
-
-    plt.tight_layout()
-    plt.show()

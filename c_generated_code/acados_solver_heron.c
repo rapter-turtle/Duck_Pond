@@ -429,7 +429,7 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
         heron_acados_update_time_steps(capsule, N, new_time_steps);
     }
     else
-    {double time_step = 0.05;
+    {double time_step = 0.2;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
@@ -591,6 +591,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     ubx0[1] = 2;
     lbx0[3] = 1;
     ubx0[3] = 1;
+    lbx0[5] = 15;
+    ubx0[5] = 15;
+    lbx0[6] = 15;
+    ubx0[6] = 15;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbx", idxbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
@@ -627,10 +631,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* lbu = lubu;
     double* ubu = lubu + NBU;
     
-    lbu[0] = -9;
-    ubu[0] = 9;
-    lbu[1] = -9;
-    ubu[1] = 9;
+    lbu[0] = -12;
+    ubu[0] = 12;
+    lbu[1] = -12;
+    ubu[1] = 12;
 
     for (int i = 0; i < N; i++)
     {
@@ -680,10 +684,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     ubx[0] = 2;
     lbx[1] = -1;
     ubx[1] = 1;
-    lbx[2] = -45;
-    ubx[2] = 45;
-    lbx[3] = -45;
-    ubx[3] = 45;
+    lbx[2] = -60;
+    ubx[2] = 60;
+    lbx[3] = -60;
+    ubx[3] = 60;
 
     for (int i = 1; i < N; i++)
     {
@@ -882,6 +886,8 @@ void heron_acados_create_7_set_nlp_out(heron_solver_capsule* capsule)
     
     x0[1] = 2;
     x0[3] = 1;
+    x0[5] = 15;
+    x0[6] = 15;
 
 
     double* u0 = xu0 + NX;

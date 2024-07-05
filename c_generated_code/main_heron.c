@@ -84,10 +84,10 @@ int main()
     ubx0[3] = 1;
     lbx0[4] = 0;
     ubx0[4] = 0;
-    lbx0[5] = 0;
-    ubx0[5] = 0;
-    lbx0[6] = 0;
-    ubx0[6] = 0;
+    lbx0[5] = 15;
+    ubx0[5] = 15;
+    lbx0[6] = 15;
+    ubx0[6] = 15;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "ubx", ubx0);

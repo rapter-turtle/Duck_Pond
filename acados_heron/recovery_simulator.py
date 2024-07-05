@@ -2,7 +2,7 @@ from plot_asv import *
 from gen_ref import *
 from acados_setting import *
 
-def recover_simulator(ship, tship, control_input, dt, t, extra_control):
+def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control):
 
     M = 36 # Mass [kg]
     I = 8.35 # Inertial tensor [kg m^2]
@@ -14,25 +14,18 @@ def recover_simulator(ship, tship, control_input, dt, t, extra_control):
 
 
     # set up states & controls
-    xn   = ship[0]
-    yn   = ship[1]
     psi  = ship[2]
     v    = ship[3]
     r    = ship[4]
     n1  = ship[5]
     n2  = ship[6]
 
-    x = np.array([xn, yn, psi, v, r, n1, n2])
-    disturbance = np.array([0.0, 10.0])
-
     n1d  = control_input[0]
     n2d  = control_input[1]
-    u   = np.array([n1d, n2d])
 
     n1_extra = extra_control[0]
     n2_extra = extra_control[1]
 
-    eps = 0.00001
     # dynamics
     xdot = np.array([v*np.cos(psi),
                      v*np.sin(psi),

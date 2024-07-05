@@ -8,39 +8,41 @@ import numpy as np
 
 def main():
 
-    Fmax = 45
-    Tf = 1
+    Fmax = 60
     N_horizon = 20
-    Nsim = 1000
-    simulation_dt = 0.01
-
-    con_dt = (Tf/N_horizon)
-    ref_dt = 0.01
+    con_dt = 0.2
+    Tf = int(N_horizon*con_dt)
+    T_final = 50
+    simulation_dt = 0.1
 
     x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u
 
-    x0 = np.array([0.0, 2.0, 0.0 , 1, 0.0, 0, 0])
+    x0 = np.array([0.0, 2.0, 0.0 , 1, 0, 15, 15])
     ocp_solver, integrator = setup_recovery(x0, Fmax, N_horizon, Tf)
 
     nx = ocp_solver.acados_ocp.dims.nx
     nu = ocp_solver.acados_ocp.dims.nu
 
-    simX = np.zeros((int(Nsim*con_dt/simulation_dt)+1, nx))
-    simX_tship = np.zeros((int(Nsim*con_dt/simulation_dt)+1, 4))
-    simU = np.zeros((Nsim+1, nu))
+    simX = np.zeros((int(T_final/simulation_dt)+1, nx))
+    simX_tship = np.zeros((int(T_final/simulation_dt)+1, 4))
+    simU = np.zeros((int(T_final/simulation_dt)+1, nu))
     simX[0,:] = x0
     simX_tship[0,:] = x_tship
     k = 0
 
     mpc_pred_list = []
 
-    t_preparation = np.zeros((Nsim))
-    t_feedback = np.zeros((Nsim))
+    t_preparation = np.zeros((int(T_final/con_dt)))
+    t_feedback = np.zeros((int(T_final/con_dt)))
 
     param_estim = np.zeros((2))
     param_filtered = np.zeros((2))
     state_estim = np.array([0.0, 2.0, 0.0 , 1, 0.0])
     l1_control = np.zeros((2))
+
+
+    dob_save = np.zeros((int(T_final/simulation_dt)+1, 6))
+
     extra_control = np.zeros((2))
 
     # do some initial iterations to start with a good initial guess
@@ -49,7 +51,7 @@ def main():
         ocp_solver.solve_for_x0(x0_bar = x0)
 
     # closed loop
-    for i in range(int(Nsim*con_dt/simulation_dt)):
+    for i in range(int(T_final/simulation_dt)):
         if i%int(con_dt/simulation_dt) == 0:
             if i != 0:
                 k += 1
@@ -95,7 +97,6 @@ def main():
             status = ocp_solver.solve()
             t_feedback[k] = ocp_solver.get_stats('time_tot')
 
-            simU[k, :] = ocp_solver.get(0, "u")
             # print(simU[k,:])
             
             print(t_preparation[k] + t_feedback[k])
@@ -116,8 +117,8 @@ def main():
         l1_control[1] = (M*param_filtered[0] + 2*(I/L)*param_filtered[1])*0.5
         extra_control = l1_control
         # print(param_estim)
-        print(param_filtered)
-        ##### L1 adaptive #####
+        # print(param_filtered)
+        # ##### L1 adaptive #####
         
 
         ##### DOB #####
@@ -125,15 +126,18 @@ def main():
         # print(param_estim)
         ##### DOB #####
 
-
-
+        disturbance = np.array([0.0, 5.0])
         # simulate system
-        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[k,:], simulation_dt, i*simulation_dt, extra_control )
+
+        L1_XN = np.array([l1_control[0] + l1_control[1], (-l1_control[0] + l1_control[1])*L/2])
+        dob_save[i,:] = np.hstack((disturbance, l1_control, L1_XN))
+        simU[i, :] = ocp_solver.get(0, "u")
+        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[i,:], simulation_dt, disturbance ,extra_control )
 
         simX_tship[i+1, :] = x_tship
 
 
-    simU[k+1, :] = simU[k, :]
+    simU[i+1, :] = simU[i, :]
     mpc_pred_list.append(mpc_pred_array)
 
     # evaluate timings
@@ -147,14 +151,13 @@ def main():
 
 
     ocp_solver = None
-    scale = 10
-    plot_iter = int(con_dt/simulation_dt)
+    plot_iter = 5
+    dt_gap = int(con_dt/simulation_dt)
+    t = np.arange(0, T_final, simulation_dt)
 
-    animateASV_recovery(simX[::scale*plot_iter,:], simU[::scale,:], simX_tship[::scale*plot_iter,:], mpc_pred_list[::scale], con_pos)
-
-    t = np.arange(0, con_dt*Nsim, con_dt)
-    plot_inputs_recovery(t, simX[::plot_iter,:], simU, Fmax)
-
+    animateASV_recovery(simX[::dt_gap*plot_iter,:], simU[::dt_gap*plot_iter,:], 
+                        simX_tship[::dt_gap*plot_iter,:], mpc_pred_list[::plot_iter], 
+                        con_pos, t[::dt_gap*plot_iter], Fmax, dob_save[::dt_gap*plot_iter],)
 
 if __name__ == '__main__':
     main()
