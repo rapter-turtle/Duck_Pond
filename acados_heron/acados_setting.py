@@ -143,7 +143,7 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
     ocp.cost.cost_type = 'NONLINEAR_LS'
     ocp.cost.cost_type_e = 'NONLINEAR_LS'
 
-    Q_mat = 2*np.diag([1, 1, 20, 10, 5, 1e-4, 1e-4])
+    Q_mat = 2*np.diag([1, 1, 20, 30, 500, 1e-4, 1e-4])
     R_mat = 2*np.diag([1e-3, 1e-3])
 
     ocp.cost.W = scipy.linalg.block_diag(Q_mat, R_mat)

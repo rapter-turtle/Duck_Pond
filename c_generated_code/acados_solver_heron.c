@@ -458,8 +458,8 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     W_0[0+(NY0) * 0] = 2;
     W_0[1+(NY0) * 1] = 2;
     W_0[2+(NY0) * 2] = 40;
-    W_0[3+(NY0) * 3] = 20;
-    W_0[4+(NY0) * 4] = 10;
+    W_0[3+(NY0) * 3] = 60;
+    W_0[4+(NY0) * 4] = 1000;
     W_0[5+(NY0) * 5] = 0.0002;
     W_0[6+(NY0) * 6] = 0.0002;
     W_0[7+(NY0) * 7] = 0.002;
@@ -479,8 +479,8 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     W[0+(NY) * 0] = 2;
     W[1+(NY) * 1] = 2;
     W[2+(NY) * 2] = 40;
-    W[3+(NY) * 3] = 20;
-    W[4+(NY) * 4] = 10;
+    W[3+(NY) * 3] = 60;
+    W[4+(NY) * 4] = 1000;
     W[5+(NY) * 5] = 0.0002;
     W[6+(NY) * 6] = 0.0002;
     W[7+(NY) * 7] = 0.002;
@@ -501,8 +501,8 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     W_e[0+(NYN) * 0] = 2;
     W_e[1+(NYN) * 1] = 2;
     W_e[2+(NYN) * 2] = 40;
-    W_e[3+(NYN) * 3] = 20;
-    W_e[4+(NYN) * 4] = 10;
+    W_e[3+(NYN) * 3] = 60;
+    W_e[4+(NYN) * 4] = 1000;
     W_e[5+(NYN) * 5] = 0.0002;
     W_e[6+(NYN) * 6] = 0.0002;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
