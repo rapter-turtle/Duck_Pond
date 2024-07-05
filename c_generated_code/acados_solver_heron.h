@@ -63,7 +63,7 @@
 #define HERON_NY0    9
 #define HERON_NY     9
 #define HERON_NYN    7
-#define HERON_N      20
+#define HERON_N      10
 #define HERON_NH     5
 #define HERON_NHN    5
 #define HERON_NH0    0

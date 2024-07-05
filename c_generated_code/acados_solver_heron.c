@@ -455,15 +455,15 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
-    W_0[0+(NY0) * 0] = 2;
-    W_0[1+(NY0) * 1] = 2;
+    W_0[0+(NY0) * 0] = 4;
+    W_0[1+(NY0) * 1] = 4;
     W_0[2+(NY0) * 2] = 40;
-    W_0[3+(NY0) * 3] = 60;
+    W_0[3+(NY0) * 3] = 200;
     W_0[4+(NY0) * 4] = 10;
     W_0[5+(NY0) * 5] = 0.0002;
     W_0[6+(NY0) * 6] = 0.0002;
-    W_0[7+(NY0) * 7] = 0.002;
-    W_0[8+(NY0) * 8] = 0.002;
+    W_0[7+(NY0) * 7] = 0.0002;
+    W_0[8+(NY0) * 8] = 0.0002;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -476,15 +476,15 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     free(yref);
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
-    W[0+(NY) * 0] = 2;
-    W[1+(NY) * 1] = 2;
+    W[0+(NY) * 0] = 4;
+    W[1+(NY) * 1] = 4;
     W[2+(NY) * 2] = 40;
-    W[3+(NY) * 3] = 60;
+    W[3+(NY) * 3] = 200;
     W[4+(NY) * 4] = 10;
     W[5+(NY) * 5] = 0.0002;
     W[6+(NY) * 6] = 0.0002;
-    W[7+(NY) * 7] = 0.002;
-    W[8+(NY) * 8] = 0.002;
+    W[7+(NY) * 7] = 0.0002;
+    W[8+(NY) * 8] = 0.0002;
 
     for (int i = 1; i < N; i++)
     {
@@ -498,10 +498,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
-    W_e[0+(NYN) * 0] = 2;
-    W_e[1+(NYN) * 1] = 2;
+    W_e[0+(NYN) * 0] = 4;
+    W_e[1+(NYN) * 1] = 4;
     W_e[2+(NYN) * 2] = 40;
-    W_e[3+(NYN) * 3] = 60;
+    W_e[3+(NYN) * 3] = 200;
     W_e[4+(NYN) * 4] = 10;
     W_e[5+(NYN) * 5] = 0.0002;
     W_e[6+(NYN) * 6] = 0.0002;
@@ -529,26 +529,26 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* zl = zlumem+NS*2;
     double* zu = zlumem+NS*3;
     // change only the non-zero elements:
-    Zl[0] = 100000;
-    Zl[1] = 100000;
-    Zl[2] = 100000;
-    Zl[3] = 100000;
-    Zl[4] = 100000;
-    Zu[0] = 100000;
-    Zu[1] = 100000;
-    Zu[2] = 100000;
-    Zu[3] = 100000;
-    Zu[4] = 100000;
-    zl[0] = 100000;
-    zl[1] = 100000;
-    zl[2] = 100000;
-    zl[3] = 100000;
-    zl[4] = 100000;
-    zu[0] = 100000;
-    zu[1] = 100000;
-    zu[2] = 100000;
-    zu[3] = 100000;
-    zu[4] = 100000;
+    Zl[0] = 1000000;
+    Zl[1] = 1000000;
+    Zl[2] = 1000000;
+    Zl[3] = 1000000;
+    Zl[4] = 1000000;
+    Zu[0] = 1000000;
+    Zu[1] = 1000000;
+    Zu[2] = 1000000;
+    Zu[3] = 1000000;
+    Zu[4] = 1000000;
+    zl[0] = 1000000;
+    zl[1] = 1000000;
+    zl[2] = 1000000;
+    zl[3] = 1000000;
+    zl[4] = 1000000;
+    zu[0] = 1000000;
+    zu[1] = 1000000;
+    zu[2] = 1000000;
+    zu[3] = 1000000;
+    zu[4] = 1000000;
 
     for (int i = 1; i < N; i++)
     {
@@ -569,32 +569,32 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     // change only the non-zero elements:
     
-    Zl_e[0] = 100000;
-    Zl_e[1] = 100000;
-    Zl_e[2] = 100000;
-    Zl_e[3] = 100000;
-    Zl_e[4] = 100000;
+    Zl_e[0] = 1000000;
+    Zl_e[1] = 1000000;
+    Zl_e[2] = 1000000;
+    Zl_e[3] = 1000000;
+    Zl_e[4] = 1000000;
 
     
-    Zu_e[0] = 100000;
-    Zu_e[1] = 100000;
-    Zu_e[2] = 100000;
-    Zu_e[3] = 100000;
-    Zu_e[4] = 100000;
+    Zu_e[0] = 1000000;
+    Zu_e[1] = 1000000;
+    Zu_e[2] = 1000000;
+    Zu_e[3] = 1000000;
+    Zu_e[4] = 1000000;
 
     
-    zl_e[0] = 100000;
-    zl_e[1] = 100000;
-    zl_e[2] = 100000;
-    zl_e[3] = 100000;
-    zl_e[4] = 100000;
+    zl_e[0] = 1000000;
+    zl_e[1] = 1000000;
+    zl_e[2] = 1000000;
+    zl_e[3] = 1000000;
+    zl_e[4] = 1000000;
 
     
-    zu_e[0] = 100000;
-    zu_e[1] = 100000;
-    zu_e[2] = 100000;
-    zu_e[3] = 100000;
-    zu_e[4] = 100000;
+    zu_e[0] = 1000000;
+    zu_e[1] = 1000000;
+    zu_e[2] = 1000000;
+    zu_e[3] = 1000000;
+    zu_e[4] = 1000000;
 
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zl", Zl_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zu", Zu_e);
@@ -621,8 +621,12 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     // change only the non-zero elements:
     lbx0[1] = 2;
     ubx0[1] = 2;
-    lbx0[3] = 0.5;
-    ubx0[3] = 0.5;
+    lbx0[3] = 0.9;
+    ubx0[3] = 0.9;
+    lbx0[5] = 15;
+    ubx0[5] = 15;
+    lbx0[6] = 15;
+    ubx0[6] = 15;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbx", idxbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
@@ -872,7 +876,7 @@ int fixed_hess = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "levenberg_marquardt", &levenberg_marquardt);
 
     /* options QP solver */
-    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 20;
+    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 10;
     qp_solver_cond_N = N < qp_solver_cond_N_ori ? N : qp_solver_cond_N_ori; // use the minimum value here
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_N", &qp_solver_cond_N);
 
@@ -929,7 +933,9 @@ void heron_acados_create_7_set_nlp_out(heron_solver_capsule* capsule)
     // initialize with x0
     
     x0[1] = 2;
-    x0[3] = 0.5;
+    x0[3] = 0.9;
+    x0[5] = 15;
+    x0[6] = 15;
 
 
     double* u0 = xu0 + NX;

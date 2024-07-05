@@ -158,6 +158,9 @@ def main():
     animateASV_recovery(simX[::dt_gap*plot_iter,:], simU[::dt_gap*plot_iter,:], 
                         simX_tship[::dt_gap*plot_iter,:], mpc_pred_list[::plot_iter], 
                         con_pos, t[::dt_gap*plot_iter], Fmax, dob_save[::dt_gap*plot_iter],)
+    
+    ## plot_iter - animateASV_recovery 안에 포함시키는거로 바꾸기
+
 
 if __name__ == '__main__':
     main()

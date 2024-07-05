@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 
 
 
-def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
+def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
     # Define the geometry of the twin-hull ASV
     hullLength = 0.7  # Length of the hull
     hullWidth = 0.2   # Width of each hull
@@ -13,6 +13,12 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
     bodyWidth = 0.25  # Width of the body connecting the hulls
 
     fig, ax = plt.subplots()
+
+
+    # Define the grid for plotting
+    x_range = np.linspace(-20, 20, 100)
+    y_range = np.linspace(-20, 20, 100)
+    X, Y = np.meshgrid(x_range, y_range)
 
     def update(frame):
         position = states[frame,0:2]
@@ -26,14 +32,14 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
         
         # Define the vertices of the two hulls
         hull1 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
-                          [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
+                        [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
 
         hull2 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
-                          [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
+                        [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
 
         # Define the vertices of the body connecting the hulls
         body = np.array([[-bodyWidth/2, bodyWidth/2, bodyWidth/2, -bodyWidth/2, -bodyWidth/2],
-                         [separation/2, separation/2, -separation/2, -separation/2, separation/2]])
+                        [separation/2, separation/2, -separation/2, -separation/2, separation/2]])
 
         # Combine hulls into a single structure
         hull2[1, :] = hull2[1, :] - separation/2
@@ -41,7 +47,7 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
 
         # Rotation matrix for the heading
         R = np.array([[np.cos(heading), -np.sin(heading)],
-                      [np.sin(heading), np.cos(heading)]])
+                    [np.sin(heading), np.cos(heading)]])
 
         # Rotate the hulls and body
         hull1 = R @ hull1
@@ -77,6 +83,9 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
         ax.fill(hull1[0, :], hull1[1, :], 'b', alpha=0.3)
         ax.fill(hull2[0, :], hull2[1, :], 'b', alpha=0.3)
         ax.fill(body[0, :], body[1, :], 'b', alpha=0.3)
+        
+        ax.plot(states[0:frame,0], states[0:frame,1], 'b--')  # Mark the position with a red dot
+        
         ax.plot(position[0], position[1], 'go')  # Mark the position with a red dot
         ax.arrow(position[0], position[1], direction[0], direction[1], head_width=0.1, head_length=0.1, fc='k', ec='k')
         ax.axis('equal')
@@ -92,14 +101,37 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos):
             radius = obs_pos[frame][3*i+2]        
             a = obs_pos[frame][3*i+0] + radius * np.cos( theta )
             b = obs_pos[frame][3*i+1] + radius * np.sin( theta )    
-            ax.plot(a, b)
+            ax.fill(a, b, color='red', alpha=0.3)
 
-        ax.set_xlim(-8, 8)  # Adjust these limits as needed
-        ax.set_ylim(-6, 6)  # Adjust these limits as needed
+
+
+
+        for i in range(5):        
+            # Initialize hk array
+            hk = np.zeros_like(X)
+            # Calculate hk for each point in the grid
+            for j in range(len(x_range)):
+                for k in range(len(y_range)):
+                    x = X[j, k]
+                    y = Y[j, k]
+                    theta = states[frame,2]  # Assume theta = 0 for simplicity
+                    v = states[frame,3]  # Assume constant speed for simplicity
+
+                    B = np.sqrt((x - obs_pos[frame][3*i+0]) ** 2 + (y - obs_pos[frame][3*i+1]) ** 2) - obs_pos[frame][3*i+2]
+                    Bdot = ((x - obs_pos[frame][3*i+0]) * v * np.cos(theta) + (y - obs_pos[frame][3*i+1]) * v * np.sin(theta)) / np.sqrt((x - obs_pos[frame][3*i+0]) ** 2 + (y - obs_pos[frame][3*i+1]) ** 2)
+                    hk[j, k] = Bdot + 0.4 * B
+
+            # Plotting
+            ax.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['red'], alpha=0.1)
+        
+        ax.axis([-15, 15, -10, 10])  # Adjust these limits as needed
+    
+
         # ax.autoscale(enable=True, axis='x', tight=True)
         # ax.autoscale(enable=True, axis='y', tight=True)
-
-    anim = FuncAnimation(fig, update, frames=len(states), repeat=False)
+    
+    frames = range(0, len(states), plot_iter)
+    anim = FuncAnimation(fig, update, frames, repeat=False)
     plt.show()
 
 

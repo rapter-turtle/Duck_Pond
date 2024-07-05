@@ -5,21 +5,21 @@ from acados_setting import *
 def main():
 
     Fmax = 45
-    N_horizon = 20
+    N_horizon = 10
     dt = 0.2
     Tf = int(dt*N_horizon)
-    Nsim = 1000
+    Nsim = 600
 
     con_dt = dt
     ref_dt = 0.01
     ref_iter = int(con_dt/ref_dt)
 
-    reference = generate_figure_eight_trajectory((Nsim+N_horizon*2)*con_dt, ref_dt)
-    # reference = generate_figure_eight_trajectory_con(100, ref_dt)
+    # reference = generate_figure_eight_trajectory((Nsim+N_horizon*2)*con_dt, ref_dt, 12, 6, 10)
+    reference = generate_figure_eight_trajectory_con((Nsim+N_horizon*2)*con_dt, ref_dt, 15, 12, 15)
     reference = reference[::ref_iter,:]
 
-    x0 = np.array([0.0, 2.0, 0.0 , 0.5, 0.0, 0, 0])
-    ocp_solver, integrator = setup_trajectory_tracking(x0, Fmax, N_horizon, Tf)
+    x0 = np.array([0.0, 2.0, 0.0 , 0.9, 0.0, 15, 15])
+    ocp_solver, integrator = setup_trajectory_tracking(x0, Fmax, N_horizon, Tf, dt)
 
     nx = ocp_solver.acados_ocp.dims.nx
     nu = ocp_solver.acados_ocp.dims.nu
@@ -53,26 +53,22 @@ def main():
         yref_N = np.hstack((reference[i+N_horizon,:],0,0))
         ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
-        rad = 1
-        obs_pos = np.array([0.0, 0.1, 0.5, 
-                            6.0, -1.0*np.sin(i/10), 0.6, 
-                            3.0, 1.0, 0.4, 
-                            -3.0, 1.0, 0.4,
-                            -6.0, 1.0*np.sin(i/10), 0.5])
+        
+        ox1 = 0.0; oy1 = 0.5; or1 = 0.75
+        ox2 = 5.0; oy2 = 2.5; or2 = 1.0
+        ox3 = 15.0; oy3 = 0.0; or3 = 1.5
+        ox4 = -13.0; oy4 = 5.0; or4 = 1.75
+        ox5 = -6.0; oy5 = -5.5; or5 = 1.0
+        
+        obs_pos = np.array([ox1, oy1, or1, 
+                            ox2, oy2, or2, 
+                            ox3, oy3, or3, 
+                            ox4, oy4, or4, 
+                            ox5, oy5, or5])
         obs_list.append(obs_pos)
 
         for j in range(N_horizon):
-            obs_pos = np.array([0.0, 0.1, 0.5, 
-                                6.0, -1.0*np.sin((i+j*con_dt)/10), 0.6, 
-                                3.0, 1.0, 0.4, 
-                                -3.0, 1.0, 0.4,
-                                -6.0, 1.0*np.sin((i+j*con_dt)/10), 0.5])
             ocp_solver.set(j, "p", obs_pos)
-        obs_pos = np.array([0.0, 0.1, 0.5, 
-                            6.0, -1.0*np.sin((i+j*con_dt)/10), 0.6, 
-                            3.0, 1.0, 0.4, 
-                            -3.0, 1.0, 0.4,
-                            -6.0, 1.0*np.sin((i+N_horizon*con_dt)/10), 0.5])
         ocp_solver.set(N_horizon, "p", obs_pos)
 
 
@@ -109,6 +105,7 @@ def main():
     simU[i+1, :] = simU[i, :]
     yref_list.append(yref)
     mpc_pred_list.append(mpc_pred_array)
+    obs_list.append(obs_pos)
 
     # evaluate timings
     # scale to milliseconds
@@ -122,11 +119,11 @@ def main():
     obs_array = np.array(obs_list)
 
     ocp_solver = None
-    plot_iter = 3
-    animateASV(simX[::plot_iter,:], simU[::plot_iter,:], reference, yref_array[::plot_iter],mpc_pred_list[::plot_iter], obs_array)
+    plot_iter = 10
+    animateASV(simX, simU, reference, yref_array,mpc_pred_list, obs_array, plot_iter)
 
     t = np.arange(0, con_dt*Nsim, con_dt)
-    plot_inputs(t, reference, simX, simU, Fmax)
+    # plot_inputs(t, reference, simX, simU, Fmax)
 
 
 if __name__ == '__main__':
