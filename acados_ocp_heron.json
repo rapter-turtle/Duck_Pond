@@ -45,42 +45,58 @@
         "idxsg": [],
         "idxsg_e": [],
         "idxsh": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4
         ],
         "idxsh_0": [],
         "idxsh_e": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4
         ],
         "idxsphi": [],
         "idxsphi_0": [],
         "idxsphi_e": [],
         "lbu": [
-            -12.0,
-            -12.0
+            -9.0,
+            -9.0
         ],
         "lbx": [
             -1,
             -1,
-            -60,
-            -60
+            -45,
+            -45
         ],
         "lbx_0": [
             0.0,
             2.0,
             0.0,
-            1.0,
+            0.5,
             0.0,
-            15.0,
-            15.0
+            0.0,
+            0.0
         ],
         "lbx_e": [],
         "lg": [],
         "lg_e": [],
         "lh": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "lh_0": [],
         "lh_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "lphi": [],
@@ -92,43 +108,59 @@
         "lsg": [],
         "lsg_e": [],
         "lsh": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "lsh_0": [],
         "lsh_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "lsphi": [],
         "lsphi_0": [],
         "lsphi_e": [],
         "ubu": [
-            12.0,
-            12.0
+            9.0,
+            9.0
         ],
         "ubx": [
             2,
             1,
-            60,
-            60
+            45,
+            45
         ],
         "ubx_0": [
             0.0,
             2.0,
             0.0,
-            1.0,
+            0.5,
             0.0,
-            15.0,
-            15.0
+            0.0,
+            0.0
         ],
         "ubx_e": [],
         "ug": [],
         "ug_e": [],
         "uh": [
-            1000000.0
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
+            10000000000.0
         ],
         "uh_0": [],
         "uh_e": [
-            1000000.0
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
+            10000000000.0,
+            10000000000.0
         ],
         "uphi": [],
         "uphi_0": [],
@@ -139,10 +171,18 @@
         "usg": [],
         "usg_e": [],
         "ush": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "ush_0": [],
         "ush_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0
         ],
         "usphi": [],
@@ -207,7 +247,7 @@
                 0.0,
                 0.0,
                 0.0,
-                1000.0,
+                10.0,
                 0.0,
                 0.0,
                 0.0,
@@ -308,7 +348,7 @@
                 0.0,
                 0.0,
                 0.0,
-                1000.0,
+                10.0,
                 0.0,
                 0.0,
                 0.0,
@@ -401,7 +441,7 @@
                 0.0,
                 0.0,
                 0.0,
-                1000.0,
+                10.0,
                 0.0,
                 0.0
             ],
@@ -425,18 +465,34 @@
             ]
         ],
         "Zl": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "Zl_0": [],
         "Zl_e": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "Zu": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "Zu_0": [],
         "Zu_e": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "cost_ext_fun_type": "casadi",
         "cost_ext_fun_type_0": "casadi",
@@ -476,18 +532,34 @@
             0.0
         ],
         "zl": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "zl_0": [],
         "zl_e": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "zu": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ],
         "zu_0": [],
         "zu_e": [
-            10.0
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0,
+            100000.0
         ]
     },
     "cython_include_dirs": [
@@ -503,27 +575,27 @@
         "nbxe_0": 7,
         "ng": 0,
         "ng_e": 0,
-        "nh": 1,
+        "nh": 5,
         "nh_0": 0,
-        "nh_e": 1,
-        "np": 3,
+        "nh_e": 5,
+        "np": 15,
         "nphi": 0,
         "nphi_0": 0,
         "nphi_e": 0,
         "nr": 0,
         "nr_0": 0,
         "nr_e": 0,
-        "ns": 1,
+        "ns": 5,
         "ns_0": 0,
-        "ns_e": 1,
+        "ns_e": 5,
         "nsbu": 0,
         "nsbx": 0,
         "nsbx_e": 0,
         "nsg": 0,
         "nsg_e": 0,
-        "nsh": 1,
+        "nsh": 5,
         "nsh_0": 0,
-        "nsh_e": 1,
+        "nsh_e": 5,
         "nsphi": 0,
         "nsphi_0": 0,
         "nsphi_e": 0,
@@ -536,9 +608,9 @@
     },
     "json_file": "acados_ocp_heron.json",
     "model": {
-        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaapgbgegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
+        "con_h_expr": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
         "con_h_expr_0": null,
-        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegfaaaaaaaaaaaaaaabaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaacaaaaaaapgbgegdaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
+        "con_h_expr_e": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegjaaaaaaaaaaaaaaafaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaaihogegpcaaaaaaaaaaaaaadaaaaaaapgihbdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaajhogegpcaaaaaaaaaaaaaadaaaaaaapgjhbdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchbdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihcdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhcdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchcdegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihddeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhddeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchddegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihedeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhedeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchedegcaaaaaaaaaaaaaaaegbaaaaaaaaaaaaaaaeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachbaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihfdeglaaaaaaaaaaaaaaaegcaaaaaaaaaaaaaaachfaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgjhfdeglaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
         "con_phi_expr": null,
         "con_phi_expr_0": null,
         "con_phi_expr_e": null,
@@ -580,7 +652,7 @@
         },
         "name": "heron",
         "nu_original": null,
-        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeghaaaaaaaaaaaaaaadaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaapgbgegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
+        "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaegdbaaaaaaaaaaaaaapaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaeaaaaaaaaaaaaaaafaaaaaaaaaaaaaaagaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaiaaaaaaaaaaaaaaajaaaaaaaaaaaaaaakaaaaaaaaaaaaaaalaaaaaaaaaaaaaaamaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaoaaaaaaaaaaaaaaapaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaapgihbdegpcaaaaaaaaaaaaaadaaaaaaapgjhbdegpcaaaaaaaaaaaaaadaaaaaaapgchbdegpcaaaaaaaaaaaaaadaaaaaaapgihcdegpcaaaaaaaaaaaaaadaaaaaaapgjhcdegpcaaaaaaaaaaaaaadaaaaaaapgchcdegpcaaaaaaaaaaaaaadaaaaaaapgihddegpcaaaaaaaaaaaaaadaaaaaaapgjhddegpcaaaaaaaaaaaaaadaaaaaaapgchddegpcaaaaaaaaaaaaaadaaaaaaapgihedegpcaaaaaaaaaaaaaadaaaaaaapgjhedegpcaaaaaaaaaaaaaadaaaaaaapgchedegpcaaaaaaaaaaaaaadaaaaaaapgihfdegpcaaaaaaaaaaaaaadaaaaaaapgjhfdegpcaaaaaaaaaaaaaadaaaaaaapgchfd",
         "t": [],
         "t0": null,
         "t_label": "$t$ [s]",
@@ -604,6 +676,18 @@
     },
     "name": "heron",
     "parameter_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0
