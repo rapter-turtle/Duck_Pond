@@ -39,7 +39,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
 
     Am = -np.eye(5)
     state_error =  state_estim - state[:len(state_estim)]
-    # print(state_error)
+    # print(state_error) 
 
     x_plus = (xdot + np.dot(Am,state_error))*dt + state_estim
 
