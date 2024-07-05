@@ -159,7 +159,9 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
     # set up parameters
     oa = SX.sym('oa') 
     ob = SX.sym('ob') 
-    oc = SX.sym('oc') 
+    oc = SX.sym('oc')
+    # disturbance_u = SX.sym('disturbance_u')
+    # disturbance_r = SX.sym('disturbance_r') 
     p = vertcat(oa, ob, oc)
     ocp.model.p = p 
     ocp.parameter_values = np.array([0.0, 0.0, 0.0]) 
@@ -172,8 +174,8 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
 
     ocp.constraints.idxsh = np.array([0])
     ocp.constraints.idxsh_e = np.array([0])
-    Zh = 1e5*np.ones(1)
-    zh = 1e5*np.ones(1)
+    Zh = 1e1*np.ones(1)
+    zh = 1e1*np.ones(1)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh

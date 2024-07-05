@@ -1,7 +1,7 @@
 {
-    "acados_include_path": "/home/leeck/catkin_ws/src/acados/include",
-    "acados_lib_path": "/home/leeck/catkin_ws/src/acados/lib",
-    "code_export_directory": "/home/leeck/catkin_ws/src/Duck_Pond/acados_heron/c_generated_code",
+    "acados_include_path": "/home/kiyong/acados/include",
+    "acados_lib_path": "/home/kiyong/acados/lib",
+    "code_export_directory": "/home/kiyong/Kiyong/Duck pond/acados_heron/c_generated_code",
     "constraints": {
         "C": [],
         "C_e": [],
@@ -425,18 +425,18 @@
             ]
         ],
         "Zl": [
-            100000.0
+            10.0
         ],
         "Zl_0": [],
         "Zl_e": [
-            100000.0
+            10.0
         ],
         "Zu": [
-            100000.0
+            10.0
         ],
         "Zu_0": [],
         "Zu_e": [
-            100000.0
+            10.0
         ],
         "cost_ext_fun_type": "casadi",
         "cost_ext_fun_type_0": "casadi",
@@ -476,22 +476,22 @@
             0.0
         ],
         "zl": [
-            100000.0
+            10.0
         ],
         "zl_0": [],
         "zl_e": [
-            100000.0
+            10.0
         ],
         "zu": [
-            100000.0
+            10.0
         ],
         "zu_0": [],
         "zu_e": [
-            100000.0
+            10.0
         ]
     },
     "cython_include_dirs": [
-        "/home/leeck/.local/lib/python3.8/site-packages/numpy/core/include",
+        "/home/kiyong/.local/lib/python3.8/site-packages/numpy/core/include",
         "/usr/include/python3.8"
     ],
     "dims": {
@@ -582,7 +582,6 @@
         "nu_original": null,
         "p": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeghaaaaaaaaaaaaaaadaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaacaaaaaaapgbgegpcaaaaaaaaaaaaaacaaaaaaapgcgegpcaaaaaaaaaaaaaacaaaaaaapgdg",
         "t": [],
-        "t0": null,
         "t_label": "$t$ [s]",
         "u": "jhpnnagiieahaaaadaaaaaaaaaaaaaaaaaeggaaaaaaaaaaaaaaacaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaegpcaaaaaaaaaaaaaadaaaaaaaogbdegegpcaaaaaaaaaaaaaadaaaaaaaogcdeg",
         "u_labels": [
@@ -610,16 +609,10 @@
     ],
     "problem_class": "OCP",
     "shared_lib_ext": ".so",
-    "simulink_opts": null,
     "solver_options": {
         "Tsim": 0.05,
-        "adaptive_levenberg_marquardt_lam": 5.0,
-        "adaptive_levenberg_marquardt_mu0": 0.001,
-        "adaptive_levenberg_marquardt_mu_min": 1e-16,
         "alpha_min": 0.05,
         "alpha_reduction": 0.7,
-        "as_rti_iter": 1,
-        "as_rti_level": 4,
         "collocation_type": "GAUSS_LEGENDRE",
         "cost_discretization": "EULER",
         "custom_templates": [],
@@ -642,7 +635,6 @@
         "integrator_type": "IRK",
         "levenberg_marquardt": 0.0,
         "line_search_use_sufficient_descent": 0,
-        "log_primal_step_norm": false,
         "model_external_shared_lib_dir": null,
         "model_external_shared_lib_name": null,
         "nlp_solver_ext_qp_res": 0,
@@ -653,7 +645,6 @@
         "nlp_solver_tol_ineq": 1e-06,
         "nlp_solver_tol_stat": 1e-06,
         "nlp_solver_type": "SQP_RTI",
-        "num_threads_in_batch_solve": 1,
         "print_level": 0,
         "qp_solver": "PARTIAL_CONDENSING_HPIPM",
         "qp_solver_cond_N": 20,
@@ -667,7 +658,6 @@
         "qp_solver_warm_start": 0,
         "reg_epsilon": 0.0001,
         "regularize_method": "NO_REGULARIZE",
-        "rti_log_residuals": 0,
         "shooting_nodes": [
             0.0,
             0.05,
@@ -781,10 +771,7 @@
             0.05,
             0.05,
             0.05
-        ],
-        "with_adaptive_levenberg_marquardt": false,
-        "with_solution_sens_wrt_params": false,
-        "with_value_sens_wrt_params": false
+        ]
     },
     "zoro_description": null
 }

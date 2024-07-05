@@ -37,7 +37,7 @@
 #define HERON_NX     7
 #define HERON_NZ     0
 #define HERON_NU     2
-#define HERON_NP     15
+#define HERON_NP     3
 
 #ifdef __cplusplus
 extern "C" {

@@ -60,13 +60,13 @@ casadi_real casadi_sq(casadi_real x) { return x*x;}
 static const casadi_int casadi_s0[11] = {7, 1, 0, 7, 0, 1, 2, 3, 4, 5, 6};
 static const casadi_int casadi_s1[6] = {2, 1, 0, 2, 0, 1};
 static const casadi_int casadi_s2[3] = {0, 0, 0};
-static const casadi_int casadi_s3[19] = {15, 1, 0, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+static const casadi_int casadi_s3[7] = {3, 1, 0, 3, 0, 1, 2};
 static const casadi_int casadi_s4[21] = {7, 7, 0, 0, 0, 2, 5, 7, 9, 11, 0, 1, 0, 1, 3, 2, 4, 3, 4, 3, 4};
 static const casadi_int casadi_s5[17] = {7, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6};
 static const casadi_int casadi_s6[7] = {7, 2, 0, 1, 2, 5, 6};
 static const casadi_int casadi_s7[3] = {7, 0, 0};
 
-/* heron_impl_dae_jac_x_xdot_u_z:(i0[7],i1[7],i2[2],i3[],i4[],i5[15])->(o0[7x7,11nz],o1[7x7,7nz],o2[7x2,2nz],o3[7x0]) */
+/* heron_impl_dae_jac_x_xdot_u_z:(i0[7],i1[7],i2[2],i3[],i4[],i5[3])->(o0[7x7,11nz],o1[7x7,7nz],o2[7x2,2nz],o3[7x0]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3, a4, a5;
   a0=arg[0]? arg[0][3] : 0;

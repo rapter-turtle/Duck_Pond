@@ -43,7 +43,6 @@
 #include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
 
 #define NX     HERON_NX
-#define NP     HERON_NP
 #define NU     HERON_NU
 #define NBX0   HERON_NBX0
 

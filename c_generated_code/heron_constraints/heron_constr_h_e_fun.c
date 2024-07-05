@@ -34,7 +34,6 @@ extern "C" {
 #define casadi_s1 CASADI_PREFIX(s1)
 #define casadi_s2 CASADI_PREFIX(s2)
 #define casadi_s3 CASADI_PREFIX(s3)
-#define casadi_sq CASADI_PREFIX(sq)
 
 /* Symbol visibility in DLLs */
 #ifndef CASADI_SYMBOL_EXPORT
@@ -51,73 +50,24 @@ extern "C" {
   #endif
 #endif
 
-casadi_real casadi_sq(casadi_real x) { return x*x;}
-
 static const casadi_int casadi_s0[11] = {7, 1, 0, 7, 0, 1, 2, 3, 4, 5, 6};
 static const casadi_int casadi_s1[3] = {0, 0, 0};
-static const casadi_int casadi_s2[19] = {15, 1, 0, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-static const casadi_int casadi_s3[9] = {5, 1, 0, 5, 0, 1, 2, 3, 4};
+static const casadi_int casadi_s2[7] = {3, 1, 0, 3, 0, 1, 2};
+static const casadi_int casadi_s3[5] = {1, 1, 0, 1, 0};
 
-/* heron_constr_h_e_fun:(i0[7],i1[],i2[],i3[15])->(o0[5]) */
+/* heron_constr_h_e_fun:(i0[7],i1[],i2[],i3[3])->(o0) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
-  casadi_real a0, a1, a2, a3;
+  casadi_real a0, a1, a2;
   a0=arg[0]? arg[0][0] : 0;
   a1=arg[3]? arg[3][0] : 0;
-  a1=(a0-a1);
-  a1=casadi_sq(a1);
-  a2=arg[0]? arg[0][1] : 0;
-  a3=arg[3]? arg[3][1] : 0;
-  a3=(a2-a3);
-  a3=casadi_sq(a3);
-  a1=(a1+a3);
-  a3=arg[3]? arg[3][2] : 0;
-  a3=casadi_sq(a3);
-  a1=(a1-a3);
-  if (res[0]!=0) res[0][0]=a1;
-  a1=arg[3]? arg[3][3] : 0;
-  a1=(a0-a1);
-  a1=casadi_sq(a1);
-  a3=arg[3]? arg[3][4] : 0;
-  a3=(a2-a3);
-  a3=casadi_sq(a3);
-  a1=(a1+a3);
-  a3=arg[3]? arg[3][5] : 0;
-  a3=casadi_sq(a3);
-  a1=(a1-a3);
-  if (res[0]!=0) res[0][1]=a1;
-  a1=arg[3]? arg[3][6] : 0;
-  a1=(a0-a1);
-  a1=casadi_sq(a1);
-  a3=arg[3]? arg[3][7] : 0;
-  a3=(a2-a3);
-  a3=casadi_sq(a3);
-  a1=(a1+a3);
-  a3=arg[3]? arg[3][8] : 0;
-  a3=casadi_sq(a3);
-  a1=(a1-a3);
-  if (res[0]!=0) res[0][2]=a1;
-  a1=arg[3]? arg[3][9] : 0;
-  a1=(a0-a1);
-  a1=casadi_sq(a1);
-  a3=arg[3]? arg[3][10] : 0;
-  a3=(a2-a3);
-  a3=casadi_sq(a3);
-  a1=(a1+a3);
-  a3=arg[3]? arg[3][11] : 0;
-  a3=casadi_sq(a3);
-  a1=(a1-a3);
-  if (res[0]!=0) res[0][3]=a1;
-  a1=arg[3]? arg[3][12] : 0;
-  a0=(a0-a1);
-  a0=casadi_sq(a0);
-  a1=arg[3]? arg[3][13] : 0;
-  a2=(a2-a1);
-  a2=casadi_sq(a2);
-  a0=(a0+a2);
-  a2=arg[3]? arg[3][14] : 0;
-  a2=casadi_sq(a2);
-  a0=(a0-a2);
-  if (res[0]!=0) res[0][4]=a0;
+  a0=(a0*a1);
+  a1=arg[0]? arg[0][1] : 0;
+  a2=arg[3]? arg[3][1] : 0;
+  a1=(a1*a2);
+  a0=(a0+a1);
+  a1=arg[3]? arg[3][2] : 0;
+  a0=(a0+a1);
+  if (res[0]!=0) res[0][0]=a0;
   return 0;
 }
 

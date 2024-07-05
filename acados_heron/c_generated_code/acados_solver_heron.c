@@ -187,7 +187,7 @@ ocp_nlp_dims* heron_acados_create_2_create_and_set_dimensions(heron_solver_capsu
     /************************************************
     *  dimensions
     ************************************************/
-    #define NINTNP1MEMS 18
+    #define NINTNP1MEMS 17
     int* intNp1mem = (int*)malloc( (N+1)*sizeof(int)*NINTNP1MEMS );
 
     int* nx    = intNp1mem + (N+1)*0;
@@ -207,7 +207,6 @@ ocp_nlp_dims* heron_acados_create_2_create_and_set_dimensions(heron_solver_capsu
     int* ny    = intNp1mem + (N+1)*14;
     int* nr    = intNp1mem + (N+1)*15;
     int* nbxe  = intNp1mem + (N+1)*16;
-    int* np  = intNp1mem + (N+1)*17;
 
     for (int i = 0; i < N+1; i++)
     {
@@ -231,7 +230,6 @@ ocp_nlp_dims* heron_acados_create_2_create_and_set_dimensions(heron_solver_capsu
         nphi[i]   = NPHI;
         nr[i]     = NR;
         nbxe[i]   = 0;
-        np[i]     = NP;
     }
 
     // for initial state
@@ -273,7 +271,6 @@ ocp_nlp_dims* heron_acados_create_2_create_and_set_dimensions(heron_solver_capsu
     ocp_nlp_dims_set_opt_vars(nlp_config, nlp_dims, "nu", nu);
     ocp_nlp_dims_set_opt_vars(nlp_config, nlp_dims, "nz", nz);
     ocp_nlp_dims_set_opt_vars(nlp_config, nlp_dims, "ns", ns);
-    ocp_nlp_dims_set_opt_vars(nlp_config, nlp_dims, "np", np);
 
     for (int i = 0; i <= N; i++)
     {
@@ -413,8 +410,6 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     ocp_nlp_config* nlp_config = capsule->nlp_config;
     ocp_nlp_dims* nlp_dims = capsule->nlp_dims;
 
-    int tmp_int = 0;
-
     /************************************************
     *  nlp_in
     ************************************************/
@@ -529,10 +524,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* zl = zlumem+NS*2;
     double* zu = zlumem+NS*3;
     // change only the non-zero elements:
-    Zl[0] = 100000;
-    Zu[0] = 100000;
-    zl[0] = 100000;
-    zu[0] = 100000;
+    Zl[0] = 10;
+    Zu[0] = 10;
+    zl[0] = 10;
+    zu[0] = 10;
 
     for (int i = 1; i < N; i++)
     {
@@ -553,16 +548,16 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
 
     // change only the non-zero elements:
     
-    Zl_e[0] = 100000;
+    Zl_e[0] = 10;
 
     
-    Zu_e[0] = 100000;
+    Zu_e[0] = 10;
 
     
-    zl_e[0] = 100000;
+    zl_e[0] = 10;
 
     
-    zu_e[0] = 100000;
+    zu_e[0] = 10;
 
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zl", Zl_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zu", Zu_e);
@@ -782,13 +777,7 @@ void heron_acados_create_6_set_opts(heron_solver_capsule* capsule)
 
 int fixed_hess = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "fixed_hess", &fixed_hess);
-    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "globalization", "fixed_step");int with_solution_sens_wrt_params = false;
-    ocp_nlp_solver_opts_set(nlp_config, capsule->nlp_opts, "with_solution_sens_wrt_params", &with_solution_sens_wrt_params);
-
-    int with_value_sens_wrt_params = false;
-    ocp_nlp_solver_opts_set(nlp_config, capsule->nlp_opts, "with_value_sens_wrt_params", &with_value_sens_wrt_params);
-
-    int full_step_dual = 0;
+    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "globalization", "fixed_step");int full_step_dual = 0;
     ocp_nlp_solver_opts_set(nlp_config, capsule->nlp_opts, "full_step_dual", &full_step_dual);
 
     // set collocation type (relevant for implicit integrators)
@@ -834,14 +823,6 @@ int fixed_hess = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_hpipm_mode", "BALANCE");
 
 
-    int as_rti_iter = 1;
-    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "as_rti_iter", &as_rti_iter);
-
-    int as_rti_level = 4;
-    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "as_rti_level", &as_rti_level);
-
-    int rti_log_residuals = 0;
-    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "rti_log_residuals", &rti_log_residuals);
 
     int qp_solver_iter_max = 50;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_iter_max", &qp_solver_iter_max);
@@ -858,9 +839,6 @@ int fixed_hess = 0;
 
 
     int ext_cost_num_hess = 0;
-
-
-
 }
 
 
@@ -1126,29 +1104,27 @@ int heron_acados_update_params_sparse(heron_solver_capsule * capsule, int stage,
         capsule->impl_dae_fun[stage].set_param_sparse(capsule->impl_dae_fun+stage, n_update, idx, p);
         capsule->impl_dae_fun_jac_x_xdot_z[stage].set_param_sparse(capsule->impl_dae_fun_jac_x_xdot_z+stage, n_update, idx, p);
         capsule->impl_dae_jac_x_xdot_u_z[stage].set_param_sparse(capsule->impl_dae_jac_x_xdot_u_z+stage, n_update, idx, p);
+    
 
-        // constraints
+        // cost & constraints
         if (stage == 0)
         {
-        }
-        else
-        {
-            capsule->nl_constr_h_fun_jac[stage-1].set_param_sparse(capsule->nl_constr_h_fun_jac+stage-1, n_update, idx, p);
-            capsule->nl_constr_h_fun[stage-1].set_param_sparse(capsule->nl_constr_h_fun+stage-1, n_update, idx, p);
-        }
-
-        // cost
-        if (stage == 0)
-        {
+            // cost
             capsule->cost_y_0_fun.set_param_sparse(&capsule->cost_y_0_fun, n_update, idx, p);
             capsule->cost_y_0_fun_jac_ut_xt.set_param_sparse(&capsule->cost_y_0_fun_jac_ut_xt, n_update, idx, p);
             capsule->cost_y_0_hess.set_param_sparse(&capsule->cost_y_0_hess, n_update, idx, p);
+            // constraints
+        
         }
         else // 0 < stage < N
         {
             capsule->cost_y_fun[stage-1].set_param_sparse(capsule->cost_y_fun+stage-1, n_update, idx, p);
             capsule->cost_y_fun_jac_ut_xt[stage-1].set_param_sparse(capsule->cost_y_fun_jac_ut_xt+stage-1, n_update, idx, p);
             capsule->cost_y_hess[stage-1].set_param_sparse(capsule->cost_y_hess+stage-1, n_update, idx, p);
+
+        
+            capsule->nl_constr_h_fun_jac[stage-1].set_param_sparse(capsule->nl_constr_h_fun_jac+stage-1, n_update, idx, p);
+            capsule->nl_constr_h_fun[stage-1].set_param_sparse(capsule->nl_constr_h_fun+stage-1, n_update, idx, p);
         }
     }
 
@@ -1160,8 +1136,10 @@ int heron_acados_update_params_sparse(heron_solver_capsule * capsule, int stage,
         capsule->cost_y_e_fun_jac_ut_xt.set_param_sparse(&capsule->cost_y_e_fun_jac_ut_xt, n_update, idx, p);
         capsule->cost_y_e_hess.set_param_sparse(&capsule->cost_y_e_hess, n_update, idx, p);
         // constraints
+    
         capsule->nl_constr_h_e_fun_jac.set_param_sparse(&capsule->nl_constr_h_e_fun_jac, n_update, idx, p);
         capsule->nl_constr_h_e_fun.set_param_sparse(&capsule->nl_constr_h_e_fun, n_update, idx, p);
+    
     }
 
 
@@ -1174,19 +1152,6 @@ int heron_acados_solve(heron_solver_capsule* capsule)
     int solver_status = ocp_nlp_solve(capsule->nlp_solver, capsule->nlp_in, capsule->nlp_out);
 
     return solver_status;
-}
-
-
-void heron_acados_batch_solve(heron_solver_capsule ** capsules, int N_batch)
-{
-
-    for (int i = 0; i < N_batch; i++)
-    {
-        ocp_nlp_solve(capsules[i]->nlp_solver, capsules[i]->nlp_in, capsules[i]->nlp_out);
-    }
-
-
-    return;
 }
 
 
@@ -1250,8 +1215,8 @@ int heron_acados_free(heron_solver_capsule* capsule)
 
 void heron_acados_print_stats(heron_solver_capsule* capsule)
 {
-    int nlp_iter, stat_m, stat_n, tmp_int;
-    ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "nlp_iter", &nlp_iter);
+    int sqp_iter, stat_m, stat_n, tmp_int;
+    ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "sqp_iter", &sqp_iter);
     ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "stat_n", &stat_n);
     ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "stat_m", &stat_m);
 
@@ -1259,9 +1224,12 @@ void heron_acados_print_stats(heron_solver_capsule* capsule)
     double stat[1200];
     ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "statistics", stat);
 
-    int nrow = nlp_iter+1 < stat_m ? nlp_iter+1 : stat_m;
+    int nrow = sqp_iter+1 < stat_m ? sqp_iter+1 : stat_m;
 
-
+    printf("iter\tres_stat\tres_eq\t\tres_ineq\tres_comp\tqp_stat\tqp_iter\talpha");
+    if (stat_n > 8)
+        printf("\t\tqp_res_stat\tqp_res_eq\tqp_res_ineq\tqp_res_comp");
+    printf("\n");
     printf("iter\tqp_stat\tqp_iter\n");
     for (int i = 0; i < nrow; i++)
     {

@@ -2,6 +2,8 @@ from plot_asv import *
 from gen_ref import *
 from acados_setting import *
 from recovery_simulator import*
+from l_adaptive import*
+from DOB import*
 import numpy as np
 
 def main():
@@ -9,7 +11,7 @@ def main():
     Fmax = 45
     Tf = 1
     N_horizon = 20
-    Nsim = 100
+    Nsim = 1000
     simulation_dt = 0.01
 
     con_dt = (Tf/N_horizon)
@@ -34,6 +36,12 @@ def main():
 
     t_preparation = np.zeros((Nsim))
     t_feedback = np.zeros((Nsim))
+
+    param_estim = np.zeros((2))
+    param_filtered = np.zeros((2))
+    state_estim = np.array([0.0, 2.0, 0.0 , 1, 0.0])
+    l1_control = np.zeros((2))
+    extra_control = np.zeros((2))
 
     # do some initial iterations to start with a good initial guess
     num_iter_initial = 5
@@ -98,12 +106,31 @@ def main():
             mpc_pred_array = np.vstack(mpc_pred)
             mpc_pred_list.append(mpc_pred_array)
 
-            
+        ##### L1 adaptive #####
+        state_estim, param_estim, param_filtered = L1_control(simX[i, :], state_estim, param_filtered, simulation_dt, param_estim)
+        #L1 control allocation
+        M = 36 # Mass [kg]
+        I = 8.35 # Inertial tensor [kg m^2]
+        L = 0.73 # length [m]
+        l1_control[0] = (M*param_filtered[0] - 2*(I/L)*param_filtered[1])*0.5
+        l1_control[1] = (M*param_filtered[0] + 2*(I/L)*param_filtered[1])*0.5
+        extra_control = l1_control
+        # print(param_estim)
+        print(param_filtered)
+        ##### L1 adaptive #####
+        
+
+        ##### DOB #####
+        # state_estim, param_estim = Disturbance_observer(simX[i, :], state_estim, simulation_dt, param_estim)
+        # print(param_estim)
+        ##### DOB #####
+
+
+
         # simulate system
-        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[k,:], simulation_dt)
+        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[k,:], simulation_dt, i*simulation_dt, extra_control )
 
         simX_tship[i+1, :] = x_tship
-
 
 
     simU[k+1, :] = simU[k, :]

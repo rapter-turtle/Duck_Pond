@@ -1,6 +1,8 @@
 from plot_asv import *
 from gen_ref import *
 from acados_setting import *
+from recovery_simulator import*
+import numpy as np
 
 def main():
 
@@ -8,6 +10,7 @@ def main():
     Tf = 1
     N_horizon = 20
     Nsim = 1000
+    # simulation_dt =
 
     con_dt = (Tf/N_horizon)
     ref_dt = 0.01
@@ -59,7 +62,7 @@ def main():
 
         dist = 2.5
         oa = np.tan(x_tship[2]) 
-        ob = -1
+        ob = -1 
         oc = (x_tship[1]-dist*np.cos(x_tship[2])) - (x_tship[0]+dist*np.sin(x_tship[2]))*np.tan(x_tship[2]) 
         con_pos = np.array([oa, ob, oc])
         for j in range(N_horizon):
@@ -92,13 +95,13 @@ def main():
 
 
         # simulate system
-        simX[i+1, :] = integrator.simulate(x=simX[i, :], u=simU[i,:])
+        # simX[i+1, :] = integrator.simulate(x=simX[i, :], u=simU[i,:])
+        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[i,:], con_dt)
 
-
-        v_x_tship = x_tship[3]*np.cos(x_tship[2])
-        v_y_tship = x_tship[3]*np.sin(x_tship[2])
-        x_tship[0] = x_tship[0] + v_x_tship*con_dt
-        x_tship[1] = x_tship[1] + v_y_tship*con_dt
+        # v_x_tship = x_tship[3]*np.cos(x_tship[2])
+        # v_y_tship = x_tship[3]*np.sin(x_tship[2])
+        # x_tship[0] = x_tship[0] + v_x_tship*con_dt
+        # x_tship[1] = x_tship[1] + v_y_tship*con_dt
         simX_tship[i+1, :] = x_tship
 
         # print(simX[i, 3])

@@ -80,7 +80,6 @@ typedef struct heron_sim_solver_capsule
 
 ACADOS_SYMBOL_EXPORT int heron_acados_sim_create(heron_sim_solver_capsule *capsule);
 ACADOS_SYMBOL_EXPORT int heron_acados_sim_solve(heron_sim_solver_capsule *capsule);
-ACADOS_SYMBOL_EXPORT void heron_acados_sim_batch_solve(heron_sim_solver_capsule **capsules, int N_batch);
 ACADOS_SYMBOL_EXPORT int heron_acados_sim_free(heron_sim_solver_capsule *capsule);
 ACADOS_SYMBOL_EXPORT int heron_acados_sim_update_params(heron_sim_solver_capsule *capsule, double *value, int np);
 

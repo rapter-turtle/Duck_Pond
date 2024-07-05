@@ -162,7 +162,6 @@ ACADOS_SYMBOL_EXPORT int heron_acados_update_params(heron_solver_capsule * capsu
 ACADOS_SYMBOL_EXPORT int heron_acados_update_params_sparse(heron_solver_capsule * capsule, int stage, int *idx, double *p, int n_update);
 
 ACADOS_SYMBOL_EXPORT int heron_acados_solve(heron_solver_capsule * capsule);
-ACADOS_SYMBOL_EXPORT void heron_acados_batch_solve(heron_solver_capsule ** capsules, int N_batch);
 ACADOS_SYMBOL_EXPORT int heron_acados_free(heron_solver_capsule * capsule);
 ACADOS_SYMBOL_EXPORT void heron_acados_print_stats(heron_solver_capsule * capsule);
 ACADOS_SYMBOL_EXPORT int heron_acados_custom_update(heron_solver_capsule* capsule, double* data, int data_len);
