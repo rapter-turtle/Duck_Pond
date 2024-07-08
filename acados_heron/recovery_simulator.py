@@ -54,3 +54,23 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
     tship = tship_xdot*dt + tship
 
     return ship, tship
+
+
+
+def wave_disturbance(disturbance_state, wave_direction, wind_speed, omega, lamda, Kw, sigmaF1, sigmaF2, dt):
+    
+    omega_e = np.abs(omega - (omega*omega/9.81)*wind_speed*np.cos(wave_direction))
+    
+    x1 = disturbance_state[0]
+    x2 = disturbance_state[1]
+
+    omegaF1 = np.random.normal(0.0, sigmaF1)
+    omegaF2 = np.random.normal(0.0, sigmaF2)
+
+    xdot = np.array([x2, -omega_e*omega_e*x1 - 2*lamda*omega_e*x2 + Kw*omegaF1, omegaF2 ])
+    disturbance_state = xdot*dt + disturbance_state 
+
+
+    disturbance_force = disturbance_state[0] + disturbance_state[2]
+
+    return disturbance_state, disturbance_force

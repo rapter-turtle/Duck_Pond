@@ -12,9 +12,9 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
     Nr = 5
     Nrr = 13 # Nm/(rad/s)^2
 
-    w_cutoff = 0.5
-    u_max = 5.0
-    r_max = 5.0
+    w_cutoff = 0.2
+    u_max = 0.1
+    r_max = 0.1
 
     # set up states & controls
     xn   = state_estim[0]
@@ -24,8 +24,6 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
     r    = state_estim[4]
     n1  = state[5]
     n2  = state[6]
-
-    x = np.array([xn, yn, psi, v, r])
 
 
     eps = 0.00001

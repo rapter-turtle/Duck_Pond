@@ -39,6 +39,7 @@ def main():
     param_filtered = np.zeros((2))
     state_estim = np.array([0.0, 2.0, 0.0 , 1, 0.0])
     l1_control = np.zeros((2))
+    disturbance_state = np.zeros((6))
 
 
     dob_save = np.zeros((int(T_final/simulation_dt)+1, 6))
@@ -126,7 +127,59 @@ def main():
         # print(param_estim)
         ##### DOB #####
 
-        disturbance = np.array([0.0, 5.0])
+
+
+        #################################### Disturbance ####################################
+        wind_direction = 60*3.141592/180
+        wind_speed = 5.0
+        psi = simX[i,2]
+        v = simX[i,3]
+
+        ## Wave Disturbance ## 
+        # wave_disturbance(disturbance_state, wave_direction, wind_speed, omega, lamda, Kw, sigmaF1, sigmaF2, dt):
+        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, 7.0, 0.8, 0.1, 2.0, 10, 2, simulation_dt)
+        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, 7.0, 0.8, 0.1, 1.0, 1, 0.1, simulation_dt)
+        
+        X_wave_force = XY_wave_force*np.cos(wind_direction - psi)
+        Y_wave_force = XY_wave_force*np.sin(wind_direction - psi)
+
+        U_wave_force = X_wave_force*np.sin(psi) + Y_wave_force*np.cos(psi)
+        
+        ## Wind Disturbance ## 
+        Afw = 0.3  #Frontal area
+        Alw = 0.44  #Lateral area
+        LOA = 1.3  #Length
+        lau = 1.2  # air density
+        CD_lAF = 0.55
+        delta = 0.6
+        CDl = CD_lAF*Afw/Alw
+        CDt = 0.9
+
+        u_rel_wind = v - wind_speed*np.cos(wind_direction - psi)
+        v_rel_wind = - wind_speed*np.sin(wind_direction - psi)
+        gamma = -np.arctan2(v_rel_wind, u_rel_wind)
+
+        Cx = CD_lAF*np.cos(gamma)/(1 - delta*0.5*(1-CDl/CDt)*(np.sin(2*gamma))**2)
+        Cy = CDt*np.sin(gamma)/(1 - delta*0.5*(1-CDl/CDt)*(np.sin(2*gamma))**2)
+        Cn = -0.18*(gamma - np.pi*0.5)*Cy
+
+        X_wind_force = 0.5*lau*(u_rel_wind**2 + v_rel_wind**2)*Cx*Afw
+        Y_wind_force = 0.5*lau*(u_rel_wind**2 + v_rel_wind**2)*Cy*Alw
+        N_wind_force = 0.5*lau*(u_rel_wind**2 + v_rel_wind**2)*Cn*Alw*LOA    
+
+        U_wind_force = X_wind_force + X_wind_force*np.sin(psi) + Y_wind_force*np.cos(psi)
+
+
+        # U_wave_force = 0.0 
+        # N_wave_force = 0.0
+
+        # U_wind_force = 0.0   
+        # N_wind_force = 0.0
+        
+        disturbance = np.array([U_wave_force + U_wind_force, N_wave_force + N_wind_force])
+
+        ##########################################################################################
+
         # simulate system
 
         L1_XN = np.array([l1_control[0] + l1_control[1], (-l1_control[0] + l1_control[1])*L/2])
