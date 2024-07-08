@@ -146,8 +146,8 @@ def setup_trajectory_tracking(x0):
     ocp.model.con_h_expr_e = ocp.model.con_h_expr
 
     # set constraints
-    ocp.constraints.lbu = np.array([-heron_p.Fmax/5,-heron_p.Fmax/5])
-    ocp.constraints.ubu = np.array([+heron_p.Fmax/5,+heron_p.Fmax/5])
+    ocp.constraints.lbu = np.array([-heron_p.Fmax/10,-heron_p.Fmax/10])
+    ocp.constraints.ubu = np.array([+heron_p.Fmax/10,+heron_p.Fmax/10])
     ocp.constraints.idxbu = np.array([0, 1])
 
     ocp.constraints.lbx = np.array([-2, -1, -heron_p.Fmax, -heron_p.Fmax])

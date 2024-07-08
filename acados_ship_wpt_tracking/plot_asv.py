@@ -145,7 +145,7 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
 
 
         ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
-        ax.axis([-15, 45, -15, 15])  # Adjust these limits as needed
+        # ax.axis([-15, 145, -15, 15])  # Adjust these limits as needed
     
 
         # ax.autoscale(enable=True, axis='x', tight=True)

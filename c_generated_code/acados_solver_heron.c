@@ -429,7 +429,7 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
         heron_acados_update_time_steps(capsule, N, new_time_steps);
     }
     else
-    {double time_step = 0.2;
+    {double time_step = 0.1;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
@@ -457,13 +457,12 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     // change only the non-zero elements:
     W_0[0+(NY0) * 0] = 2;
     W_0[1+(NY0) * 1] = 2;
-    W_0[2+(NY0) * 2] = 20;
-    W_0[3+(NY0) * 3] = 100;
-    W_0[4+(NY0) * 4] = 2;
-    W_0[5+(NY0) * 5] = 0.000002;
-    W_0[6+(NY0) * 6] = 0.000002;
-    W_0[7+(NY0) * 7] = 0.000002;
-    W_0[8+(NY0) * 8] = 0.000002;
+    W_0[3+(NY0) * 3] = 50;
+    W_0[4+(NY0) * 4] = 10;
+    W_0[5+(NY0) * 5] = 0.0000002;
+    W_0[6+(NY0) * 6] = 0.0000002;
+    W_0[7+(NY0) * 7] = 0.00002;
+    W_0[8+(NY0) * 8] = 0.00002;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -478,13 +477,12 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     // change only the non-zero elements:
     W[0+(NY) * 0] = 2;
     W[1+(NY) * 1] = 2;
-    W[2+(NY) * 2] = 20;
-    W[3+(NY) * 3] = 100;
-    W[4+(NY) * 4] = 2;
-    W[5+(NY) * 5] = 0.000002;
-    W[6+(NY) * 6] = 0.000002;
-    W[7+(NY) * 7] = 0.000002;
-    W[8+(NY) * 8] = 0.000002;
+    W[3+(NY) * 3] = 50;
+    W[4+(NY) * 4] = 10;
+    W[5+(NY) * 5] = 0.0000002;
+    W[6+(NY) * 6] = 0.0000002;
+    W[7+(NY) * 7] = 0.00002;
+    W[8+(NY) * 8] = 0.00002;
 
     for (int i = 1; i < N; i++)
     {
@@ -500,11 +498,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     // change only the non-zero elements:
     W_e[0+(NYN) * 0] = 2;
     W_e[1+(NYN) * 1] = 2;
-    W_e[2+(NYN) * 2] = 20;
-    W_e[3+(NYN) * 3] = 100;
-    W_e[4+(NYN) * 4] = 2;
-    W_e[5+(NYN) * 5] = 0.000002;
-    W_e[6+(NYN) * 6] = 0.000002;
+    W_e[3+(NYN) * 3] = 50;
+    W_e[4+(NYN) * 4] = 10;
+    W_e[5+(NYN) * 5] = 0.0000002;
+    W_e[6+(NYN) * 6] = 0.0000002;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
     free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun", &capsule->cost_y_0_fun);
@@ -619,10 +616,12 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* lbx0 = lubx0;
     double* ubx0 = lubx0 + NBX0;
     // change only the non-zero elements:
-    lbx0[1] = 2;
-    ubx0[1] = 2;
-    lbx0[3] = 0.9;
-    ubx0[3] = 0.9;
+    lbx0[0] = -10;
+    ubx0[0] = -10;
+    lbx0[1] = -10;
+    ubx0[1] = -10;
+    lbx0[3] = 1;
+    ubx0[3] = 1;
     lbx0[5] = 15;
     ubx0[5] = 15;
     lbx0[6] = 15;
@@ -663,10 +662,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* lbu = lubu;
     double* ubu = lubu + NBU;
     
-    lbu[0] = -4.5;
-    ubu[0] = 4.5;
-    lbu[1] = -4.5;
-    ubu[1] = 4.5;
+    lbu[0] = -9;
+    ubu[0] = 9;
+    lbu[1] = -9;
+    ubu[1] = 9;
 
     for (int i = 0; i < N; i++)
     {
@@ -876,7 +875,7 @@ int fixed_hess = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "levenberg_marquardt", &levenberg_marquardt);
 
     /* options QP solver */
-    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 10;
+    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 20;
     qp_solver_cond_N = N < qp_solver_cond_N_ori ? N : qp_solver_cond_N_ori; // use the minimum value here
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_N", &qp_solver_cond_N);
 
@@ -932,8 +931,9 @@ void heron_acados_create_7_set_nlp_out(heron_solver_capsule* capsule)
 
     // initialize with x0
     
-    x0[1] = 2;
-    x0[3] = 0.9;
+    x0[0] = -10;
+    x0[1] = -10;
+    x0[3] = 1;
     x0[5] = 15;
     x0[6] = 15;
 

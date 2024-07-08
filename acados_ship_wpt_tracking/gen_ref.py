@@ -57,53 +57,6 @@ def generate_figure_eight_trajectory_con(tfinal, dt, A=6, B=3, C=5):
     return ref
 
 
-
-def generate_wpt_trajectory(waypoints,  repeat, desired_speed, dt):
-    if repeat:
-        waypoints = np.vstack([waypoints, waypoints])
-        waypoints = np.vstack([waypoints, waypoints])
-        waypoints = np.vstack([waypoints, waypoints])
-
-    waypoints = np.array(waypoints)
-    num_points = len(waypoints)
-    
-    # Calculate distances between waypoints
-    distances = np.sqrt(np.sum(np.diff(waypoints, axis=0)**2, axis=1))
-    total_distance = np.sum(distances)
-    
-    # Calculate time to reach each waypoint
-    times = np.zeros(num_points)
-    times[1:] = np.cumsum(distances / desired_speed)
-    total_time = times[-1]
-
-    # Create time vector for interpolation
-    t_interpolated = np.linspace(0,total_time-dt,int(total_time/dt))
-    
-    # Interpolate positions
-    interp_x = interp1d(times, waypoints[:, 0], kind='linear')
-    interp_y = interp1d(times, waypoints[:, 1], kind='linear')
-    x_interpolated = interp_x(t_interpolated)
-    y_interpolated = interp_y(t_interpolated)
-
-    # Calculate velocities
-    dx = np.gradient(x_interpolated, dt)
-    dy = np.gradient(y_interpolated, dt)
-    velocities = np.sqrt(dx**2 + dy**2)*0 + desired_speed
-    
-    # Calculate headings
-    headings = np.arctan2(dy, dx)
-    headings = np.unwrap(headings)
-    
-    # Calculate rotational speed
-    rotational_speed = np.gradient(headings, dt)*0
-    
-    # Combine into reference trajectory
-    positions = np.vstack((x_interpolated, y_interpolated)).T
-    ref = np.hstack((positions, headings.reshape(-1, 1), velocities.reshape(-1, 1), rotational_speed.reshape(-1, 1)))
-
-    return ref
-
-
 def generate_figure_circle_trajectory_con(tfinal, dt, A=6, C=5):
     t = np.arange(0, tfinal, dt)
     x = A * np.sin(t/C)

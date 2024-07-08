@@ -72,10 +72,10 @@ int main()
     x_current[6] = 0.0;
 
   
-    x_current[0] = 0;
-    x_current[1] = 2;
+    x_current[0] = -10;
+    x_current[1] = -10;
     x_current[2] = 0;
-    x_current[3] = 0.9;
+    x_current[3] = 1;
     x_current[4] = 0;
     x_current[5] = 15;
     x_current[6] = 15;
