@@ -3,10 +3,12 @@ from heron_model import export_heron_model
 import scipy.linalg
 import numpy as np
 from casadi import SX, vertcat, cos, sin, sqrt
+from load_param import load_param
 
-def setup_trajectory_tracking(x0, Fmax, N_horizon, Tf, dt):
+def setup_trajectory_tracking(x0):
     # create ocp object to formulate the OCP
     ocp = AcadosOcp()
+    heron_p = load_param
 
     # set model
     model = export_heron_model()
@@ -17,14 +19,14 @@ def setup_trajectory_tracking(x0, Fmax, N_horizon, Tf, dt):
     ny = nx + nu
     ny_e = nx
 
-    ocp.dims.N = N_horizon
+    ocp.dims.N = heron_p.N
 
     # set cost module
     ocp.cost.cost_type = 'NONLINEAR_LS'
     ocp.cost.cost_type_e = 'NONLINEAR_LS'
 
-    Q_mat = 2*np.diag([2, 2, 20, 100, 5, 1e-4, 1e-4])
-    R_mat = 2*np.diag([1e-4, 1e-4])
+    Q_mat = heron_p.Q 
+    R_mat = heron_p.R
 
     ocp.cost.W = scipy.linalg.block_diag(Q_mat, R_mat)
     ocp.cost.W_e = Q_mat
@@ -69,79 +71,66 @@ def setup_trajectory_tracking(x0, Fmax, N_horizon, Tf, dt):
     ocp.constraints.uh = 1e10 * np.ones(num_obs)
     ocp.constraints.lh = np.zeros(num_obs)
     h_expr = SX.zeros(num_obs,1)
+
+    x0 = model.x[0]
+    x1 = model.x[1]
+    x2 = model.x[2]
+    x3 = model.x[3]
+    x0d = model.f_expl_expr[0]*heron_p.dt
+    x1d = model.f_expl_expr[1]*heron_p.dt
+    x2d = model.f_expl_expr[2]*heron_p.dt
+    x3d = model.f_expl_expr[3]*heron_p.dt
+    x0_n = x0+x0d
+    x1_n = x1+x1d
+    x2_n = x2+x2d
+    x3_n = x3+x3d
     
-    ## MPC - Distance Constraints
-    # h_expr[0] = (model.x[0]-ox1) ** 2 + (model.x[1] - oy1) ** 2 - or1**2
-    # h_expr[1] = (model.x[0]-ox2) ** 2 + (model.x[1] - oy2) ** 2 - or2**2
-    # h_expr[2] = (model.x[0]-ox3) ** 2 + (model.x[1] - oy3) ** 2 - or3**2
-    # h_expr[3] = (model.x[0]-ox4) ** 2 + (model.x[1] - oy4) ** 2 - or4**2
-    # h_expr[4] = (model.x[0]-ox5) ** 2 + (model.x[1] - oy5) ** 2 - or5**2
+    if heron_p.CBF == 0:
 
-    ## MPC - Euclidean Distance-based CBF
-    gamma1 = 0.4
-    gamma2 = 0.2
+        ##################### MPC - Distance Constraints #############################
+        h_expr[0] = (model.x[0]-ox1) ** 2 + (model.x[1] - oy1) ** 2 - or1**2
+        h_expr[1] = (model.x[0]-ox2) ** 2 + (model.x[1] - oy2) ** 2 - or2**2
+        h_expr[2] = (model.x[0]-ox3) ** 2 + (model.x[1] - oy3) ** 2 - or3**2
+        h_expr[3] = (model.x[0]-ox4) ** 2 + (model.x[1] - oy4) ** 2 - or4**2
+        h_expr[4] = (model.x[0]-ox5) ** 2 + (model.x[1] - oy5) ** 2 - or5**2
 
-    x0d = model.f_expl_expr[0]*dt
-    x1d = model.f_expl_expr[1]*dt
-    x2d = model.f_expl_expr[2]*dt
-    x3d = model.f_expl_expr[3]*dt
+    if heron_p.CBF == 1:
     
-    B = np.sqrt( (model.x[0]-ox1) ** 2 + (model.x[1] - oy1) ** 2) - or1
-    Bdot = ((model.x[0]-ox1)*model.x[3]*cos(model.x[2]) + (model.x[1]-oy1)*model.x[3]*sin(model.x[2]))/np.sqrt((model.x[0]-ox1)**2 + (model.x[1] - oy1) ** 2)
-    hk = Bdot + gamma1*B
-    B = np.sqrt( (model.x[0]+x0d-ox1) ** 2 + (model.x[1]+x1d - oy1) ** 2) - or1
-    Bdot = ((model.x[0]+x0d-ox1)*(model.x[3]+x3d)*cos(model.x[2]+x2d) + (model.x[1]+x1d-oy1)*(model.x[3]+x3d)*sin(model.x[2]+x2d))/np.sqrt((model.x[0]+x0d-ox1)**2 + (model.x[1]+x1d - oy1) ** 2)
-    hkn = Bdot + gamma1*B
-    h_expr[0] = hkn - (1-gamma2)*hk
+        ##################### MPC - Euclidean Distance-based CBF #####################
+        for i in range(num_obs):
+            B = np.sqrt( (x0-p[3*i+0])**2 + (x1 - p[3*i+1])**2) - p[3*i+2]
+            Bdot = ((x0-p[3*i+0])*x3*cos(x2) + (x1-p[3*i+1])*x3*sin(x2))/np.sqrt((x0-p[3*i+0])**2 + (x1 - p[3*i+1])**2)
+            hk = Bdot + heron_p.gamma1/(p[3*i+2]+0.0001)*B
+            B = np.sqrt( (x0_n-p[3*i+0])**2 + (x1_n - p[3*i+1])**2) - p[3*i+2]
+            Bdot = ((x0_n-p[3*i+0])*(x3_n)*cos(x2_n) + (x1_n-p[3*i+1])*(x3_n)*sin(x2_n))/np.sqrt((x0_n-p[3*i+0])**2 + (x1_n - p[3*i+1])**2)
+            hkn = Bdot + heron_p.gamma1/(p[3*i+2]+0.0001)*B
+            h_expr[i] = hkn - (1-heron_p.gamma2)*hk
+            # h_expr[i] = hk
 
+    if heron_p.CBF == 2:
+        
+        ##################### MPC - TC Distance-based CBF #####################
+        for i in range(num_obs):
+            R = x3/heron_p.rmax*heron_p.gamma_TC1
+            B1 = np.sqrt( (p[3*i+0]-x0-R*cos(x2-np.pi/2))**2 + (p[3*i+1]-x1-R*sin(x2-np.pi/2))**2) - (p[3*i+2]+R)
+            B2 = np.sqrt( (p[3*i+0]-x0-R*cos(x2+np.pi/2))**2 + (p[3*i+1]-x1-R*sin(x2+np.pi/2))**2) - (p[3*i+2]+R)
+            hk = np.log((np.exp(B1)+np.exp(B2)-1))
 
-    B = np.sqrt( (model.x[0]-ox2) ** 2 + (model.x[1] - oy2) ** 2) - or2
-    Bdot = ((model.x[0]-ox2)*model.x[3]*cos(model.x[2]) + (model.x[1]-oy2)*model.x[3]*sin(model.x[2]))/np.sqrt((model.x[0]-ox2)**2 + (model.x[1] - oy2) ** 2)
-    hk = Bdot + gamma1*B    
-    B = np.sqrt( (model.x[0]+x0d-ox2) ** 2 + (model.x[1]+x1d - oy2) ** 2) - or2
-    Bdot = ((model.x[0]+x0d-ox2)*(model.x[3]+x3d)*cos(model.x[2]+x2d) + (model.x[1]+x1d-oy2)*(model.x[3]+x3d)*sin(model.x[2]+x2d))/np.sqrt((model.x[0]+x0d-ox2)**2 + (model.x[1]+x1d - oy2) ** 2)
-    hkn = Bdot + gamma1*B
-    h_expr[1] = hkn - (1-gamma2)*hk
+            
+            R = x3_n/heron_p.rmax*heron_p.gamma_TC1
+            B1 = np.sqrt( (p[3*i+0]-x0_n-R*cos(x2_n-np.pi/2))**2 + (p[3*i+1]-x1_n-R*sin(x2_n-np.pi/2))**2) - (p[3*i+2]+R)
+            B2 = np.sqrt( (p[3*i+0]-x0_n-R*cos(x2_n+np.pi/2))**2 + (p[3*i+1]-x1_n-R*sin(x2_n+np.pi/2))**2) - (p[3*i+2]+R)
+            hkn = np.log((np.exp(B1)+np.exp(B2)-1))
+            h_expr[i] = hkn - (1-heron_p.gamma_TC2)*hk
 
-    B = np.sqrt( (model.x[0]-ox3) ** 2 + (model.x[1] - oy3) ** 2) - or3
-    Bdot = ((model.x[0]-ox3)*model.x[3]*cos(model.x[2]) + (model.x[1]-oy3)*model.x[3]*sin(model.x[2]))/np.sqrt((model.x[0]-ox3)**2 + (model.x[1] - oy3) ** 2)
-    hk = Bdot + gamma1*B
-    B = np.sqrt( (model.x[0]+x0d-ox3) ** 2 + (model.x[1]+x1d - oy3) ** 2) - or3
-    Bdot = ((model.x[0]+x0d-ox3)*(model.x[3]+x3d)*cos(model.x[2]+x2d) + (model.x[1]+x1d-oy3)*(model.x[3]+x3d)*sin(model.x[2]+x2d))/np.sqrt((model.x[0]+x0d-ox3)**2 + (model.x[1]+x1d - oy3) ** 2)
-    hkn = Bdot + gamma1*B
-    h_expr[2] = hkn - (1-gamma2)*hk
-
-    B = np.sqrt( (model.x[0]-ox4) ** 2 + (model.x[1] - oy4) ** 2) - or4
-    Bdot = ((model.x[0]-ox4)*model.x[3]*cos(model.x[2]) + (model.x[1]-oy4)*model.x[3]*sin(model.x[2]))/np.sqrt((model.x[0]-ox4)**2 + (model.x[1] - oy4) ** 2)
-    hk = Bdot + gamma1*B
-    B = np.sqrt( (model.x[0]+x0d-ox4) ** 2 + (model.x[1]+x1d - oy4) ** 2) - or4
-    Bdot = ((model.x[0]+x0d-ox4)*(model.x[3]+x3d)*cos(model.x[2]+x2d) + (model.x[1]+x1d-oy4)*(model.x[3]+x3d)*sin(model.x[2]+x2d))/np.sqrt((model.x[0]+x0d-ox4)**2 + (model.x[1]+x1d - oy4) ** 2)
-    hkn = Bdot + gamma1*B
-    h_expr[3] = hkn - (1-gamma2)*hk
-
-    B = np.sqrt( (model.x[0]-ox5) ** 2 + (model.x[1] - oy5) ** 2) - or5
-    Bdot = ((model.x[0]-ox5)*model.x[3]*cos(model.x[2]) + (model.x[1]-oy5)*model.x[3]*sin(model.x[2]))/np.sqrt((model.x[0]-ox5)**2 + (model.x[1] - oy5) ** 2)
-    hk = Bdot + gamma1*B
-    B = np.sqrt( (model.x[0]+x0d-ox5) ** 2 + (model.x[1]+x1d - oy5) ** 2) - or5
-    Bdot = ((model.x[0]+x0d-ox5)*(model.x[3]+x3d)*cos(model.x[2]+x2d) + (model.x[1]+x1d-oy5)*(model.x[3]+x3d)*sin(model.x[2]+x2d))/np.sqrt((model.x[0]+x0d-ox5)**2 + (model.x[1]+x1d - oy5) ** 2)
-    hkn = Bdot + gamma1*B
-    h_expr[4] = hkn - (1-gamma2)*hk
-
-
-    # h_expr[0] = (model.x[0]-ox1) ** 2 + (model.x[1] - oy1) ** 2 - or1**2
-    # h_expr[1] = (model.x[0]-ox2) ** 2 + (model.x[1] - oy2) ** 2 - or2**2
-    # h_expr[2] = (model.x[0]-ox3) ** 2 + (model.x[1] - oy3) ** 2 - or3**2
-    # h_expr[3] = (model.x[0]-ox4) ** 2 + (model.x[1] - oy4) ** 2 - or4**2
-    # h_expr[4] = (model.x[0]-ox5) ** 2 + (model.x[1] - oy5) ** 2 - or5**2
-
-
+    
 
     ocp.model.con_h_expr = h_expr
 
     ocp.constraints.idxsh = np.array([0,1,2,3,4])
     ocp.constraints.idxsh_e = np.array([0,1,2,3,4])
-    Zh = 1e6 * np.ones(num_obs)
-    zh = 1e6 * np.ones(num_obs)
+    Zh = 1e5 * np.ones(num_obs)
+    zh = 1e5 * np.ones(num_obs)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh
@@ -157,12 +146,12 @@ def setup_trajectory_tracking(x0, Fmax, N_horizon, Tf, dt):
     ocp.model.con_h_expr_e = ocp.model.con_h_expr
 
     # set constraints
-    ocp.constraints.lbu = np.array([-Fmax/5,-Fmax/5])
-    ocp.constraints.ubu = np.array([+Fmax/5,+Fmax/5])
+    ocp.constraints.lbu = np.array([-heron_p.Fmax/10,-heron_p.Fmax/10])
+    ocp.constraints.ubu = np.array([+heron_p.Fmax/10,+heron_p.Fmax/10])
     ocp.constraints.idxbu = np.array([0, 1])
 
-    ocp.constraints.lbx = np.array([-1, -1, -Fmax, -Fmax])
-    ocp.constraints.ubx = np.array([2, 1, Fmax, Fmax])
+    ocp.constraints.lbx = np.array([-2, -1, -heron_p.Fmax, -heron_p.Fmax])
+    ocp.constraints.ubx = np.array([2, 1, heron_p.Fmax, heron_p.Fmax])
     ocp.constraints.idxbx = np.array([3, 4, 5, 6])
 
     ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM' # FULL_CONDENSING_QPOASES
@@ -170,10 +159,10 @@ def setup_trajectory_tracking(x0, Fmax, N_horizon, Tf, dt):
     ocp.solver_options.integrator_type = 'IRK'
     ocp.solver_options.sim_method_newton_iter = 50
     ocp.solver_options.nlp_solver_type = 'SQP_RTI'
-    ocp.solver_options.qp_solver_cond_N = N_horizon
+    ocp.solver_options.qp_solver_cond_N = heron_p.N
 
     # set prediction horizon
-    ocp.solver_options.tf = Tf
+    ocp.solver_options.tf = int(heron_p.dt*heron_p.N)
 
     solver_json = 'acados_ocp_' + model.name + '.json'
     acados_ocp_solver = AcadosOcpSolver(ocp, json_file = solver_json)

@@ -1,18 +1,19 @@
 from acados_template import AcadosModel
 from casadi import SX, vertcat, sin, cos, sqrt
+from load_param import load_param
 
 def export_heron_model() -> AcadosModel:
 
     model_name = 'heron'
 
-    # constants
-    M = 36 # Mass [kg]
-    I = 8.35 # Inertial tensor [kg m^2]
-    L = 0.73 # length [m]
-    Xu = 10
-    Xuu = 16.9 # N/(m/s)^2
-    Nr = 5
-    Nrr = 13 # Nm/(rad/s)^2
+    heron_p = load_param
+    M = heron_p.M
+    I = heron_p.I
+    L = heron_p.L
+    Xu = heron_p.Xu
+    Xuu = heron_p.Xuu
+    Nr = heron_p.Nr
+    Nrr = heron_p.Nrr
 
 
     # set up states & controls

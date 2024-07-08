@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-
-
+from load_param import load_param
+from matplotlib import cm
+from matplotlib.colors import Normalize
 
 def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
     # Define the geometry of the twin-hull ASV
@@ -14,15 +15,25 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
 
     fig, ax = plt.subplots()
 
+    heron_p = load_param
+
 
     # Define the grid for plotting
-    x_range = np.linspace(-20, 20, 100)
-    y_range = np.linspace(-20, 20, 100)
+    x_range = np.linspace(-20, 20, 200)
+    y_range = np.linspace(-20, 20, 200)
     X, Y = np.meshgrid(x_range, y_range)
+    
+    
+    # Create a scatter plot for the heatmap and initialize the colorbar
+    norm = Normalize(vmin=np.min(states[:, 3]), vmax=np.max(states[:, 3]))
+    heatmap = ax.scatter(states[:, 0], states[:, 1], c=states[:, 3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
+    cbar = plt.colorbar(heatmap, ax=ax, fraction=0.035)
+    cbar.set_label("velocity in [m/s]")
 
     def update(frame):
         position = states[frame,0:2]
         heading = states[frame,2]
+        vels = states[frame,3]
         print(inputs[frame,0:2])
         print()
         force_left = states[frame,5]/100
@@ -84,15 +95,17 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
         ax.fill(hull2[0, :], hull2[1, :], 'b', alpha=0.3)
         ax.fill(body[0, :], body[1, :], 'b', alpha=0.3)
         
-        ax.plot(states[0:frame,0], states[0:frame,1], 'b--')  # Mark the position with a red dot
-        
+        # ax.plot(states[0:frame,0], states[0:frame,1], 'b-')  # Mark the position with a red dot
+
+        ax.scatter(states[0:frame,0], states[0:frame,1], c=states[0:frame,3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
+
         ax.plot(position[0], position[1], 'go')  # Mark the position with a red dot
         ax.arrow(position[0], position[1], direction[0], direction[1], head_width=0.1, head_length=0.1, fc='k', ec='k')
         ax.axis('equal')
 
         ax.plot(ref[:,0], ref[:,1], 'k--')
-        ax.plot(yref[frame,:,0], yref[frame,:,1], 'mo')
-        ax.plot(mpc_result[frame][:,0], mpc_result[frame][:,1], 'c.')
+        ax.plot(yref[frame,:,0], yref[frame,:,1], 'c.')
+        ax.plot(mpc_result[frame][:,0], mpc_result[frame][:,1], 'k.')
 
 
         theta = np.linspace( 0 , 2 * np.pi , 150 )
@@ -103,28 +116,36 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
             b = obs_pos[frame][3*i+1] + radius * np.sin( theta )    
             ax.fill(a, b, color='red', alpha=0.3)
 
+        if (heron_p.CBF>0):
+            for i in range(5):        
+                # Initialize hk array
+                hk = np.zeros_like(X)
+                # Calculate hk for each point in the grid
+                for j in range(len(x_range)):
+                    for k in range(len(y_range)):
+                        x = X[j, k]
+                        y = Y[j, k]
+                        theta = states[frame,2]  # Assume theta = 0 for simplicity
+                        v = states[frame,3]  # Assume constant speed for simplicity
 
+                        if (heron_p.CBF==1):
+                            B = np.sqrt((x - obs_pos[frame][3*i+0]) ** 2 + (y - obs_pos[frame][3*i+1]) ** 2) - obs_pos[frame][3*i+2]
+                            Bdot = ((x - obs_pos[frame][3*i+0]) * v * np.cos(theta) + (y - obs_pos[frame][3*i+1]) * v * np.sin(theta)) / np.sqrt((x - obs_pos[frame][3*i+0]) ** 2 + (y - obs_pos[frame][3*i+1]) ** 2)
+                            hk[j, k] = Bdot + heron_p.gamma1/obs_pos[frame][3*i+2] * B
 
+                        elif (heron_p.CBF==2):
+                            R = v/heron_p.rmax*heron_p.gamma_TC1
+                            B1 = np.sqrt( (obs_pos[frame][3*i+0]-x-R*np.cos(theta-np.pi/2))**2 + (obs_pos[frame][3*i+1]-y-R*np.sin(theta-np.pi/2))**2) - (obs_pos[frame][3*i+2]+R)
+                            B2 = np.sqrt( (obs_pos[frame][3*i+0]-x-R*np.cos(theta+np.pi/2))**2 + (obs_pos[frame][3*i+1]-y-R*np.sin(theta+np.pi/2))**2) - (obs_pos[frame][3*i+2]+R)
+                            hk[j, k] = np.max((B1,B2))
 
-        for i in range(5):        
-            # Initialize hk array
-            hk = np.zeros_like(X)
-            # Calculate hk for each point in the grid
-            for j in range(len(x_range)):
-                for k in range(len(y_range)):
-                    x = X[j, k]
-                    y = Y[j, k]
-                    theta = states[frame,2]  # Assume theta = 0 for simplicity
-                    v = states[frame,3]  # Assume constant speed for simplicity
-
-                    B = np.sqrt((x - obs_pos[frame][3*i+0]) ** 2 + (y - obs_pos[frame][3*i+1]) ** 2) - obs_pos[frame][3*i+2]
-                    Bdot = ((x - obs_pos[frame][3*i+0]) * v * np.cos(theta) + (y - obs_pos[frame][3*i+1]) * v * np.sin(theta)) / np.sqrt((x - obs_pos[frame][3*i+0]) ** 2 + (y - obs_pos[frame][3*i+1]) ** 2)
-                    hk[j, k] = Bdot + 0.4 * B
-
-            # Plotting
-            ax.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['red'], alpha=0.1)
+                # Plotting
+                ax.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['red'], alpha=0.1)
         
-        ax.axis([-15, 15, -10, 10])  # Adjust these limits as needed
+
+
+        ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
+        # ax.axis([-15, 145, -15, 15])  # Adjust these limits as needed
     
 
         # ax.autoscale(enable=True, axis='x', tight=True)

@@ -57,6 +57,36 @@ def generate_figure_eight_trajectory_con(tfinal, dt, A=6, B=3, C=5):
     return ref
 
 
+def generate_figure_circle_trajectory_con(tfinal, dt, A=6, C=5):
+    t = np.arange(0, tfinal, dt)
+    x = A * np.sin(t/C)
+    y = A * np.cos(t/C)
+
+    # Calculate the arc length for each point
+    dx = np.gradient(x)
+    dy = np.gradient(y)
+    ds = np.sqrt(dx**2 + dy**2)
+    s = cumtrapz(ds, initial=0)
+    
+    # Create a uniform parameter based on the arc length
+    s_uniform = np.linspace(0, s[-1], len(s))
+    t_uniform = interp1d(s, t)(s_uniform)
+    
+    # Recompute the positions and velocities using the uniform parameter
+    x_uniform = A * np.sin(t_uniform/C)
+    y_uniform = A * np.cos(t_uniform/C)
+    dx_uniform = np.gradient(x_uniform, dt)
+    dy_uniform = np.gradient(y_uniform, dt)
+    velocity_magnitudes = np.sqrt(dx_uniform**2 + dy_uniform**2)
+    
+    positions = np.vstack((x_uniform, y_uniform)).T
+    headings = np.arctan2(dy_uniform, dx_uniform)
+    headings = np.unwrap(headings)
+    rot_speed = np.gradient(headings,dt)
+    ref = np.hstack((positions, headings.reshape(-1, 1), velocity_magnitudes.reshape(-1, 1), rot_speed.reshape(-1, 1)))
+    
+    return ref
+
 
 if __name__ == '__main__':
     tfinal = 40
