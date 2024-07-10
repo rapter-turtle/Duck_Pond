@@ -160,7 +160,7 @@ void ship_acados_create_1_set_plan(ocp_nlp_plan_t* nlp_solver_plan, const int N)
     for (int i = 0; i < N; i++)
     {
         nlp_solver_plan->nlp_dynamics[i] = CONTINUOUS_MODEL;
-        nlp_solver_plan->sim_solver_plan[i].sim_solver = IRK;
+        nlp_solver_plan->sim_solver_plan[i].sim_solver = ERK;
     }
 
     nlp_solver_plan->nlp_constraints[0] = BGH;
@@ -342,21 +342,17 @@ void ship_acados_create_3_create_and_set_functions(ship_solver_capsule* capsule)
     MAP_CASADI_FNC(nl_constr_h_e_fun, ship_constr_h_e_fun);
 
 
-    // implicit dae
-    capsule->impl_dae_fun = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*N);
+    // explicit ode
+    capsule->forw_vde_casadi = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*N);
     for (int i = 0; i < N; i++) {
-        MAP_CASADI_FNC(impl_dae_fun[i], ship_impl_dae_fun);
+        MAP_CASADI_FNC(forw_vde_casadi[i], ship_expl_vde_forw);
     }
 
-    capsule->impl_dae_fun_jac_x_xdot_z = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*N);
+    capsule->expl_ode_fun = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*N);
     for (int i = 0; i < N; i++) {
-        MAP_CASADI_FNC(impl_dae_fun_jac_x_xdot_z[i], ship_impl_dae_fun_jac_x_xdot_z);
+        MAP_CASADI_FNC(expl_ode_fun[i], ship_expl_ode_fun);
     }
 
-    capsule->impl_dae_jac_x_xdot_u_z = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*N);
-    for (int i = 0; i < N; i++) {
-        MAP_CASADI_FNC(impl_dae_jac_x_xdot_u_z[i], ship_impl_dae_jac_x_xdot_u_z);
-    }
 
     // nonlinear least squares function
     MAP_CASADI_FNC(cost_y_0_fun, ship_cost_y_0_fun);
@@ -440,11 +436,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     /**** Dynamics ****/
     for (int i = 0; i < N; i++)
     {
-        ocp_nlp_dynamics_model_set(nlp_config, nlp_dims, nlp_in, i, "impl_dae_fun", &capsule->impl_dae_fun[i]);
-        ocp_nlp_dynamics_model_set(nlp_config, nlp_dims, nlp_in, i,
-                                   "impl_dae_fun_jac_x_xdot_z", &capsule->impl_dae_fun_jac_x_xdot_z[i]);
-        ocp_nlp_dynamics_model_set(nlp_config, nlp_dims, nlp_in, i,
-                                   "impl_dae_jac_x_xdot_u", &capsule->impl_dae_jac_x_xdot_u_z[i]);
+        ocp_nlp_dynamics_model_set(nlp_config, nlp_dims, nlp_in, i, "expl_vde_forw", &capsule->forw_vde_casadi[i]);
+        ocp_nlp_dynamics_model_set(nlp_config, nlp_dims, nlp_in, i, "expl_ode_fun", &capsule->expl_ode_fun[i]);
     }
 
     /**** Cost ****/
@@ -458,8 +451,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     W_0[1+(NY0) * 1] = 2;
     W_0[2+(NY0) * 2] = 100;
     W_0[3+(NY0) * 3] = 200;
-    W_0[4+(NY0) * 4] = 500;
-    W_0[6+(NY0) * 6] = 0.002;
+    W_0[4+(NY0) * 4] = 2000;
+    W_0[6+(NY0) * 6] = 0.02;
     W_0[7+(NY0) * 7] = 0.002;
     W_0[8+(NY0) * 8] = 0.002;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
@@ -477,8 +470,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     W[1+(NY) * 1] = 2;
     W[2+(NY) * 2] = 100;
     W[3+(NY) * 3] = 200;
-    W[4+(NY) * 4] = 500;
-    W[6+(NY) * 6] = 0.002;
+    W[4+(NY) * 4] = 2000;
+    W[6+(NY) * 6] = 0.02;
     W[7+(NY) * 7] = 0.002;
     W[8+(NY) * 8] = 0.002;
 
@@ -497,8 +490,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     W_e[1+(NYN) * 1] = 2;
     W_e[2+(NYN) * 2] = 100;
     W_e[3+(NYN) * 3] = 200;
-    W_e[4+(NYN) * 4] = 500;
-    W_e[6+(NYN) * 6] = 0.002;
+    W_e[4+(NYN) * 4] = 2000;
+    W_e[6+(NYN) * 6] = 0.02;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
     free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun", &capsule->cost_y_0_fun);
@@ -523,26 +516,26 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* zl = zlumem+NS*2;
     double* zu = zlumem+NS*3;
     // change only the non-zero elements:
-    Zl[0] = 10000000;
-    Zl[1] = 10000000;
-    Zl[2] = 10000000;
-    Zl[3] = 10000000;
-    Zl[4] = 10000000;
-    Zu[0] = 10000000;
-    Zu[1] = 10000000;
-    Zu[2] = 10000000;
-    Zu[3] = 10000000;
-    Zu[4] = 10000000;
-    zl[0] = 10000000;
-    zl[1] = 10000000;
-    zl[2] = 10000000;
-    zl[3] = 10000000;
-    zl[4] = 10000000;
-    zu[0] = 10000000;
-    zu[1] = 10000000;
-    zu[2] = 10000000;
-    zu[3] = 10000000;
-    zu[4] = 10000000;
+    Zl[0] = 100000;
+    Zl[1] = 100000;
+    Zl[2] = 100000;
+    Zl[3] = 100000;
+    Zl[4] = 100000;
+    Zu[0] = 100000;
+    Zu[1] = 100000;
+    Zu[2] = 100000;
+    Zu[3] = 100000;
+    Zu[4] = 100000;
+    zl[0] = 100000;
+    zl[1] = 100000;
+    zl[2] = 100000;
+    zl[3] = 100000;
+    zl[4] = 100000;
+    zu[0] = 100000;
+    zu[1] = 100000;
+    zu[2] = 100000;
+    zu[3] = 100000;
+    zu[4] = 100000;
 
     for (int i = 1; i < N; i++)
     {
@@ -563,32 +556,32 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
 
     // change only the non-zero elements:
     
-    Zl_e[0] = 10000000;
-    Zl_e[1] = 10000000;
-    Zl_e[2] = 10000000;
-    Zl_e[3] = 10000000;
-    Zl_e[4] = 10000000;
+    Zl_e[0] = 100000;
+    Zl_e[1] = 100000;
+    Zl_e[2] = 100000;
+    Zl_e[3] = 100000;
+    Zl_e[4] = 100000;
 
     
-    Zu_e[0] = 10000000;
-    Zu_e[1] = 10000000;
-    Zu_e[2] = 10000000;
-    Zu_e[3] = 10000000;
-    Zu_e[4] = 10000000;
+    Zu_e[0] = 100000;
+    Zu_e[1] = 100000;
+    Zu_e[2] = 100000;
+    Zu_e[3] = 100000;
+    Zu_e[4] = 100000;
 
     
-    zl_e[0] = 10000000;
-    zl_e[1] = 10000000;
-    zl_e[2] = 10000000;
-    zl_e[3] = 10000000;
-    zl_e[4] = 10000000;
+    zl_e[0] = 100000;
+    zl_e[1] = 100000;
+    zl_e[2] = 100000;
+    zl_e[3] = 100000;
+    zl_e[4] = 100000;
 
     
-    zu_e[0] = 10000000;
-    zu_e[1] = 10000000;
-    zu_e[2] = 10000000;
-    zu_e[3] = 10000000;
-    zu_e[4] = 10000000;
+    zu_e[0] = 100000;
+    zu_e[1] = 100000;
+    zu_e[2] = 100000;
+    zu_e[3] = 100000;
+    zu_e[4] = 100000;
 
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zl", Zl_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zu", Zu_e);
@@ -615,10 +608,10 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     // change only the non-zero elements:
     lbx0[0] = -50;
     ubx0[0] = -50;
-    lbx0[3] = 2.5;
-    ubx0[3] = 2.5;
-    lbx0[5] = 362.5;
-    ubx0[5] = 362.5;
+    lbx0[3] = 2;
+    ubx0[3] = 2;
+    lbx0[5] = 240;
+    ubx0[5] = 240;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbx", idxbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
@@ -655,10 +648,10 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* lbu = lubu;
     double* ubu = lubu + NBU;
     
-    lbu[0] = -25;
-    ubu[0] = 25;
-    lbu[1] = -25;
-    ubu[1] = 25;
+    lbu[0] = -50;
+    ubu[0] = 50;
+    lbu[1] = -50;
+    ubu[1] = 50;
 
     for (int i = 0; i < N; i++)
     {
@@ -708,14 +701,13 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* lbx = lubx;
     double* ubx = lubx + NBX;
     
-    lbx[0] = 1;
     ubx[0] = 3;
     lbx[1] = -1;
     ubx[1] = 1;
     lbx[2] = 100;
     ubx[2] = 500;
-    lbx[3] = -50;
-    ubx[3] = 50;
+    lbx[3] = -100;
+    ubx[3] = 100;
 
     for (int i = 1; i < N; i++)
     {
@@ -852,7 +844,7 @@ int fixed_hess = 0;
     for (int i = 0; i < N; i++)
         ocp_nlp_solver_opts_set_at_stage(nlp_config, nlp_opts, i, "dynamics_num_stages", &sim_method_num_stages);
 
-    int newton_iter_val = 100;
+    int newton_iter_val = 200;
     for (int i = 0; i < N; i++)
         ocp_nlp_solver_opts_set_at_stage(nlp_config, nlp_opts, i, "dynamics_newton_iter", &newton_iter_val);
 
@@ -868,7 +860,7 @@ int fixed_hess = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "levenberg_marquardt", &levenberg_marquardt);
 
     /* options QP solver */
-    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 40;
+    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 5;
     qp_solver_cond_N = N < qp_solver_cond_N_ori ? N : qp_solver_cond_N_ori; // use the minimum value here
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_N", &qp_solver_cond_N);
 
@@ -925,8 +917,8 @@ void ship_acados_create_7_set_nlp_out(ship_solver_capsule* capsule)
     // initialize with x0
     
     x0[0] = -50;
-    x0[3] = 2.5;
-    x0[5] = 362.5;
+    x0[3] = 2;
+    x0[5] = 240;
 
 
     double* u0 = xu0 + NX;
@@ -1067,8 +1059,6 @@ int ship_acados_reset(ship_solver_capsule* capsule, int reset_qp_solver_mem)
         if (i<N)
         {
             ocp_nlp_out_set(nlp_config, nlp_dims, nlp_out, i, "pi", buffer);
-            ocp_nlp_set(nlp_config, nlp_solver, i, "xdot_guess", buffer);
-            ocp_nlp_set(nlp_config, nlp_solver, i, "z_guess", buffer);
         }
     }
     // get qp_status: if NaN -> reset memory
@@ -1101,9 +1091,8 @@ int ship_acados_update_params(ship_solver_capsule* capsule, int stage, double *p
     const int N = capsule->nlp_solver_plan->N;
     if (stage < N && stage >= 0)
     {
-        capsule->impl_dae_fun[stage].set_param(capsule->impl_dae_fun+stage, p);
-        capsule->impl_dae_fun_jac_x_xdot_z[stage].set_param(capsule->impl_dae_fun_jac_x_xdot_z+stage, p);
-        capsule->impl_dae_jac_x_xdot_u_z[stage].set_param(capsule->impl_dae_jac_x_xdot_u_z+stage, p);
+        capsule->forw_vde_casadi[stage].set_param(capsule->forw_vde_casadi+stage, p);
+        capsule->expl_ode_fun[stage].set_param(capsule->expl_ode_fun+stage, p);
 
         // constraints
         if (stage == 0)
@@ -1168,9 +1157,8 @@ int ship_acados_update_params_sparse(ship_solver_capsule * capsule, int stage, i
     const int N = capsule->nlp_solver_plan->N;
     if (stage < N && stage >= 0)
     {
-        capsule->impl_dae_fun[stage].set_param_sparse(capsule->impl_dae_fun+stage, n_update, idx, p);
-        capsule->impl_dae_fun_jac_x_xdot_z[stage].set_param_sparse(capsule->impl_dae_fun_jac_x_xdot_z+stage, n_update, idx, p);
-        capsule->impl_dae_jac_x_xdot_u_z[stage].set_param_sparse(capsule->impl_dae_jac_x_xdot_u_z+stage, n_update, idx, p);
+        capsule->forw_vde_casadi[stage].set_param_sparse(capsule->forw_vde_casadi+stage, n_update, idx, p);
+        capsule->expl_ode_fun[stage].set_param_sparse(capsule->expl_ode_fun+stage, n_update, idx, p);
 
         // constraints
         if (stage == 0)
@@ -1253,13 +1241,11 @@ int ship_acados_free(ship_solver_capsule* capsule)
     // dynamics
     for (int i = 0; i < N; i++)
     {
-        external_function_param_casadi_free(&capsule->impl_dae_fun[i]);
-        external_function_param_casadi_free(&capsule->impl_dae_fun_jac_x_xdot_z[i]);
-        external_function_param_casadi_free(&capsule->impl_dae_jac_x_xdot_u_z[i]);
+        external_function_param_casadi_free(&capsule->forw_vde_casadi[i]);
+        external_function_param_casadi_free(&capsule->expl_ode_fun[i]);
     }
-    free(capsule->impl_dae_fun);
-    free(capsule->impl_dae_fun_jac_x_xdot_z);
-    free(capsule->impl_dae_jac_x_xdot_u_z);
+    free(capsule->forw_vde_casadi);
+    free(capsule->expl_ode_fun);
 
     // cost
     external_function_param_casadi_free(&capsule->cost_y_0_fun);

@@ -63,7 +63,7 @@
 #define SHIP_NY0    9
 #define SHIP_NY     9
 #define SHIP_NYN    7
-#define SHIP_N      40
+#define SHIP_N      5
 #define SHIP_NH     5
 #define SHIP_NHN    5
 #define SHIP_NH0    0
@@ -96,9 +96,8 @@ typedef struct ship_solver_capsule
     /* external functions */
     // dynamics
 
-    external_function_param_casadi *impl_dae_fun;
-    external_function_param_casadi *impl_dae_fun_jac_x_xdot_z;
-    external_function_param_casadi *impl_dae_jac_x_xdot_u_z;
+    external_function_param_casadi *forw_vde_casadi;
+    external_function_param_casadi *expl_ode_fun;
 
 
 
