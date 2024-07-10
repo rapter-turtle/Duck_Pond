@@ -429,7 +429,7 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
         heron_acados_update_time_steps(capsule, N, new_time_steps);
     }
     else
-    {double time_step = 0.1;
+    {double time_step = 0.2;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
@@ -616,12 +616,10 @@ void heron_acados_create_5_set_nlp_in(heron_solver_capsule* capsule, const int N
     double* lbx0 = lubx0;
     double* ubx0 = lubx0 + NBX0;
     // change only the non-zero elements:
-    lbx0[0] = -10;
-    ubx0[0] = -10;
-    lbx0[1] = -10;
-    ubx0[1] = -10;
-    lbx0[3] = 1;
-    ubx0[3] = 1;
+    lbx0[1] = 2;
+    ubx0[1] = 2;
+    lbx0[3] = 0.9;
+    ubx0[3] = 0.9;
     lbx0[5] = 15;
     ubx0[5] = 15;
     lbx0[6] = 15;
@@ -931,9 +929,8 @@ void heron_acados_create_7_set_nlp_out(heron_solver_capsule* capsule)
 
     // initialize with x0
     
-    x0[0] = -10;
-    x0[1] = -10;
-    x0[3] = 1;
+    x0[1] = 2;
+    x0[3] = 0.9;
     x0[5] = 15;
     x0[6] = 15;
 
