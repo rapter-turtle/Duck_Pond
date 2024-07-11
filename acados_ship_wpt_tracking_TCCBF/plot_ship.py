@@ -88,6 +88,11 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
             b = obs_pos[frame][5*i+1] + radius * np.sin( theta )    
             ax_asv.fill(a, b, color='red', alpha=0.3)
 
+            radius = obs_pos[frame][5*i+2]
+            a = obs_pos[frame][5*i+0] + radius * np.cos( theta )
+            b = obs_pos[frame][5*i+1] + radius * np.sin( theta )    
+            ax_asv.fill(a, b, color='red', alpha=0.1)
+
         if (ship_p.CBF>0) and (ship_p.CBF_plot==1):
             for i in range(5):        
                 # Initialize hk array
@@ -115,7 +120,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
                             # hk[j, k] = B1                            
 
                 # Plotting
-                ax_asv.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['red'], alpha=0.1)
+                ax_asv.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['orange'], alpha=0.3)
 
         # ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
         # ax.axis([-15, 145, -15, 15])  # Adjust these limits as needed
@@ -126,6 +131,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
         # Axis 범위 지정
         ax_asv.set_xlim([states[0, 0] - 50, states[-1, 0] + 50])
         ax_asv.set_ylim([-50, 50])
+        ax_asv.grid(True)
 
 
         times = np.linspace(0, dt*frame, frame)
@@ -139,7 +145,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
             ax_cbf1.plot(times,cbf_and_dist[0:frame,j])
         ax_cbf1.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_cbf1.set_xlim([0, len(cbf_and_dist)*dt])
-        ax_cbf1.set_ylim([-5, np.max(cbf_and_dist[:,0])])
+        ax_cbf1.set_ylim([-10, 30])
         ax_cbf1.set_xlabel("Time", fontsize=FS)
         ax_cbf1.set_title("CBF", fontsize=FS)
         
@@ -151,7 +157,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
                 ax_cbf2.plot(times,cbf_and_dist[1:frame+1,j]-(1-ship_p.gamma_TC2)*cbf_and_dist[0:frame,j])
         ax_cbf2.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_cbf2.set_xlim([0, len(cbf_and_dist)*dt])
-        ax_cbf2.set_ylim([-1, 3])
+        ax_cbf2.set_ylim([-2, 3])
         ax_cbf2.set_xlabel("Time", fontsize=FS)
         ax_cbf2.set_title("DCBF", fontsize=FS)
         
@@ -161,7 +167,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
         ax_cbf3.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_cbf3.set_xlim([0, len(cbf_and_dist)*dt])
         # ax_cbf3.set_ylim([-5, np.max(cbf_and_dist[:,0])])
-        ax_cbf3.set_ylim([0, 20])
+        ax_cbf3.set_ylim([-5, 20])
         ax_cbf3.set_xlabel("Time", fontsize=FS)
         ax_cbf3.set_title("Closest Distance", fontsize=FS)
 
@@ -190,7 +196,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
     anim = FuncAnimation(fig, update, frames, repeat=False)
     date_string = time.strftime("%Y-%m-%d-%H:%M")
     # anim.save(date_string + 'cbf_type_' + str(ship_p.CBF) + '.gif', writer='imagemagick')  # Save the animation as a gif file
-    anim.save(mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.gif', writer=PillowWriter(fps=20))  
+    anim.save('Result_' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.gif', writer=PillowWriter(fps=20))  
     plt.close(fig)  # Close the figure to free memory
 
 

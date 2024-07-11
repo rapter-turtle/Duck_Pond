@@ -20,7 +20,6 @@ def setup_wpt_tracking(x0):
     ny_e = nx
 
     ocp.dims.N = ship_p.N
-
     # set cost module
     ocp.cost.cost_type = 'NONLINEAR_LS'
     ocp.cost.cost_type_e = 'NONLINEAR_LS'
@@ -147,7 +146,7 @@ def setup_wpt_tracking(x0):
             B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
             hkn = np.log((np.exp(B1)+np.exp(B2)-1))
-            hkn = B1
+            # hkn = B1
             h_expr[i] = hkn - (1-ship_p.gamma_TC2)*hk
 
     
@@ -156,8 +155,8 @@ def setup_wpt_tracking(x0):
 
     ocp.constraints.idxsh = np.array([0,1,2,3,4])
     ocp.constraints.idxsh_e = np.array([0,1,2,3,4])
-    Zh = 1e5 * np.ones(num_obs)
-    zh = 1e5 * np.ones(num_obs)
+    Zh = 1e4 * np.ones(num_obs)
+    zh = 1e4 * np.ones(num_obs)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh
@@ -184,10 +183,10 @@ def setup_wpt_tracking(x0):
     ocp.solver_options.print_level = 0
     ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM' # FULL_CONDENSING_QPOASES
     ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
-    ocp.solver_options.integrator_type = 'ERK'
-    ocp.solver_options.sim_method_newton_iter = 200
+    ocp.solver_options.integrator_type = 'IRK'
+    ocp.solver_options.sim_method_newton_iter = 50
     ocp.solver_options.nlp_solver_type = 'SQP_RTI'
-    ocp.solver_options.qp_solver_cond_N = ship_p.N
+    ocp.solver_options.qp_solver_cond_N = int(ship_p.N/2)
 
     # set prediction horizon
     ocp.solver_options.tf = int(ship_p.dt*ship_p.N)
