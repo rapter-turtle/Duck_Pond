@@ -40,9 +40,9 @@ class load_ship_param:
 
     # CBF param
     CBF = 2 # 0-DC 1-ED 2-TC   
-    CBF_plot = 0 # 0-plot off / 1-Plot on
+    CBF_plot = 1 # 0-plot off / 1-Plot on
     #### CBF = 1 ####
-    gamma1 = 2
+    gamma1 = 1
     gamma2 = 0.02
 
     #### CBF = 2 ####

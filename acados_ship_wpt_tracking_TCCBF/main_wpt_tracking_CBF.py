@@ -20,6 +20,8 @@ def main(cbf_num,mode,prediction_horizon):
         Tf = 80
     if mode == 'overtaking':   
         Tf = 150    
+    if mode == 'crossing':   
+        Tf = 350    
 
     Nsim = int(Tf/dt)
     # Initial state
@@ -34,7 +36,7 @@ def main(cbf_num,mode,prediction_horizon):
                    Fx_init/2,  # Fx
                    Fx_init/2])  # Fn    
 
-    ocp_solver, integrator = setup_wpt_tracking(x0)
+    ocp_solver, integrator = setup_wpt_tracking(x0,mode)
 
     nx = ocp_solver.acados_ocp.dims.nx
     nu = ocp_solver.acados_ocp.dims.nu
@@ -169,6 +171,59 @@ def main(cbf_num,mode,prediction_horizon):
                 else:
                     ocp_solver.set(j, "p", obs_pos)         
 
+        ## Dynamic obstacles - Avoid              
+        if mode == 'crossing':
+            for j in range(N_horizon+1):
+                obs_speed1 = 0.75
+                obs_speed2 = 0.35
+                obs_speed3 = -0.5
+                obs_speed4 = 0.5
+                obs_speed5 = -1
+                ox1 = 100
+                oy1 = -50 + (i+j)*dt*obs_speed1;  
+                or1 = 30.0
+                ox2 = 200
+                oy2 = -50 + (i+j)*dt*obs_speed2;  
+                or2 = 30.0
+                ox3 = 300
+                oy3 = 70 + (i+j)*dt*obs_speed3;  
+                or3 = 30.0
+                ox4 = 400
+                oy4 = -90 + (i+j)*dt*obs_speed4;  
+                or4 = 30.0
+                ox5 = 500
+                oy5 = 250 + (i+j)*dt*obs_speed5;  
+                or5 = 30.0
+                
+                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, obs_speed1,  
+                                    ox2, oy2, or2 + ship_p.radius, 0, obs_speed2,  
+                                    ox3, oy3, or3 + ship_p.radius, 0, obs_speed3,  
+                                    ox4, oy4, or4 + ship_p.radius, 0, obs_speed4,  
+                                    ox5, oy5, or5 + ship_p.radius, 0, obs_speed5])    
+
+                if j == 0:
+                    for jj in range(5):
+                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
+                        if jj == 2 or jj == 4:
+                            cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],3)
+                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])                
+
+                if j == 0:
+                    obs_list.append(obs_pos)
+ 
+
+                # if simX[i, 0] > ox5:
+                #     obs_pos = np.array([ox1, oy1, 0.00001, 0, 0,  
+                #                         ox2, oy2, 0.00001, 0, 0,  
+                #                         ox3, oy3, 0.00001, 0, 0,  
+                #                         ox4, oy4, 0.00001, 0, 0,  
+                #                         ox5, oy5, 0.00001, 0, 0])  
+                                    
+                if j == N_horizon:
+                    ocp_solver.set(N_horizon, "p", obs_pos)
+                else:
+                    ocp_solver.set(j, "p", obs_pos)         
+
 
         ## Dynamic obstacles - Overtaking              
         if mode == 'overtaking':
@@ -263,7 +318,7 @@ def main(cbf_num,mode,prediction_horizon):
 
     ocp_solver = None
     plot_iter = len(simX)-1
-    plot_iter = 50
+    plot_iter = 25
     animateASV(simX, target_speed, mpc_pred_list, obs_array, cbf_and_dist, plot_iter, t_preparation+t_feedback, mode)
     # animateCBF(plot_iter, cbf_and_dist, mode)
 
@@ -300,6 +355,13 @@ def calc_cbf(state,obs,type):
             cbf = B2
         if ship_p.TCCBF == 1:
             cbf = B1
+    if type == 3:
+        R = v/ship_p.rmax*ship_p.gamma_TC1
+        B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
+        B2 = np.sqrt( (ox-x-R*  cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
+        cbf = B2
+
+
     return cbf
 
 
@@ -319,17 +381,20 @@ if __name__ == '__main__':
 
 
     # for i in range(2):        
-        mode = 'avoid'
-        # main(1,mode,10)
-        main(2,mode,10)
-        mode = 'static_straight'
-        # main(1,mode,10)
-        main(2,mode,10)
-        mode = 'overtaking'
-        # main(1,mode,10)
-        main(2,mode,10)
-        mode = 'static_narrow'
-        # main(1,mode,10)
+        # mode = 'avoid'
+        # # main(1,mode,10)
+        # main(2,mode,10)
+        # mode = 'static_straight'
+        # # main(1,mode,10)
+        # main(2,mode,10)
+        # mode = 'overtaking'
+        # # main(1,mode,10)
+        # main(2,mode,10)
+        # mode = 'static_narrow'
+        # # main(1,mode,10)
+        # main(2,mode,10)       
+        mode = 'crossing'
+        main(1,mode,10)
         main(2,mode,10)        
         # main(1,mode,5)
         # main(1,mode,10)

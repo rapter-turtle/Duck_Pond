@@ -30,6 +30,9 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
     # Define the grid for plotting
     x_range = np.linspace(states[0,0], states[-1,0], 200)
     y_range = np.linspace(-80, 80, 200)
+    if mode == 'crossing':
+        y_range = np.linspace(-180, 180, 200)
+        
     X, Y = np.meshgrid(x_range, y_range)
     
 
@@ -127,6 +130,9 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
                                 hk[j, k] = np.max((B1,B2))
                                 if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-theta)>np.pi/2:
                                     hk[j, k] = 100
+                            if mode == 'crossing':
+                                if i == 2 or i == 4:
+                                    hk[j, k] = B2
 
                 # Plotting
                 ax_asv.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['orange'], alpha=0.3)
@@ -154,7 +160,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
             ax_cbf1.plot(times,cbf_and_dist[0:frame,j])
         ax_cbf1.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_cbf1.set_xlim([0, len(cbf_and_dist)*dt])
-        ax_cbf1.set_ylim([-10, 30])
+        ax_cbf1.set_ylim([-2, 30])
         ax_cbf1.set_xlabel("Time", fontsize=FS)
         ax_cbf1.set_title("CBF", fontsize=FS)
         
@@ -166,7 +172,7 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
                 ax_cbf2.plot(times,cbf_and_dist[1:frame+1,j]-(1-ship_p.gamma_TC2)*cbf_and_dist[0:frame,j])
         ax_cbf2.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_cbf2.set_xlim([0, len(cbf_and_dist)*dt])
-        ax_cbf2.set_ylim([-2, 3])
+        ax_cbf2.set_ylim([-0.5, 3])
         ax_cbf2.set_xlabel("Time", fontsize=FS)
         ax_cbf2.set_title("DCBF", fontsize=FS)
         
