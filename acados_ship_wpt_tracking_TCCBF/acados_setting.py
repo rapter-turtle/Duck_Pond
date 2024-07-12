@@ -70,15 +70,15 @@ def setup_wpt_tracking(x0):
                 ox5, oy5, or5, odx5, ody5)
     
     ocp.model.p = p 
-    ocp.parameter_values = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.0, 0.0, 0.0])
+    ocp.parameter_values = np.array([0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0])
 
     num_obs = 5
     ocp.constraints.uh = 1e10 * np.ones(num_obs)
-    ocp.constraints.lh = np.zeros(num_obs)
+    ocp.constraints.lh = -1e-10 * np.ones(num_obs)
     h_expr = SX.zeros(num_obs,1)
 
     x0 = model.x[0]
@@ -139,14 +139,22 @@ def setup_wpt_tracking(x0):
             R = x3/ship_p.rmax*ship_p.gamma_TC1
             B1 = np.sqrt( (ox-x0-R*cos(x2-np.pi/2))**2 + (oy-x1-R*sin(x2-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox-x0-R*cos(x2+np.pi/2))**2 + (oy-x1-R*sin(x2+np.pi/2))**2) - (obr+R)
-            hk = np.log((np.exp(B1)+np.exp(B2)-1))
-            # hk = B1
+            if ship_p.TCCBF == 1:
+                hk = B1
+            if ship_p.TCCBF == 2:
+                hk = B2
+            if ship_p.TCCBF == 3:
+                hk = np.log((np.exp(B1)+np.exp(B2)-1))
             
             R = x3_n/ship_p.rmax*ship_p.gamma_TC1
             B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
-            hkn = np.log((np.exp(B1)+np.exp(B2)-1))
-            # hkn = B1
+            if ship_p.TCCBF == 1:
+                hkn = B1
+            if ship_p.TCCBF == 2:
+                hkn = B2
+            if ship_p.TCCBF == 3:
+                hkn = np.log((np.exp(B1)+np.exp(B2)-1))
             h_expr[i] = hkn - (1-ship_p.gamma_TC2)*hk
 
     
@@ -155,8 +163,8 @@ def setup_wpt_tracking(x0):
 
     ocp.constraints.idxsh = np.array([0,1,2,3,4])
     ocp.constraints.idxsh_e = np.array([0,1,2,3,4])
-    Zh = 1e4 * np.ones(num_obs)
-    zh = 1e4 * np.ones(num_obs)
+    Zh = 1e6 * np.ones(num_obs)
+    zh = 1e6 * np.ones(num_obs)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh
@@ -176,17 +184,21 @@ def setup_wpt_tracking(x0):
     ocp.constraints.ubu = np.array([+ship_p.dFxmax,+ship_p.dFnmax])
     ocp.constraints.idxbu = np.array([0, 1])
 
-    ocp.constraints.lbx = np.array([0, -1, ship_p.Fxmin, -ship_p.Fnmax])
+    ocp.constraints.lbx = np.array([0, -1, ship_p.Fxmin, ship_p.Fnmin])
     ocp.constraints.ubx = np.array([3, 1, ship_p.Fxmax, ship_p.Fnmax])
     ocp.constraints.idxbx = np.array([3, 4, 5, 6])
 
     ocp.solver_options.print_level = 0
+    # ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'
     ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM' # FULL_CONDENSING_QPOASES
     ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
-    ocp.solver_options.integrator_type = 'IRK'
-    ocp.solver_options.sim_method_newton_iter = 50
+    # ocp.solver_options.hessian_approx = 'EXACT'
+    ocp.solver_options.integrator_type = 'ERK'
+    # ocp.solver_options.integrator_type = 'DISCRETE'
+    # ocp.solver_options.tol = 1e-10
+    # ocp.solver_options.sim_method_newton_iter = 250
     ocp.solver_options.nlp_solver_type = 'SQP_RTI'
-    ocp.solver_options.qp_solver_cond_N = int(ship_p.N/2)
+    # ocp.solver_options.qp_solver_cond_N = int(ship_p.N)
 
     # set prediction horizon
     ocp.solver_options.tf = int(ship_p.dt*ship_p.N)

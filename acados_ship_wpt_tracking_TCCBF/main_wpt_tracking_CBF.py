@@ -1,6 +1,7 @@
 from plot_ship import *
 from acados_setting import *
 from load_param import *
+from ship_integrator import *
 
 def main(cbf_num,mode,prediction_horizon):
     ship_p = load_ship_param
@@ -16,7 +17,7 @@ def main(cbf_num,mode,prediction_horizon):
     if mode == 'static_narrow':   
         Tf = 100
     if mode == 'avoid':   
-        Tf = 100
+        Tf = 80
     if mode == 'overtaking':   
         Tf = 150    
 
@@ -25,13 +26,13 @@ def main(cbf_num,mode,prediction_horizon):
     target_speed = 2.0
 
     Fx_init = ship_p.Xu*target_speed + ship_p.Xuu*target_speed**2
-    x0 = np.array([-50.0, # x
+    x0 = np.array([0.0 , # x
                    0.0, # y
                    0.0, # psi
                    target_speed, # vel
                    0.0, # rot-vel
-                   Fx_init,  # Fx
-                   0])  # Fn    
+                   Fx_init/2,  # Fx
+                   Fx_init/2])  # Fn    
 
     ocp_solver, integrator = setup_wpt_tracking(x0)
 
@@ -58,9 +59,9 @@ def main(cbf_num,mode,prediction_horizon):
     for i in range(Nsim):
         print(i)
         for j in range(N_horizon):
-            yref = np.hstack((0,0,0,target_speed,0,Fx_init,0,0,0))
+            yref = np.hstack((0,0,0,target_speed,0,Fx_init/2,Fx_init/2,0,0))
             ocp_solver.cost_set(j, "yref", yref)
-        yref_N = np.hstack((0,0,0,target_speed,0,Fx_init,0))
+        yref_N = np.hstack((0,0,0,target_speed,0,Fx_init/2,Fx_init/2))
         ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
         
@@ -99,8 +100,8 @@ def main(cbf_num,mode,prediction_horizon):
             
         ## Static obstacles - Narrow
         if mode == 'static_narrow':
-            ox1 = 50; oy1 = +30; or1 = 20.0
-            ox2 = 50; oy2 = -30; or2 = 20.0
+            ox1 = 50; oy1 = +25; or1 = 20.0
+            ox2 = 50; oy2 = -25; or2 = 20.0
             ox3 = 500; oy3 = +100; or3 = 0.001
             ox4 = 500; oy4 = +100; or4 = 0.001
             ox5 = 500; oy5 = +100; or5 = 0.001
@@ -124,45 +125,44 @@ def main(cbf_num,mode,prediction_horizon):
         ## Dynamic obstacles - Avoid              
         if mode == 'avoid':
             for j in range(N_horizon+1):
-                ox1 = simX[i,0]-90
-                oy1 = 0 
-                or1 = 0.0
-                ox2 = simX[i,0]-90
-                oy2 = 0
-                or2 = 0.0
-                ox3 = simX[i,0]-90
-                oy3 = 0
-                or3 = 0.0
-                ox4 = simX[i,0]-90
-                oy4 = 0
-                or4 = 0.0
-
-                obs_speed = -0.5
-                ox5 = 50 + (i+j)*dt*obs_speed;  
+                obs_speed = - 0.5
+                ox1 = 100 + (i+j)*dt*obs_speed;  
+                oy1 = 0.001; 
+                or1 = 10.0
+                ox2 = 100 + (i+j)*dt*obs_speed;  
+                oy2 = 0.001; 
+                or2 = 10.0
+                ox3 = 100 + (i+j)*dt*obs_speed;  
+                oy3 = 0.001; 
+                or3 = 10.0
+                ox4 = 100 + (i+j)*dt*obs_speed;  
+                oy4 = 0.001; 
+                or4 = 10.0
+                ox5 = 100 + (i+j)*dt*obs_speed;  
                 oy5 = 0.001; 
                 or5 = 10.0
                 
-                obs_pos = np.array([ox1, oy1, or1, 0, 0,  
-                                    ox2, oy2, or2, 0, 0,  
-                                    ox3, oy3, or3, 0, 0,  
-                                    ox4, oy4, or4, 0, 0,  
+                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, obs_speed, 0,  
+                                    ox2, oy2, or2 + ship_p.radius, obs_speed, 0,  
+                                    ox3, oy3, or3 + ship_p.radius, obs_speed, 0,  
+                                    ox4, oy4, or4 + ship_p.radius, obs_speed, 0,  
                                     ox5, oy5, or5 + ship_p.radius, obs_speed, 0])    
 
                 if j == 0:
-                    jj = 4
-                    cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
-                    cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])                
+                    for jj in range(5):
+                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
+                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])                
 
                 if j == 0:
                     obs_list.append(obs_pos)
  
 
-                if simX[i, 0] > ox5:
-                    obs_pos = np.array([ox1, oy1, 0.00001, obs_speed, 0,  
-                                        ox2, oy2, 0.00001, obs_speed, 0,  
-                                        ox3, oy3, 0.00001, obs_speed, 0,  
-                                        ox4, oy4, 0.00001, obs_speed, 0,  
-                                        ox5, oy5, 0.00001, obs_speed, 0])  
+                # if simX[i, 0] > ox5:
+                #     obs_pos = np.array([ox1, oy1, 0.00001, 0, 0,  
+                #                         ox2, oy2, 0.00001, 0, 0,  
+                #                         ox3, oy3, 0.00001, 0, 0,  
+                #                         ox4, oy4, 0.00001, 0, 0,  
+                #                         ox5, oy5, 0.00001, 0, 0])  
                                     
                 if j == N_horizon:
                     ocp_solver.set(N_horizon, "p", obs_pos)
@@ -173,20 +173,20 @@ def main(cbf_num,mode,prediction_horizon):
         ## Dynamic obstacles - Overtaking              
         if mode == 'overtaking':
             for j in range(N_horizon+1):
-                obs_speed = 1
+                obs_speed = 0.5
                 ox1 = 50 + (i+j)*dt*obs_speed; 
-                oy1 = 50.001
+                oy1 = 0.001
                 or1 = 0.0
                 ox2 = 50 + (i+j)*dt*obs_speed; 
-                oy2 = 50.001
+                oy2 = 0.001
                 or2 = 0.0
                 ox3 = 50 + (i+j)*dt*obs_speed; 
-                oy3 = 50.001
+                oy3 = 0.001
                 or3 = 0.0
                 ox4 = 50 + (i+j)*dt*obs_speed; 
-                oy4 = 50.001
+                oy4 = 0.001
                 or4 = 0.0
-                ox5 = 0 + (i+j)*dt*obs_speed; 
+                ox5 = 80 + (i+j)*dt*obs_speed; 
                 oy5 = 0.001; 
                 or5 = 10.0
                 
@@ -209,12 +209,8 @@ def main(cbf_num,mode,prediction_horizon):
                 #                         ox2, oy2, 0.00001, obs_speed, 0,  
                 #                         ox3, oy3, 0.00001, obs_speed, 0,  
                 #                         ox4, oy4, 0.00001, obs_speed, 0,  
-                #                         ox5, oy5, 0.00001, obs_speed, 0])   
-                    
-                if j == N_horizon:
-                    ocp_solver.set(N_horizon, "p", obs_pos)
-                else:
-                    ocp_solver.set(j, "p", obs_pos)         
+                #                         ox5, oy5, 0.00001, obs_speed, 0])                       
+                ocp_solver.set(j, "p", obs_pos)         
 
 
 
@@ -242,9 +238,9 @@ def main(cbf_num,mode,prediction_horizon):
         mpc_pred_array = np.vstack(mpc_pred)
         mpc_pred_list.append(mpc_pred_array)
 
-
         # simulate system
-        simX[i+1, :] = integrator.simulate(x=simX[i, :], u=simU[i,:])
+        # simX[i+1, :] = integrator.simulate(x=simX[i, :], u=simU[i,:])
+        simX[i+1, :] = ship_integrator(simX[i, :], simU[i,:], dt)
 
         # print(simX[i, 3])
         # print(simU[i, :])
@@ -267,7 +263,7 @@ def main(cbf_num,mode,prediction_horizon):
 
     ocp_solver = None
     plot_iter = len(simX)-1
-    plot_iter = 249
+    plot_iter = 50
     animateASV(simX, target_speed, mpc_pred_list, obs_array, cbf_and_dist, plot_iter, t_preparation+t_feedback, mode)
     # animateCBF(plot_iter, cbf_and_dist, mode)
 
@@ -298,16 +294,12 @@ def calc_cbf(state,obs,type):
         R = v/ship_p.rmax*ship_p.gamma_TC1
         B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
         B2 = np.sqrt( (ox-x-R*  cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
-        cbf = np.log((np.exp(B1)+np.exp(B2)-1))
-        # cbf = np.max((B1,B2))
-        # cbf = B1
-    if type == 3:
-        R = v/ship_p.rmax*ship_p.gamma_TC1
-        B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
-        B2 = np.sqrt( (ox-x-R*  cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
-        # cbf = np.log((np.exp(B1)+np.exp(B2)-1))
-        # cbf = np.max((B1,B2))
-        cbf = B2
+        if ship_p.TCCBF == 3:
+            cbf = np.log((np.exp(B1)+np.exp(B2)-1))
+        if ship_p.TCCBF == 2:
+            cbf = B2
+        if ship_p.TCCBF == 1:
+            cbf = B1
     return cbf
 
 
@@ -326,19 +318,30 @@ if __name__ == '__main__':
     #     main(0,mode,N)
 
 
-    for i in range(3):
-        N = 10 + 10*i
-        print(N)
+    # for i in range(2):        
         mode = 'avoid'
-        main(1,mode,N)
-        # main(2,mode,N)        
+        # main(1,mode,10)
+        main(2,mode,10)
         mode = 'static_straight'
-        main(1,mode,N)
-        # main(2,mode,N)
+        # main(1,mode,10)
+        main(2,mode,10)
         mode = 'overtaking'
-        main(1,mode,N)
+        # main(1,mode,10)
+        main(2,mode,10)
+        mode = 'static_narrow'
+        # main(1,mode,10)
+        main(2,mode,10)        
+        # main(1,mode,5)
+        # main(1,mode,10)
+        # main(1,mode,15)
+        # main(1,mode,20)        
+        # mode = 'static_straight'
+        # # main(1,mode,N)
+        # main(2,mode,N)
+        # mode = 'overtaking'
+        # main(1,mode,N)
         # main(2,mode,N)       
-        mode = 'static_narrow' 
-        main(1,mode,N)
+        # mode = 'static_narrow' 
+        # # main(1,mode,N)
         # main(2,mode,N)
 

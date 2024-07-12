@@ -74,8 +74,8 @@ int main()
     // initial condition
     double lbx0[NBX0];
     double ubx0[NBX0];
-    lbx0[0] = -50;
-    ubx0[0] = -50;
+    lbx0[0] = 0;
+    ubx0[0] = 0;
     lbx0[1] = 0;
     ubx0[1] = 0;
     lbx0[2] = 0;
@@ -84,10 +84,10 @@ int main()
     ubx0[3] = 2;
     lbx0[4] = 0;
     ubx0[4] = 0;
-    lbx0[5] = 240;
-    ubx0[5] = 240;
-    lbx0[6] = 0;
-    ubx0[6] = 0;
+    lbx0[5] = 43.8;
+    ubx0[5] = 43.8;
+    lbx0[6] = 43.8;
+    ubx0[6] = 43.8;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "ubx", ubx0);

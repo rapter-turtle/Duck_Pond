@@ -81,17 +81,22 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
         ax_asv.yaxis.label.set_size(FS)
 
 
-        
-        for i in range(5):
-            radius = obs_pos[frame][5*i+2] - ship_p.radius
-            a = obs_pos[frame][5*i+0] + radius * np.cos( theta )
-            b = obs_pos[frame][5*i+1] + radius * np.sin( theta )    
-            ax_asv.fill(a, b, color='red', alpha=0.3)
+        for jjj in range(0, ship_p.N):
+            for i in range(5):
+                # i = 4
+                radius = obs_pos[frame][5*i+2] - ship_p.radius
+                a = obs_pos[frame][5*i+0]+dt*jjj*obs_pos[frame][5*i+3] + radius * np.cos( theta )
+                b = obs_pos[frame][5*i+1]+dt*jjj*obs_pos[frame][5*i+4] + radius * np.sin( theta )    
+                if jjj == 0:
+                    ax_asv.fill(a, b, color='black', alpha=(0.3), edgecolor='black')
+                else:
+                    ax_asv.fill(a, b, color='red', alpha=(0.2))
 
-            radius = obs_pos[frame][5*i+2]
-            a = obs_pos[frame][5*i+0] + radius * np.cos( theta )
-            b = obs_pos[frame][5*i+1] + radius * np.sin( theta )    
-            ax_asv.fill(a, b, color='red', alpha=0.1)
+
+                # radius = obs_pos[frame][5*i+2]
+                # a = obs_pos[frame][5*i+0]+dt*jjj*obs_pos[frame][5*i+3] + radius * np.cos( theta )
+                # b = obs_pos[frame][5*i+1]+dt*jjj*obs_pos[frame][5*i+4] + radius * np.sin( theta )    
+                # ax_asv.fill(a, b, color='red', alpha=0.1)
 
         if (ship_p.CBF>0) and (ship_p.CBF_plot==1):
             for i in range(5):        
@@ -114,10 +119,14 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
                             R = v/ship_p.rmax*ship_p.gamma_TC1
                             B1 = np.sqrt( (obs_pos[frame][5*i+0]-x-R*np.cos(theta-np.pi/2))**2 + (obs_pos[frame][5*i+1]-y-R*np.sin(theta-np.pi/2))**2) - (obs_pos[frame][5*i+2]+R)
                             B2 = np.sqrt( (obs_pos[frame][5*i+0]-x-R*np.cos(theta+np.pi/2))**2 + (obs_pos[frame][5*i+1]-y-R*np.sin(theta+np.pi/2))**2) - (obs_pos[frame][5*i+2]+R)
-                            hk[j, k] = np.max((B1,B2))
-                            if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-theta)>np.pi/2:
-                                hk[j, k] = 100
-                            # hk[j, k] = B1                            
+                            if ship_p.TCCBF == 1:
+                                hk[j, k] = B1
+                            if ship_p.TCCBF == 2:
+                                hk[j, k] = B2
+                            if ship_p.TCCBF == 3:
+                                hk[j, k] = np.max((B1,B2))
+                                if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-theta)>np.pi/2:
+                                    hk[j, k] = 100
 
                 # Plotting
                 ax_asv.contourf(X, Y, hk, levels=[-np.inf, 0], colors=['orange'], alpha=0.3)
@@ -193,69 +202,19 @@ def animateASV(states, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_ite
         
 
     frames = range(0, len(states), plot_iter)
+    # frames = range(len(states)-1, len(states))
     anim = FuncAnimation(fig, update, frames, repeat=False)
     date_string = time.strftime("%Y-%m-%d-%H:%M")
     # anim.save(date_string + 'cbf_type_' + str(ship_p.CBF) + '.gif', writer='imagemagick')  # Save the animation as a gif file
     anim.save('Result_' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.gif', writer=PillowWriter(fps=20))  
+    # anim.save('Result_' + 'avoid' + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.gif', writer=PillowWriter(fps=20))  
     plt.close(fig)  # Close the figure to free memory
 
-
-
-def animateCBF(plot_iter, cbf_and_dist, mode):
-    
-    fig, ax = plt.subplots(1,3,figsize=(15,6))
-    ship_p = load_ship_param
-    dt = ship_p.dt
-    def update(frame):
-
-        times = np.linspace(0, dt*frame, frame)
-
-        ax[0].clear()
-        ax[1].clear()
-        ax[2].clear()
-
-        ax[0].grid(True)
-        for j in range(5):
-            ax[0].plot(times,cbf_and_dist[0:frame,j])
-        ax[0].plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
-        ax[0].set_xlim([0, len(cbf_and_dist)*dt])
-        ax[0].set_ylim([-25, np.max(cbf_and_dist[:,0])])
-        ax[0].set_xlabel("Time", fontsize=14)
-        ax[0].set_ylabel("CBF", fontsize=14)
-        
-        ax[1].grid(True)
-        for j in range(5):
-            if ship_p.CBF == 1:
-                ax[1].plot(times,cbf_and_dist[1:frame+1,j]-(1-ship_p.gamma2)*cbf_and_dist[0:frame,j])
-            if ship_p.CBF == 2:
-                ax[1].plot(times,cbf_and_dist[1:frame+1,j]-(1-ship_p.gamma_TC2)*cbf_and_dist[0:frame,j])
-        ax[1].plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
-        ax[1].set_xlim([0, len(cbf_and_dist)*dt])
-        ax[1].set_ylim([-1, 3])
-        ax[1].set_xlabel("Time", fontsize=14)
-        ax[1].set_ylabel("CBF", fontsize=14)
-        
-        ax[2].grid(True)
-        for j in range(5):            
-            ax[2].plot(times,cbf_and_dist[0:frame,5+j])
-        ax[2].plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
-        ax[2].set_xlim([0, len(cbf_and_dist)*dt])
-        ax[2].set_ylim([-15, np.max(cbf_and_dist[:,0])])
-        ax[2].set_xlabel("Time", fontsize=14)
-        ax[2].set_ylabel("Closest Distance", fontsize=14)
-            
-    frames = range(0, len(cbf_and_dist), plot_iter)
-    anim = FuncAnimation(fig, update, frames, repeat=False)
-    date_string = time.strftime("%Y-%m-%d-%H:%M")
-    # anim.save(date_string + 'cbf_type_' + str(ship_p.CBF) + '.gif', writer='imagemagick')  # Save the animation as a gif file
-    # anim.save('CBF' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.gif', writer=PillowWriter(fps=20))  
-    anim.save('CBF' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(5) + '.gif', writer=PillowWriter(fps=20))  
-    plt.close(fig)  # Close the figure to free memory    
 
 def plot_inputs(t, states, inputs, target_speed, mode):
     FS = 18
     ship_p = load_ship_param
-    fig, axs = plt.subplots(2, 3, figsize=(10, 6))
+    fig, axs = plt.subplots(2, 2, figsize=(10, 6))
     # Plot the figure-eight trajectory
     axs[0, 0].plot(t, states[0:-1,3], 'k', linewidth=2) 
     axs[0, 0].plot(t, states[0:-1,3]*0 + target_speed, 'b--', linewidth=2) 
@@ -274,48 +233,110 @@ def plot_inputs(t, states, inputs, target_speed, mode):
     axs[0, 1].autoscale(enable=True, axis='y', tight=True)
 
     # Plot the figure-eight trajectory
-    axs[1, 0].plot(t, states[0:-1,5], 'k')
+    axs[1, 0].plot(t, states[0:-1,5], 'r')
+    axs[1, 0].plot(t, states[0:-1,6], 'g')
     axs[1, 0].plot(t, states[0:-1,5]*0 + ship_p.Fxmax, 'r--')
     axs[1, 0].plot(t, states[0:-1,5]*0 + ship_p.Fxmin, 'r--')
     axs[1, 0].set_xlabel("Time", fontsize=FS)
-    axs[1, 0].set_ylabel("Fx-Thrust", fontsize=FS)
+    axs[1, 0].set_ylabel("Thrust", fontsize=FS)
     axs[1, 0].grid(True)
     axs[1, 0].autoscale(enable=True, axis='x', tight=True)
-    axs[1, 0].set_ylim(ship_p.Fxmin-10, ship_p.Fxmax+10)
+    axs[1, 0].set_ylim(ship_p.Fxmin-5, ship_p.Fxmax+5   )
 
     # Plot the headings
-    axs[1, 1].plot(t, states[0:-1,6], 'k')
-    axs[1, 1].plot(t, states[0:-1,6]*0 + ship_p.Fnmax, 'r--')
-    axs[1, 1].plot(t, states[0:-1,6]*0 - ship_p.Fnmax, 'r--')
+    # axs[1, 1].plot(t, states[0:-1,5]+states[0:-1,6], 'c')
+    # axs[1, 1].plot(t, (-states[0:-1,5]+states[0:-1,6])*ship_p.L/2, 'm')
+    axs[1, 1].plot(t, inputs[0:-1,0], 'r')
+    axs[1, 1].plot(t, inputs[0:-1,1], 'g')
+    axs[1, 1].plot(t, states[0:-1,6]*0 + ship_p.dFnmax, 'r--')
+    axs[1, 1].plot(t, states[0:-1,6]*0 - ship_p.dFnmax, 'r--')
     axs[1, 1].set_xlabel("Time", fontsize=FS)
-    axs[1, 1].set_ylabel("Fn-Moment", fontsize=FS)
+    axs[1, 1].set_ylabel("del. Thrust", fontsize=FS)
     axs[1, 1].grid(True)
     axs[1, 1].autoscale(enable=True, axis='x', tight=True)
-    axs[1, 1].set_ylim(-ship_p.Fnmax-10, ship_p.Fnmax+10)
+    axs[1, 1].set_ylim(-ship_p.dFnmax-1, ship_p.dFnmax+1)
 
-    # Plot the figure-eight trajectory
-    axs[0, 2].plot(t, inputs[0:-1,0], 'k')
-    axs[0, 2].plot(t, inputs[0:-1,0]*0 + ship_p.dFxmax, 'r--')
-    axs[0, 2].plot(t, inputs[0:-1,0]*0 - ship_p.dFxmax, 'r--')
-    axs[0, 2].set_xlabel("Time", fontsize=FS)
-    axs[0, 2].set_ylabel("del. Fx-Thrust", fontsize=FS)
-    axs[0, 2].grid(True)
-    axs[0, 2].autoscale(enable=True, axis='x', tight=True)
-    axs[0, 2].set_ylim(-ship_p.dFxmax-1, ship_p.dFxmax+1)
+    # # Plot the figure-eight trajectory
+    # axs[0, 2].plot(t, inputs[0:-1,0], 'k')
+    # axs[0, 2].plot(t, inputs[0:-1,0]*0 + ship_p.dFxmax, 'r--')
+    # axs[0, 2].plot(t, inputs[0:-1,0]*0 - ship_p.dFxmax, 'r--')
+    # axs[0, 2].set_xlabel("Time", fontsize=FS)
+    # axs[0, 2].set_ylabel("del. Fx-Thrust", fontsize=FS)
+    # axs[0, 2].grid(True)
+    # axs[0, 2].axis('equal')
+    # axs[0, 2].autoscale(enable=True, axis='x', tight=True)
+    # axs[0, 2].set_ylim(-ship_p.dFxmax-1, ship_p.dFxmax+1)
+    
 
     # Plot the headings
-    axs[1, 2].plot(t, inputs[0:-1,1], 'k')
-    axs[1, 2].plot(t, inputs[0:-1,1]*0 + ship_p.dFnmax, 'r--')
-    axs[1, 2].plot(t, inputs[0:-1,1]*0 - ship_p.dFnmax, 'r--')
-    axs[1, 2].set_xlabel("Time", fontsize=FS)
-    axs[1, 2].set_ylabel("del. Fn-Moment", fontsize=FS)
-    axs[1, 2].grid(True)
-    axs[1, 2].autoscale(enable=True, axis='x', tight=True)
-    axs[1, 2].set_ylim(-ship_p.dFnmax-1, ship_p.dFnmax+1)
+    # axs[1, 2].plot(t, inputs[0:-1,1], 'k')
+    # axs[1, 2].plot(t, inputs[0:-1,1]*0 + ship_p.dFnmax, 'r--')
+    # axs[1, 2].plot(t, inputs[0:-1,1]*0 - ship_p.dFnmax, 'r--')
+    # axs[1, 2].set_xlabel("Time", fontsize=FS)
+    # axs[1, 2].set_ylabel("del. Fn-Moment", fontsize=FS)
+    # axs[1, 2].grid(True)
+    # axs[1, 2].axis('equal')
+    # axs[1, 2].autoscale(enable=True, axis='x', tight=True)
+    # axs[1, 2].set_ylim(-ship_p.dFnmax-1, ship_p.dFnmax+1)
 
     plt.tight_layout()
     date_string = time.strftime("%Y-%m-%d-%H:%M")
     # plt.savefig(date_string + 'cbf_type_' + str(ship_p.CBF) + '.png')
     plt.savefig('input_' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.png')
+    # plt.savefig('input_' + 'avoid' + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.png')
     plt.close(fig)  # Close the figure to free memory
     # plt.show()
+
+
+
+
+# def animateCBF(plot_iter, cbf_and_dist, mode):
+    
+#     fig, ax = plt.subplots(1,3,figsize=(15,6))
+#     ship_p = load_ship_param
+#     dt = ship_p.dt
+#     def update(frame):
+
+#         times = np.linspace(0, dt*frame, frame)
+
+#         ax[0].clear()
+#         ax[1].clear()
+#         ax[2].clear()
+
+#         ax[0].grid(True)
+#         for j in range(5):
+#             ax[0].plot(times,cbf_and_dist[0:frame,j])
+#         ax[0].plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
+#         ax[0].set_xlim([0, len(cbf_and_dist)*dt])
+#         ax[0].set_ylim([-25, np.max(cbf_and_dist[:,0])])
+#         ax[0].set_xlabel("Time", fontsize=14)
+#         ax[0].set_ylabel("CBF", fontsize=14)
+        
+#         ax[1].grid(True)
+#         for j in range(5):
+#             if ship_p.CBF == 1:
+#                 ax[1].plot(times,cbf_and_dist[1:frame+1,j]-(1-ship_p.gamma2)*cbf_and_dist[0:frame,j])
+#             if ship_p.CBF == 2:
+#                 ax[1].plot(times,cbf_and_dist[1:frame+1,j]-(1-ship_p.gamma_TC2)*cbf_and_dist[0:frame,j])
+#         ax[1].plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
+#         ax[1].set_xlim([0, len(cbf_and_dist)*dt])
+#         ax[1].set_ylim([-1, 3])
+#         ax[1].set_xlabel("Time", fontsize=14)
+#         ax[1].set_ylabel("CBF", fontsize=14)
+        
+#         ax[2].grid(True)
+#         for j in range(5):            
+#             ax[2].plot(times,cbf_and_dist[0:frame,5+j])
+#         ax[2].plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
+#         ax[2].set_xlim([0, len(cbf_and_dist)*dt])
+#         ax[2].set_ylim([-15, np.max(cbf_and_dist[:,0])])
+#         ax[2].set_xlabel("Time", fontsize=14)
+#         ax[2].set_ylabel("Closest Distance", fontsize=14)
+            
+#     frames = range(0, len(cbf_and_dist), plot_iter)
+#     anim = FuncAnimation(fig, update, frames, repeat=False)
+#     date_string = time.strftime("%Y-%m-%d-%H:%M")
+#     # anim.save(date_string + 'cbf_type_' + str(ship_p.CBF) + '.gif', writer='imagemagick')  # Save the animation as a gif file
+#     # anim.save('CBF' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.gif', writer=PillowWriter(fps=20))  
+#     anim.save('CBF' + mode + 'cbf_type_' + str(2) + 'N=' + str(5) + '.gif', writer=PillowWriter(fps=20))  
+#     plt.close(fig)  # Close the figure to free memory    

@@ -48,8 +48,8 @@ def export_ship_model() -> AcadosModel:
     f_expl = vertcat(v*cos(psi),
                      v*sin(psi),
                      r,
-                     (Fx - (Xu + Xuu*sqrt(v*v+eps))*v) / M,
-                     (Fn - (Nr + Nrr*sqrt(r*r+eps))*r) / I,
+                     ((Fx+Fn) - (Xu + Xuu*sqrt(v*v+eps))*v) / M,
+                     ((-Fx+Fn)*L/2 - (Nr + Nrr*sqrt(r*r+eps))*r) / I,
                      dFx,
                      dFn
                      )
