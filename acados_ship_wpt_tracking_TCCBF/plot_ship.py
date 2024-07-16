@@ -53,11 +53,12 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
     cbar = plt.colorbar(heatmap, ax=ax_asv, fraction=0.03)
     cbar.set_label("velocity in [m/s]",fontsize=FS-2)
 
-    cbar_ax = fig.add_axes([0.09, 0.94, 0.5, 0.02])  # [left, bottom, width, height]
+    cbar_ax = fig.add_axes([0.09, 0.94, 0.5, 0.03])  # [left, bottom, width, height]
     sm = plt.cm.ScalarMappable(cmap='bone', norm=mcolors.Normalize(vmin=-50, vmax=200))
     sm.set_array([])
     cbar_hk = fig.colorbar(sm, ax=ax_asv, cax=cbar_ax, orientation='horizontal')
     cbar_hk.ax.set_title("CBF values", fontsize=FS-2)
+    cbar_hk.ax.axvline(x=(0 - (-50)) / (200 - (-50)), color='red', linewidth=2)  # Adjust the normalization accordingly
 
 
     def update(frame):
@@ -97,12 +98,12 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
                                 hk[j, k] = np.min((hk[j, k], B2))
                             if ship_p.TCCBF == 3:
                                 hk[j, k] = np.min((hk[j, k], np.max((B1,B2))))
-                            # if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-head_ang)>np.pi/2:
-                            #     hk[j, k] = 100
+                            if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-head_ang)>np.pi/2:
+                                hk[j, k] = 250
 
             # Plotting
             if ship_p.CBF==2 or ship_p.CBF==1:  # Only add the colorbar once
-                ax_asv.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),12), alpha=0.85, cmap=cm.bone)
+                ax_asv.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),15), alpha=0.85, cmap=cm.bone)
                 # CS = ax_asv.contourf(X, Y, hk, levels=np.linspace(-30,80,10), alpha=0.2, cmap=cm.bone)
                 ax_asv.contourf(X, Y, hk, levels=[-0.03, 0.03], colors=['red'], alpha=1)
 

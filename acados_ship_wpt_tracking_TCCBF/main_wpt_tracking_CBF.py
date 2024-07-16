@@ -191,7 +191,7 @@ def main(cbf_num,mode,prediction_horizon,tccbf_type=0):
                 obs_speed4 = 0.5
                 obs_speed5 = 0.5
                 ox1 = 150
-                oy1 = -70 + (i+j)*dt*obs_speed1;  
+                oy1 = -40 + (i+j)*dt*obs_speed1;  
                 or1 = 25.0
                 ox2 = 500
                 oy2 = 0.0
@@ -329,7 +329,7 @@ def main(cbf_num,mode,prediction_horizon,tccbf_type=0):
 
     ocp_solver = None
     # plot_iter = len(simX)-1
-    plot_iter = 20
+    plot_iter = 210
     animateASV(simX, simU, target_speed, mpc_pred_list, obs_array, cbf_and_dist, plot_iter, t_preparation+t_feedback, mode, obs_index)
 
     # animateCBF(plot_iter, cbf_and_dist, mode)
@@ -379,51 +379,51 @@ def calc_cbf(state,obs,type):
 if __name__ == '__main__':
 
 
-    main(0,'avoid',30) 
-    main(0,'avoid',35) 
-    main(0,'avoid',40) 
-    main(1,'avoid',10)
-    main(2,'avoid',10,1)
-    main(2,'avoid',10,2)
+    # main(0,'avoid',30) 
+    # main(0,'avoid',35) 
+    # main(0,'avoid',40) 
+    # main(1,'avoid',10)
+    # main(2,'avoid',10,1)
+    # main(2,'avoid',10,2)
     main(2,'avoid',10,3)
 
-    main(0,'crossing',30)  
-    main(0,'crossing',35) 
-    main(0,'crossing',40) 
-    main(1,'crossing',10)
-    main(2,'crossing',10,1)
-    main(2,'crossing',10,2)
+    # main(0,'crossing',30)  
+    # main(0,'crossing',35) 
+    # main(0,'crossing',40) 
+    # main(1,'crossing',10)
+    # main(2,'crossing',10,1)
+    # main(2,'crossing',10,2)
     main(2,'crossing',10,3)
 
-    main(0,'overtaking',30) 
-    main(0,'overtaking',35) 
-    main(0,'overtaking',40) 
-    main(1,'overtaking',10)
-    main(2,'overtaking',10,1)
-    main(2,'overtaking',10,2)
+    # main(0,'overtaking',30) 
+    # main(0,'overtaking',35) 
+    # main(0,'overtaking',40) 
+    # main(1,'overtaking',10)
+    # main(2,'overtaking',10,1)
+    # main(2,'overtaking',10,2)
     main(2,'overtaking',10,3)
     
-    main(0,'single_static_straight',30) 
-    main(0,'single_static_straight',35) 
-    main(0,'single_static_straight',40) 
-    main(1,'single_static_straight',10)
-    main(2,'single_static_straight',10,1)
-    main(2,'single_static_straight',10,2)
+    # main(0,'single_static_straight',30) 
+    # main(0,'single_static_straight',35) 
+    # main(0,'single_static_straight',40) 
+    # main(1,'single_static_straight',10)
+    # main(2,'single_static_straight',10,1)
+    # main(2,'single_static_straight',10,2)
     main(2,'single_static_straight',10,3)
 
-    main(0,'static_narrow',30)
-    main(0,'static_narrow',35)
-    main(0,'static_narrow',40) 
-    main(1,'static_narrow',10)
-    main(2,'static_narrow',10,1)
-    main(2,'static_narrow',10,2)
+    # main(0,'static_narrow',30)
+    # main(0,'static_narrow',35)
+    # main(0,'static_narrow',40) 
+    # main(1,'static_narrow',10)
+    # main(2,'static_narrow',10,1)
+    # main(2,'static_narrow',10,2)
     main(2,'static_narrow',10,3)
 
-    main(0,'static_straight',30) 
-    main(0,'static_straight',35) 
-    main(0,'static_straight',40) 
-    main(1,'static_straight',10)
-    main(2,'static_straight',10,1)
-    main(2,'static_straight',10,2)
+    # main(0,'static_straight',30) 
+    # main(0,'static_straight',35) 
+    # main(0,'static_straight',40) 
+    # main(1,'static_straight',10)
+    # main(2,'static_straight',10,1)
+    # main(2,'static_straight',10,2)
     main(2,'static_straight',10,3)
 
