@@ -39,8 +39,8 @@ def Disturbance_observer(state, state_estim, dt, param_estim):
 
     before_param_estim = param_estim
 
-    param_estim[0] = 10*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 0.3) + before_param_estim[0]
-    param_estim[1] = 10*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 0.8) + before_param_estim[1]
+    param_estim[0] = 10*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 0.9) + before_param_estim[0]
+    param_estim[1] = 10*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 0.9) + before_param_estim[1]
 
 
     return x_plus, param_estim

@@ -12,9 +12,9 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
     Nr = 5
     Nrr = 13 # Nm/(rad/s)^2
 
-    w_cutoff = 0.2
-    u_max = 0.1
-    r_max = 0.1
+    w_cutoff = 1.0
+    u_max = 0.6
+    r_max = 0.8
 
     # set up states & controls
     xn   = state_estim[0]
@@ -43,8 +43,8 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
 
     before_param_estim = param_estim
 
-    pu = 100000*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 0.3) + before_param_estim[0]
-    pr = 100000*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 0.8) + before_param_estim[1]
+    pu = 1000000000*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 0.3) + before_param_estim[0]
+    pr = 1000000000*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 0.8) + before_param_estim[1]
 
 
     if pu > u_max:

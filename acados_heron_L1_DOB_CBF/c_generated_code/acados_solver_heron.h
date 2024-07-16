@@ -63,7 +63,7 @@
 #define HERON_NY0    9
 #define HERON_NY     9
 #define HERON_NYN    7
-#define HERON_N      20
+#define HERON_N      10
 #define HERON_NH     1
 #define HERON_NHN    1
 #define HERON_NH0    0
@@ -96,9 +96,8 @@ typedef struct heron_solver_capsule
     /* external functions */
     // dynamics
 
-    external_function_param_casadi *impl_dae_fun;
-    external_function_param_casadi *impl_dae_fun_jac_x_xdot_z;
-    external_function_param_casadi *impl_dae_jac_x_xdot_u_z;
+    external_function_param_casadi *forw_vde_casadi;
+    external_function_param_casadi *expl_ode_fun;
 
 
 

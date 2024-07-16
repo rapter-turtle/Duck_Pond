@@ -36,39 +36,31 @@ extern "C" {
 #endif
 
 
-  
-// implicit ODE: function
-int heron_impl_dae_fun(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int heron_impl_dae_fun_work(int *, int *, int *, int *);
-const int *heron_impl_dae_fun_sparsity_in(int);
-const int *heron_impl_dae_fun_sparsity_out(int);
-int heron_impl_dae_fun_n_in(void);
-int heron_impl_dae_fun_n_out(void);
+/* explicit ODE */
 
-// implicit ODE: function + jacobians
-int heron_impl_dae_fun_jac_x_xdot_z(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int heron_impl_dae_fun_jac_x_xdot_z_work(int *, int *, int *, int *);
-const int *heron_impl_dae_fun_jac_x_xdot_z_sparsity_in(int);
-const int *heron_impl_dae_fun_jac_x_xdot_z_sparsity_out(int);
-int heron_impl_dae_fun_jac_x_xdot_z_n_in(void);
-int heron_impl_dae_fun_jac_x_xdot_z_n_out(void);
+// explicit ODE
+int heron_expl_ode_fun(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int heron_expl_ode_fun_work(int *, int *, int *, int *);
+const int *heron_expl_ode_fun_sparsity_in(int);
+const int *heron_expl_ode_fun_sparsity_out(int);
+int heron_expl_ode_fun_n_in(void);
+int heron_expl_ode_fun_n_out(void);
 
-// implicit ODE: jacobians only
-int heron_impl_dae_jac_x_xdot_u_z(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int heron_impl_dae_jac_x_xdot_u_z_work(int *, int *, int *, int *);
-const int *heron_impl_dae_jac_x_xdot_u_z_sparsity_in(int);
-const int *heron_impl_dae_jac_x_xdot_u_z_sparsity_out(int);
-int heron_impl_dae_jac_x_xdot_u_z_n_in(void);
-int heron_impl_dae_jac_x_xdot_u_z_n_out(void);
+// explicit forward VDE
+int heron_expl_vde_forw(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int heron_expl_vde_forw_work(int *, int *, int *, int *);
+const int *heron_expl_vde_forw_sparsity_in(int);
+const int *heron_expl_vde_forw_sparsity_out(int);
+int heron_expl_vde_forw_n_in(void);
+int heron_expl_vde_forw_n_out(void);
 
-// implicit ODE - for lifted_irk
-int heron_impl_dae_fun_jac_x_xdot_u(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int heron_impl_dae_fun_jac_x_xdot_u_work(int *, int *, int *, int *);
-const int *heron_impl_dae_fun_jac_x_xdot_u_sparsity_in(int);
-const int *heron_impl_dae_fun_jac_x_xdot_u_sparsity_out(int);
-int heron_impl_dae_fun_jac_x_xdot_u_n_in(void);
-int heron_impl_dae_fun_jac_x_xdot_u_n_out(void);
-  
+// explicit adjoint VDE
+int heron_expl_vde_adj(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int heron_expl_vde_adj_work(int *, int *, int *, int *);
+const int *heron_expl_vde_adj_sparsity_in(int);
+const int *heron_expl_vde_adj_sparsity_out(int);
+int heron_expl_vde_adj_n_in(void);
+int heron_expl_vde_adj_n_out(void);
 
 
 

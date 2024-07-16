@@ -9,11 +9,11 @@ import numpy as np
 def main():
 
     Fmax = 60
-    N_horizon = 20
+    N_horizon = 10
     con_dt = 0.2
     Tf = int(N_horizon*con_dt)
-    T_final = 50
-    simulation_dt = 0.1
+    T_final = 120
+    simulation_dt = 0.01
 
     x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u
 
@@ -22,12 +22,14 @@ def main():
 
     nx = ocp_solver.acados_ocp.dims.nx
     nu = ocp_solver.acados_ocp.dims.nu
+    ncbf = 2
 
     simX = np.zeros((int(T_final/simulation_dt)+1, nx))
     simX_tship = np.zeros((int(T_final/simulation_dt)+1, 4))
     simU = np.zeros((int(T_final/simulation_dt)+1, nu))
     simX[0,:] = x0
     simX_tship[0,:] = x_tship
+    CBF = np.zeros((int(T_final/simulation_dt)+1, ncbf*2))
     k = 0
 
     mpc_pred_list = []
@@ -76,7 +78,7 @@ def main():
             ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
 
-            dist = 4.0#2.5
+            dist = 2.5
             oa = np.tan(x_tship[2]) 
             ob = -1 
             oc = (x_tship[1]-dist*np.cos(x_tship[2])) - (x_tship[0]+dist*np.sin(x_tship[2]))*np.tan(x_tship[2]) 
@@ -124,15 +126,15 @@ def main():
         
 
         ##### DOB #####
-        state_estim, param_estim = Disturbance_observer(simX[i, :], state_estim, simulation_dt, param_estim)
-        M = 36 # Mass [kg]
-        I = 8.35 # Inertial tensor [kg m^2]
-        L = 0.73 # length [m]
-        disturbance_u = param_estim[0]
-        disturbance_r = param_estim[1]
-        l1_control[0] = -(M*param_estim[0] - 2*(I/L)*param_estim[1])*0.5
-        l1_control[1] = -(M*param_estim[0] + 2*(I/L)*param_estim[1])*0.5        
-        # print(param_estim)
+        # state_estim, param_estim = Disturbance_observer(simX[i, :], state_estim, simulation_dt, param_estim)
+        # M = 36 # Mass [kg]
+        # I = 8.35 # Inertial tensor [kg m^2]
+        # L = 0.73 # length [m]
+        # disturbance_u = param_estim[0]
+        # disturbance_r = param_estim[1]
+        # l1_control[0] = -(M*param_estim[0] - 2*(I/L)*param_estim[1])*0.5
+        # l1_control[1] = -(M*param_estim[0] + 2*(I/L)*param_estim[1])*0.5        
+        # # print(param_estim)
         ##### DOB #####
 
 
@@ -145,8 +147,8 @@ def main():
 
         ## Wave Disturbance ## 
         # wave_disturbance(disturbance_state, wave_direction, wind_speed, omega, lamda, Kw, sigmaF1, sigmaF2, dt):
-        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, 7.0, 0.8, 0.1, 2.0, 10, 2, simulation_dt)
-        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, 7.0, 0.8, 0.1, 1.0, 1, 0.1, simulation_dt)
+        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, wind_speed, 0.8, 0.1, 5.0, 7, 1.0, simulation_dt)
+        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, wind_speed, 0.8, 0.1, 1.0, 1, 0.1, simulation_dt)
         
         X_wave_force = XY_wave_force*np.cos(wind_direction - psi)
         Y_wave_force = XY_wave_force*np.sin(wind_direction - psi)
@@ -178,13 +180,14 @@ def main():
         U_wind_force = X_wind_force + X_wind_force*np.sin(psi) + Y_wind_force*np.cos(psi)
 
 
-        U_wave_force = 0.0 
-        N_wave_force = 0.0
+        # U_wave_force = 0.0 
+        # N_wave_force = 0.0
 
-        U_wind_force = 0.0   
-        N_wind_force = 0.0
+        # U_wind_force = 0.0   
+        # N_wind_force = 0.0
         
         disturbance = np.array([U_wave_force + U_wind_force, N_wave_force + N_wind_force])
+
 
         ##########################################################################################
 
@@ -196,6 +199,29 @@ def main():
         simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[i,:], simulation_dt, disturbance ,extra_control )
 
         simX_tship[i+1, :] = x_tship
+
+        # CBF check
+        M = 36 # Mass [kg]
+        Xu = 10
+        Xuu = 16.9 # N/(m/s)^2  
+        alpha1 = 0.5
+        alpha2 = 0.1  
+        u_dot = ((simX[i,5] + simX[i,6]) - (Xu*simX[i,3] + Xuu*simX[i,3]*simX[i,3]))/M  
+        x_dotdot = u_dot*np.cos(simX[i,2]) - simX[i,3]*simX[i,4]*sin(simX[i,2])
+        y_dotdot = u_dot*np.sin(simX[i,2]) + simX[i,3]*simX[i,4]*cos(simX[i,2])  
+
+        # CBF
+        # V = oa*simX[i,0] + ob*simX[i,1] + oc
+        # V_dot = oa*simX[i,3]*cos(simX[i,2]) + ob*simX[i,3]*sin(simX[i,2])
+
+        # CLF
+        V = (oa*simX[i,0] + ob*simX[i,1] + oc)**2
+        V_dot = 2*(oa*simX[i,0] + ob*simX[i,1] + oc)*(oa*simX[i,0]*cos(simX[i,2]) + ob*simX[i,1]*sin(simX[i,2]))
+
+        CBF[i,0] = V
+        CBF[i,1] = CBF[0,0]*np.exp(-(1/alpha1)*simulation_dt*i)
+        CBF[i,2] = alpha1*V_dot + V
+        CBF[i,3] = CBF[0,2]*np.exp(-(1/alpha2)*simulation_dt*i)      
 
 
     simU[i+1, :] = simU[i, :]
@@ -218,7 +244,7 @@ def main():
 
     animateASV_recovery(simX[::dt_gap*plot_iter,:], simU[::dt_gap*plot_iter,:], 
                         simX_tship[::dt_gap*plot_iter,:], mpc_pred_list[::plot_iter], 
-                        con_pos, t[::dt_gap*plot_iter], Fmax, dob_save[::dt_gap*plot_iter],)
+                        con_pos, t[::dt_gap*plot_iter], Fmax, dob_save[::dt_gap*plot_iter], CBF[::dt_gap*plot_iter,:])
     
     ## plot_iter - animateASV_recovery 안에 포함시키는거로 바꾸기
 
