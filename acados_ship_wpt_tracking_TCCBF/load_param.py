@@ -5,7 +5,7 @@ class load_ship_param:
     M = 36 # Mass [kg]
     I = 8.35 # Inertial tensor [kg m^2]
     L = 0.73 # length [m]
-    radius = L*0.001
+    radius = L*0.0001
     Xu = 10
     Xuu = 16.9 # N/(m/s)^2
     Nr = 5*3
@@ -30,9 +30,13 @@ class load_ship_param:
     # R = 2*np.diag([1e2,  # N=100
     #                1e2]) # N=100
 
-    Q = 2*np.diag([0, 1, 20, 5, 50, 1e-1, 1e-1])
+    Q = 2*np.diag([0, 1, 50, 50, 50, 1e-1, 1e-1])
     R = 2*np.diag([1e0,  # N=20
                    1e0]) # N=20
+    
+    # Q = 2*np.diag([0, 1, 20, 5, 50, 1e0, 1e0])
+    # R = 2*np.diag([1e0,  # N=20
+    #                1e0]) # N=20
 
     # Q = 2*np.diag([0, 1, 50, 250, 100, 1e-1, 1e-1])
     # R = 2*np.diag([1e0,  # N=10
@@ -42,18 +46,19 @@ class load_ship_param:
     CBF = 2 # 0-DC 1-ED 2-TC   
     CBF_plot = 1 # 0-plot off / 1-Plot on
     #### CBF = 1 ####
-    gamma1 = 1
+    gamma1 = 1.5
     gamma2 = 0.02
 
     #### CBF = 2 ####
     TCCBF = 1 # 1-B1(right avoid), 2-B2, 3-B1+B2
     rmax = 0.3
-    gamma_TC1 = 7
+
+    gamma_TC1 = 5
     
     # gamma_TC2 = 0.15 # N = 100
     # gamma_TC2 = 0.15 # N = 50
     # gamma_TC2 = 0.15 # N = 30
-    gamma_TC2 = 0.02 # N = 20
+    gamma_TC2 = 0.025 # N = 20
     # gamma_TC2 = 0.025 # N = 10
 
 

@@ -454,8 +454,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
     W_0[1+(NY0) * 1] = 2;
-    W_0[2+(NY0) * 2] = 40;
-    W_0[3+(NY0) * 3] = 10;
+    W_0[2+(NY0) * 2] = 100;
+    W_0[3+(NY0) * 3] = 100;
     W_0[4+(NY0) * 4] = 100;
     W_0[5+(NY0) * 5] = 0.2;
     W_0[6+(NY0) * 6] = 0.2;
@@ -474,8 +474,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
     W[1+(NY) * 1] = 2;
-    W[2+(NY) * 2] = 40;
-    W[3+(NY) * 3] = 10;
+    W[2+(NY) * 2] = 100;
+    W[3+(NY) * 3] = 100;
     W[4+(NY) * 4] = 100;
     W[5+(NY) * 5] = 0.2;
     W[6+(NY) * 6] = 0.2;
@@ -495,8 +495,8 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
     W_e[1+(NYN) * 1] = 2;
-    W_e[2+(NYN) * 2] = 40;
-    W_e[3+(NYN) * 3] = 10;
+    W_e[2+(NYN) * 2] = 100;
+    W_e[3+(NYN) * 3] = 100;
     W_e[4+(NYN) * 4] = 100;
     W_e[5+(NYN) * 5] = 0.2;
     W_e[6+(NYN) * 6] = 0.2;

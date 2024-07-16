@@ -146,11 +146,6 @@ def setup_wpt_tracking(x0,mode):
             if ship_p.TCCBF == 3:
                 hk = np.log((np.exp(B1)+np.exp(B2)-1))
             
-            ## Crossing
-            if mode == 'crossing':
-                if i == 2 or i ==4:
-                    hk = B2
-
             R = x3_n/ship_p.rmax*ship_p.gamma_TC1
             B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
@@ -160,12 +155,7 @@ def setup_wpt_tracking(x0,mode):
                 hkn = B2
             if ship_p.TCCBF == 3:
                 hkn = np.log((np.exp(B1)+np.exp(B2)-1))
-            
-            ## Crossing
-            if mode == 'crossing':
-                if i == 2 or i ==4:
-                    hkn = B2
-            
+   
             h_expr[i] = hkn - (1-ship_p.gamma_TC2)*hk
 
     
