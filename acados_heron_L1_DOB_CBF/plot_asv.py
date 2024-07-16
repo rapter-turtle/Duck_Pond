@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 
 
 
-def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, disturb):
+def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, disturb, CBF):
     # Define the geometry of the twin-hull ASV
     hullLength = 0.7  # Length of the hull
     hullWidth = 0.2   # Width of each hull
@@ -147,20 +147,55 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
 
 
         # Plot the figure-eight trajectory
-        ax_speed.plot(t[0:frame], states[0:frame,3], 'k', linewidth=2) 
+        # ax_speed.plot(t[0:frame], states[0:frame,3], 'k', linewidth=2) 
+        # ax_speed.set_xlabel("Time", fontsize=FS)
+        # ax_speed.set_title("Speed [m/s]", fontsize=FS)
+        # ax_speed.grid(True)
+        # ax_speed.autoscale(enable=True, axis='x', tight=True)
+        # ax_speed.autoscale(enable=True, axis='y', tight=True)
+
+        # Plot Rel X
+        # ax_speed.plot(t[0:frame], states[0:frame,0] - tship[0:frame,0], 'k', linewidth=2) 
+        # ax_speed.set_xlabel("Time", fontsize=FS)
+        # ax_speed.set_title("Rel X", fontsize=FS)
+        # ax_speed.grid(True)
+        # ax_speed.autoscale(enable=True, axis='x', tight=True)
+        # ax_speed.autoscale(enable=True, axis='y', tight=True)   
+
+        # Plot CBF 1    
+        ax_speed.plot(t[0:frame], CBF[0:frame,0], 'k', linewidth=2, label='CBF') 
+        ax_speed.plot(t[0:frame], CBF[0:frame,1], 'r', linewidth=2, label='CBF barrier') 
         ax_speed.set_xlabel("Time", fontsize=FS)
-        ax_speed.set_title("Speed [m/s]", fontsize=FS)
+        ax_speed.set_title("CBF", fontsize=FS)
         ax_speed.grid(True)
         ax_speed.autoscale(enable=True, axis='x', tight=True)
-        ax_speed.autoscale(enable=True, axis='y', tight=True)
+        ax_speed.autoscale(enable=True, axis='y', tight=True)            
 
         # Plot the headings
-        ax_rot_speed.plot(t[0:frame], states[0:frame,4], 'k', linewidth=2) 
+        # ax_rot_speed.plot(t[0:frame], states[0:frame,4], 'k', linewidth=2) 
+        # ax_rot_speed.set_xlabel("Time", fontsize=FS)
+        # ax_rot_speed.set_title("Rot. Speed [rad/s]", fontsize=FS)
+        # ax_rot_speed.grid(True)
+        # ax_rot_speed.autoscale(enable=True, axis='x', tight=True)
+        # ax_rot_speed.autoscale(enable=True, axis='y', tight=True)
+
+        # Plot Rel Y
+        # ax_rot_speed.plot(t[0:frame], states[0:frame,1] - tship[0:frame,1], 'k', linewidth=2) 
+        # ax_rot_speed.set_xlabel("Time", fontsize=FS)
+        # ax_rot_speed.set_title("Rel Y", fontsize=FS)
+        # ax_rot_speed.grid(True)
+        # ax_rot_speed.autoscale(enable=True, axis='x', tight=True)
+        # ax_rot_speed.autoscale(enable=True, axis='y', tight=True)     
+
+        # Plot CBF 2
+        ax_rot_speed.plot(t[0:frame], CBF[0:frame,2], 'k', linewidth=2, label='2nd CBF') 
+        ax_rot_speed.plot(t[0:frame], CBF[0:frame,3], 'r', linewidth=2, label='2nd CBF barrier') 
         ax_rot_speed.set_xlabel("Time", fontsize=FS)
-        ax_rot_speed.set_title("Rot. Speed [rad/s]", fontsize=FS)
+        ax_rot_speed.set_title("2nd CBF", fontsize=FS)
         ax_rot_speed.grid(True)
+        ax_rot_speed.legend()
         ax_rot_speed.autoscale(enable=True, axis='x', tight=True)
-        ax_rot_speed.autoscale(enable=True, axis='y', tight=True)
+        ax_rot_speed.autoscale(enable=True, axis='y', tight=True)             
 
         # Plot the figure-eight trajectory
         ax_thrust.plot(t[0:frame], states[0:frame,5], 'g--', label='Left (MPC)')

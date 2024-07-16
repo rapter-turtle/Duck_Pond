@@ -167,18 +167,61 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
     ocp.parameter_values = np.array([0.0, 0.0, 0.0, 0.0, 0.0]) 
     param = model.p
 
+    #Normal boundary constraints
     # h_expr = (model.x[0]*param[0]) + (model.x[1]*param[1]) + param[2]
-    alpha = 0.1
-    h_expr = (param[0]*model.x[3]*cos(model.x[2]) + param[1]*model.x[3]*sin(model.x[2])) + alpha*(param[0]*model.x[0] + param[1]*model.x[1] + param[2])
+
+
+    #Control Barrier Function
+    M = 36 # Mass [kg]
+    Xu = 10
+    Xuu = 16.9 # N/(m/s)^2  
+    alpha = 5.0
+    delta = 0.01
+    d_u = 50.0/M
+    # Nominal CBF
+    # h_expr = alpha*(param[0]*model.x[3]*cos(model.x[2]) + param[1]*model.x[3]*sin(model.x[2])) + (param[0]*model.x[0] + param[1]*model.x[1] + param[2])
+
+    # Robust CLF
+    alpha1 = 0.5
+    alpha2 = 0.1
+    u_dot = ((model.x[5] + model.x[6]) - (Xu*model.x[3] + Xuu*model.x[3]*model.x[3]))/M  
+    x_dotdot = u_dot*cos(model.x[2]) - model.x[3]*model.x[4]*sin(model.x[2])
+    y_dotdot = u_dot*sin(model.x[2]) + model.x[3]*model.x[4]*cos(model.x[2])  
+    V = (param[0]*model.x[0] + param[1]*model.x[1] + param[2])**2
+    V_dot = 2*(param[0]*model.x[0] + param[1]*model.x[1] + param[2])*(param[0]*model.x[3]*cos(model.x[2]) + param[1]*model.x[3]*sin(model.x[2]))
+    V_dotdot = 2*(param[0]*model.x[3]*cos(model.x[2]) + param[1]*model.x[3]*sin(model.x[2]))**2 + 2*(param[0]*model.x[0] + param[1]*model.x[1] + param[2])*(param[0]*x_dotdot + param[1]*y_dotdot)
+    disturbance = 2*(param[0]*model.x[0] + param[1]*model.x[1] + param[2])*(param[0]*cos(model.x[2]) + param[1]*sin(model.x[2]))
+    h_expr = alpha2*alpha1*V_dotdot + (alpha2 + alpha1)*V_dot + V + alpha2*alpha1*((disturbance**2 + delta**2)**0.5 - delta)*d_u
+
+    # Robust CBF
+    # alpha1 = 5.0
+    # alpha2 = 1.0   
+    # u_dot = ((model.x[5] + model.x[6]) - (Xu*model.x[3] + Xuu*model.x[3]*model.x[3]))/M  
+    # x_dotdot = u_dot*cos(model.x[2]) - model.x[3]*model.x[4]*sin(model.x[2])
+    # y_dotdot = u_dot*sin(model.x[2]) + model.x[3]*model.x[4]*cos(model.x[2])  
+    # V = param[0]*model.x[0] + param[1]*model.x[1] + param[2]
+    # V_dot = param[0]*model.x[3]*cos(model.x[2]) + param[1]*model.x[3]*sin(model.x[2])
+    # V_dotdot = param[0]*x_dotdot + param[1]*y_dotdot
+    # disturbance = (param[0]*cos(model.x[2]) + param[1]*sin(model.x[2]))
+    # h_expr = alpha2*alpha1*V_dotdot + (alpha2 + alpha1)*V_dot + V - alpha2*alpha1*((disturbance**2 + delta**2)**0.5 - delta)*d_u
+
+
+
     ocp.model.con_h_expr = h_expr
  
-    ocp.constraints.uh = 1e6*np.ones(1)
-    ocp.constraints.lh = 0*np.ones(1)
+    # For CBF
+    # ocp.constraints.uh = 1e10*np.ones(1)
+    # ocp.constraints.lh = 0*np.ones(1)
+
+    # For CLF
+    ocp.constraints.uh = 0*np.ones(1)
+    ocp.constraints.lh = -1e10*np.ones(1)
+
 
     ocp.constraints.idxsh = np.array([0])
     ocp.constraints.idxsh_e = np.array([0])
-    Zh = 1e5*np.ones(1)#1e1*np.ones(1)
-    zh = 1e5*np.ones(1)#1e1*np.ones(1)
+    Zh = 1e3*np.ones(1)#1e1*np.ones(1)
+    zh = 1e3*np.ones(1)#1e1*np.ones(1)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh
@@ -204,7 +247,7 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
 
     ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM' # FULL_CONDENSING_QPOASES
     ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
-    ocp.solver_options.integrator_type = 'IRK'
+    ocp.solver_options.integrator_type = 'ERK'
     ocp.solver_options.sim_method_newton_iter = 50
     ocp.solver_options.nlp_solver_type = 'SQP_RTI'
     ocp.solver_options.qp_solver_cond_N = N_horizon
