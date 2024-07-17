@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from load_param import load_param
-from matplotlib import cm
 from matplotlib.colors import Normalize
+from matplotlib import cm, animation
 
 def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
     # Define the geometry of the twin-hull ASV
@@ -13,7 +13,7 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
     bodyLength = hullLength  # Length of the body connecting the hulls
     bodyWidth = 0.25  # Width of the body connecting the hulls
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(15,5))
 
     heron_p = load_param
 
@@ -23,12 +23,12 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
     y_range = np.linspace(-20, 20, 200)
     X, Y = np.meshgrid(x_range, y_range)
     
-    
+    FS = 16
     # Create a scatter plot for the heatmap and initialize the colorbar
     norm = Normalize(vmin=np.min(states[:, 3]), vmax=np.max(states[:, 3]))
     heatmap = ax.scatter(states[:, 0], states[:, 1], c=states[:, 3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
     cbar = plt.colorbar(heatmap, ax=ax, fraction=0.035)
-    cbar.set_label("velocity in [m/s]")
+    cbar.set_label("velocity in [m/s]", fontsize=FS)
 
     def update(frame):
         position = states[frame,0:2]
@@ -143,16 +143,21 @@ def animateASV(states, inputs, ref, yref, mpc_result, obs_pos, plot_iter):
         
 
 
-        ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
-        ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
-    
-
+        # ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
+        # ax.axis([-15, 15, -15, 15])  # Adjust these limits as needed
+        ax.set_aspect('equal')
+        ax.set(xlim=(-15, 15),ylim=(-5,5))
+        ax.set_xlabel("x [m]", fontsize=FS)
+        ax.set_ylabel("y [m]", fontsize=FS)
+        ax.xaxis.label.set_size(FS)
+        ax.yaxis.label.set_size(FS)
         # ax.autoscale(enable=True, axis='x', tight=True)
         # ax.autoscale(enable=True, axis='y', tight=True)
     
     frames = range(0, len(states), plot_iter)
     anim = FuncAnimation(fig, update, frames, repeat=False)
-    plt.show()
+    # plt.show()
+    anim.save('Result.mp4', writer=animation.FFMpegWriter(fps=20))  
 
 
 def plot_inputs(t, reference, states, inputs, Fmax):

@@ -87,6 +87,12 @@ def main():
         ox4 = -10.0; oy4 = 3.0; or4 = 1.25
         ox5 = -6.0; oy5 = -1.5; or5 = 1.5
         
+        ox1 = 25.0; oy1 = 0.0; or1 = 0.0
+        ox2 = 25.0; oy2 = 0.0; or2 = 0.0
+        ox3 = 25.0; oy3 = 0.0; or3 = 0.0
+        ox4 = 25.0; oy4 = 0.0; or4 = 0.0
+        ox5 = 25.0; oy5 = 0.0; or5 = 0.0
+        
         # ox1 =  10.5; oy1 =  0.0;  or1 = 1.5
         # ox2 = -10.5; oy2 =  0.0;  or2 = 1.5
         # ox3 =  0.0;  oy3 =  10.5; or3 = 1.5
@@ -163,7 +169,7 @@ def main():
     obs_array = np.array(obs_list)
 
     ocp_solver = None
-    plot_iter = 20
+    plot_iter = 2
     # plot_iter = len(simU)-1
 
     animateASV(simX, simU, reference, yref_array,mpc_pred_list, obs_array, plot_iter)

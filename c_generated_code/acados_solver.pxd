@@ -30,33 +30,33 @@
 
 cimport acados_solver_common
 
-cdef extern from "acados_solver_ship.h":
-    ctypedef struct nlp_solver_capsule "ship_solver_capsule":
+cdef extern from "acados_solver_heron.h":
+    ctypedef struct nlp_solver_capsule "heron_solver_capsule":
         pass
 
-    nlp_solver_capsule * acados_create_capsule "ship_acados_create_capsule"()
-    int acados_free_capsule "ship_acados_free_capsule"(nlp_solver_capsule *capsule)
+    nlp_solver_capsule * acados_create_capsule "heron_acados_create_capsule"()
+    int acados_free_capsule "heron_acados_free_capsule"(nlp_solver_capsule *capsule)
 
-    int acados_create "ship_acados_create"(nlp_solver_capsule * capsule)
+    int acados_create "heron_acados_create"(nlp_solver_capsule * capsule)
 
-    int acados_create_with_discretization "ship_acados_create_with_discretization"(nlp_solver_capsule * capsule, int n_time_steps, double* new_time_steps)
-    int acados_update_time_steps "ship_acados_update_time_steps"(nlp_solver_capsule * capsule, int N, double* new_time_steps)
-    int acados_update_qp_solver_cond_N "ship_acados_update_qp_solver_cond_N"(nlp_solver_capsule * capsule, int qp_solver_cond_N)
+    int acados_create_with_discretization "heron_acados_create_with_discretization"(nlp_solver_capsule * capsule, int n_time_steps, double* new_time_steps)
+    int acados_update_time_steps "heron_acados_update_time_steps"(nlp_solver_capsule * capsule, int N, double* new_time_steps)
+    int acados_update_qp_solver_cond_N "heron_acados_update_qp_solver_cond_N"(nlp_solver_capsule * capsule, int qp_solver_cond_N)
 
-    int acados_update_params "ship_acados_update_params"(nlp_solver_capsule * capsule, int stage, double *value, int np_)
-    int acados_update_params_sparse "ship_acados_update_params_sparse"(nlp_solver_capsule * capsule, int stage, int *idx, double *p, int n_update)
-    int acados_solve "ship_acados_solve"(nlp_solver_capsule * capsule)
-    int acados_reset "ship_acados_reset"(nlp_solver_capsule * capsule, int reset_qp_solver_mem)
-    int acados_free "ship_acados_free"(nlp_solver_capsule * capsule)
-    void acados_print_stats "ship_acados_print_stats"(nlp_solver_capsule * capsule)
+    int acados_update_params "heron_acados_update_params"(nlp_solver_capsule * capsule, int stage, double *value, int np_)
+    int acados_update_params_sparse "heron_acados_update_params_sparse"(nlp_solver_capsule * capsule, int stage, int *idx, double *p, int n_update)
+    int acados_solve "heron_acados_solve"(nlp_solver_capsule * capsule)
+    int acados_reset "heron_acados_reset"(nlp_solver_capsule * capsule, int reset_qp_solver_mem)
+    int acados_free "heron_acados_free"(nlp_solver_capsule * capsule)
+    void acados_print_stats "heron_acados_print_stats"(nlp_solver_capsule * capsule)
 
-    int acados_custom_update "ship_acados_custom_update"(nlp_solver_capsule* capsule, double * data, int data_len)
+    int acados_custom_update "heron_acados_custom_update"(nlp_solver_capsule* capsule, double * data, int data_len)
 
-    acados_solver_common.ocp_nlp_in *acados_get_nlp_in "ship_acados_get_nlp_in"(nlp_solver_capsule * capsule)
-    acados_solver_common.ocp_nlp_out *acados_get_nlp_out "ship_acados_get_nlp_out"(nlp_solver_capsule * capsule)
-    acados_solver_common.ocp_nlp_out *acados_get_sens_out "ship_acados_get_sens_out"(nlp_solver_capsule * capsule)
-    acados_solver_common.ocp_nlp_solver *acados_get_nlp_solver "ship_acados_get_nlp_solver"(nlp_solver_capsule * capsule)
-    acados_solver_common.ocp_nlp_config *acados_get_nlp_config "ship_acados_get_nlp_config"(nlp_solver_capsule * capsule)
-    void *acados_get_nlp_opts "ship_acados_get_nlp_opts"(nlp_solver_capsule * capsule)
-    acados_solver_common.ocp_nlp_dims *acados_get_nlp_dims "ship_acados_get_nlp_dims"(nlp_solver_capsule * capsule)
-    acados_solver_common.ocp_nlp_plan *acados_get_nlp_plan "ship_acados_get_nlp_plan"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_in *acados_get_nlp_in "heron_acados_get_nlp_in"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_out *acados_get_nlp_out "heron_acados_get_nlp_out"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_out *acados_get_sens_out "heron_acados_get_sens_out"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_solver *acados_get_nlp_solver "heron_acados_get_nlp_solver"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_config *acados_get_nlp_config "heron_acados_get_nlp_config"(nlp_solver_capsule * capsule)
+    void *acados_get_nlp_opts "heron_acados_get_nlp_opts"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_dims *acados_get_nlp_dims "heron_acados_get_nlp_dims"(nlp_solver_capsule * capsule)
+    acados_solver_common.ocp_nlp_plan *acados_get_nlp_plan "heron_acados_get_nlp_plan"(nlp_solver_capsule * capsule)
