@@ -75,10 +75,10 @@ int main()
     x_current[0] = 0;
     x_current[1] = 0;
     x_current[2] = 0;
-    x_current[3] = 2;
+    x_current[3] = 1.5;
     x_current[4] = 0;
-    x_current[5] = 43.8;
-    x_current[6] = 43.8;
+    x_current[5] = 26.5125;
+    x_current[6] = 26.5125;
     
   
 

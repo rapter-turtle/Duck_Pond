@@ -18,8 +18,8 @@ class load_ship_param:
     
     Fxmax = 60
     Fnmax = 60
-    Fxmin = 20
-    Fnmin = 20
+    Fxmin = -60
+    Fnmin = -60
     dFxmax = 5
     dFnmax = 5
 
@@ -47,18 +47,19 @@ class load_ship_param:
     CBF_plot = 1 # 0-plot off / 1-Plot on
     #### CBF = 1 ####
     gamma1 = 1.5
+
     gamma2 = 0.02
 
     #### CBF = 2 ####
-    TCCBF = 1 # 1-B1(right avoid), 2-B2, 3-B1+B2
-    rmax = 0.3
+    TCCBF = 3 # 1-B1(right avoid), 2-B2, 3-B1+B2
+    rmax = 0.2
 
-    gamma_TC1 = 5
+    gamma_TC1 = 3
     
     # gamma_TC2 = 0.15 # N = 100
     # gamma_TC2 = 0.15 # N = 50
     # gamma_TC2 = 0.15 # N = 30
-    gamma_TC2 = 0.025 # N = 20
+    gamma_TC2 = 0.03  # N = 20
     # gamma_TC2 = 0.025 # N = 10
 
 

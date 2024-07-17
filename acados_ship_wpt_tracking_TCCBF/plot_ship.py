@@ -9,7 +9,7 @@ import matplotlib.colors as mcolors
 
 def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_iter, comptime, mode, obs_index):
     
-    fig, axs = plt.subplots(3,3, figsize=(10,8))
+    fig, axs = plt.subplots(3,3, figsize=(12,8))
     # Combine first two columns for the ASV plot
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[1, 0])
@@ -18,7 +18,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
     # CBF animation setup
     ax_compt = axs[0, 2]
     # ax_cbf1 = axs[1, 0]
-    # ax_cbf2 = axs[1, 1]
+    # ax_cbf2 = axs[2, 1]
     ax_cbf3 = axs[1, 2]
     ax_speed = axs[2, 0]
     ax_rot = axs[2, 1]
@@ -48,7 +48,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
     ## Create a scatter plot for the heatmap and initialize the colorbar
     # norm = Normalize(vmin=np.min(states[:, 3]), vmax=np.max(states[:, 3]))
-    norm = Normalize(vmin=1.5, vmax=2.5)
+    norm = Normalize(vmin=0.5, vmax=2.5)
     heatmap = ax_asv.scatter(states[:, 0], states[:, 1], c=states[:, 3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
     cbar = plt.colorbar(heatmap, ax=ax_asv, fraction=0.03)
     cbar.set_label("velocity in [m/s]",fontsize=FS-2)
@@ -90,6 +90,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
                         elif (ship_p.CBF==2):
                             R = v/ship_p.rmax*ship_p.gamma_TC1
+                            # R = R/2-(R-R/2)*(1-np.cos(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-head_ang/2))
                             B1 = np.sqrt( (obs_pos[frame][5*i+0]-x-R*np.cos(head_ang-np.pi/2))**2 + (obs_pos[frame][5*i+1]-y-R*np.sin(head_ang-np.pi/2))**2) - (obs_pos[frame][5*i+2]+R)
                             B2 = np.sqrt( (obs_pos[frame][5*i+0]-x-R*np.cos(head_ang+np.pi/2))**2 + (obs_pos[frame][5*i+1]-y-R*np.sin(head_ang+np.pi/2))**2) - (obs_pos[frame][5*i+2]+R)
                             if ship_p.TCCBF == 1:
@@ -104,8 +105,9 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
             # Plotting
             if ship_p.CBF==2 or ship_p.CBF==1:  # Only add the colorbar once
                 ax_asv.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),15), alpha=0.85, cmap=cm.bone)
+                # ax_asv.contourf(X, Y, hk, levels=np.linspace(-50,200,15), alpha=0.85, cmap=cm.bone)                
                 # CS = ax_asv.contourf(X, Y, hk, levels=np.linspace(-30,80,10), alpha=0.2, cmap=cm.bone)
-                ax_asv.contourf(X, Y, hk, levels=[-0.03, 0.03], colors=['red'], alpha=1)
+                ax_asv.contourf(X, Y, hk, levels=[-0.02, 0.02], colors=['red'], alpha=1)
 
         # if frame == 0 and ship_p.CBF>=1:  # Only add the colorbar once
         #     # cbar_hk = fig.colorbar(CS, ax=ax_asv, fraction=0.035)
@@ -166,13 +168,13 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
         ax_asv.set_aspect('equal')
         if mode == 'crossing':
-            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-100,100))
+            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-80,80))
         elif mode == 'avoid':
-            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-100,100))
+            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-30,30))
         elif mode == 'overtaking':
-            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-70,70))
+            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-40,40))
         elif mode == 'static_narrow':
-            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-60,60))
+            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-50,50))
         elif mode == 'static_straight':
             ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-100,100))
         elif mode == 'single_static_straight':
@@ -189,11 +191,11 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         ax_compt.clear()
 
         ax_compt.grid(True)
-        for j in range(5):
+        for j in range(obs_index):
             ax_compt.plot(times,cbf_and_dist[0:frame,j])
         ax_compt.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_compt.set_xlim([0, len(cbf_and_dist)*dt])
-        ax_compt.set_ylim([-2, 30])
+        ax_compt.set_ylim([-1, 10])
         ax_compt.set_xlabel("Time", fontsize=FS)
         ax_compt.set_ylabel("CBF", fontsize=FS)
         
@@ -210,12 +212,12 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         # ax_cbf2.set_ylabel("CBF dot", fontsize=FS)
         
         ax_cbf3.grid(True)
-        for j in range(5):            
+        for j in range(obs_index):            
             ax_cbf3.plot(times,cbf_and_dist[0:frame,5+j])
         ax_cbf3.plot([0, len(cbf_and_dist)*dt],[0,0],'r--')
         ax_cbf3.set_xlim([0, len(cbf_and_dist)*dt])
         # ax_cbf3.set_ylim([-5, np.max(cbf_and_dist[:,0])])
-        ax_cbf3.set_ylim([-5, 20])
+        ax_cbf3.set_ylim([-1, 10])
         ax_cbf3.set_xlabel("Time", fontsize=FS)
         ax_cbf3.set_ylabel("Closest Distance", fontsize=FS)
 
@@ -229,7 +231,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         # ax_cbf1.xaxis.label.set_size(FS)
         # ax_cbf1.yaxis.label.set_size(FS)
 
-        # ax_cbf2.xaxis.label.set_size(FS)
+        # ax_cbf2.xaxis.label.set_size(FS)static_straight
         # ax_cbf2.yaxis.label.set_size(FS)
 
         ax_cbf3.xaxis.label.set_size(FS)
@@ -246,7 +248,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         ax_speed.grid(True)
         ax_speed.autoscale(enable=True, axis='x', tight=True)
         ax_speed.autoscale(enable=True, axis='y', tight=True)
-        ax_speed.set_ylim(1.2, 2.1)
+        ax_speed.set_ylim(0.5, 2.5)
 
         # Plot the headings
         ax_rot.plot(t, states[0:frame,4], 'k', linewidth=2) 
@@ -266,7 +268,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         ax_thrust.set_ylabel("Thrust", fontsize=FS)
         ax_thrust.grid(True)
         ax_thrust.autoscale(enable=True, axis='x', tight=True)
-        ax_thrust.set_ylim(ship_p.Fxmin-5, ship_p.Fxmax+5   )
+        ax_thrust.set_ylim(ship_p.Fxmin-1, ship_p.Fxmax+1)
 
         fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
 
@@ -277,6 +279,8 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
     # plt.show()
     if ship_p.CBF == 2:
         anim.save('Result_' + mode + '_cbf_type_' + str(ship_p.CBF) + '_TCCBF_type_=' + str(ship_p.TCCBF) + '_N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))  
+    elif ship_p.CBF == 1:
+        anim.save('Result_' + mode + '_cbf_type_' + str(ship_p.CBF) + '_EDCBF_gamma1_=' + str(ship_p.gamma1) + '_N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))          
     else:
         anim.save('Result_' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))  
 

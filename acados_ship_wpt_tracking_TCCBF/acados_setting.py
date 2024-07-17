@@ -106,7 +106,7 @@ def setup_wpt_tracking(x0,mode):
     if ship_p.CBF == 1:
     
         ##################### MPC - Euclidean Distance-based CBF #####################
-        for i in range(num_obs):
+        for i in range(5):
             ox = p[5*i+0]
             oy = p[5*i+1]
             obr = p[5*i+2]
@@ -127,7 +127,7 @@ def setup_wpt_tracking(x0,mode):
     if ship_p.CBF == 2:
         
         ##################### MPC - TC Distance-based CBF #####################
-        for i in range(num_obs):
+        for i in range(5):
             ox = p[5*i+0]
             oy = p[5*i+1]
             obr = p[5*i+2]
@@ -146,7 +146,7 @@ def setup_wpt_tracking(x0,mode):
             if ship_p.TCCBF == 3:
                 hk = np.log((np.exp(B1)+np.exp(B2)-1))
             
-            R = x3_n/ship_p.rmax*ship_p.gamma_TC1
+            R = x3/ship_p.rmax*ship_p.gamma_TC1
             B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
             if ship_p.TCCBF == 1:
@@ -164,8 +164,8 @@ def setup_wpt_tracking(x0,mode):
 
     ocp.constraints.idxsh = np.array([0,1,2,3,4])
     ocp.constraints.idxsh_e = np.array([0,1,2,3,4])
-    Zh = 1e6 * np.ones(num_obs)
-    zh = 1e6 * np.ones(num_obs)
+    Zh = 1e5 * np.ones(num_obs)
+    zh = 1e5 * np.ones(num_obs)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh
