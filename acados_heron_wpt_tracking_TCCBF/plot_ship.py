@@ -84,22 +84,22 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
                         v = states[frame,3]  # Assume constant speed for simplicity
 
                         if (ship_p.CBF==1):
-                            B = np.sqrt((x - obs_pos[frame][6*i+0]) ** 2 + (y - obs_pos[frame][6*i+1]) ** 2) - obs_pos[frame][6*i+2]
-                            Bdot = ((x - obs_pos[frame][6*i+0]) * v * np.cos(head_ang) + (y - obs_pos[frame][6*i+1]) * v * np.sin(head_ang)) / np.sqrt((x - obs_pos[frame][6*i+0]) ** 2 + (y - obs_pos[frame][6*i+1]) ** 2)
-                            hk[j, k] = np.min((hk[j, k], Bdot + ship_p.gamma1/obs_pos[frame][6*i+2] * B))
+                            B = np.sqrt((x - obs_pos[frame][5*i+0]) ** 2 + (y - obs_pos[frame][5*i+1]) ** 2) - obs_pos[frame][5*i+2]
+                            Bdot = ((x - obs_pos[frame][5*i+0]) * v * np.cos(head_ang) + (y - obs_pos[frame][5*i+1]) * v * np.sin(head_ang)) / np.sqrt((x - obs_pos[frame][5*i+0]) ** 2 + (y - obs_pos[frame][5*i+1]) ** 2)
+                            hk[j, k] = np.min((hk[j, k], Bdot + ship_p.gamma1/obs_pos[frame][5*i+2] * B))
 
                         elif (ship_p.CBF==2):
                             R = v/ship_p.rmax*ship_p.gamma_TC1
-                            # R = R/2-(R-R/2)*(1-np.cos(np.arctan2((obs_pos[frame][6*i+1]-y),(obs_pos[frame][6*i+0]-x))-head_ang/2))
-                            B1 = np.sqrt( (obs_pos[frame][6*i+0]-x-R*np.cos(head_ang-np.pi/2))**2 + (obs_pos[frame][6*i+1]-y-R*np.sin(head_ang-np.pi/2))**2) - (obs_pos[frame][6*i+2]+R)
-                            B2 = np.sqrt( (obs_pos[frame][6*i+0]-x-R*np.cos(head_ang+np.pi/2))**2 + (obs_pos[frame][6*i+1]-y-R*np.sin(head_ang+np.pi/2))**2) - (obs_pos[frame][6*i+2]+R)
+                            # R = R/2-(R-R/2)*(1-np.cos(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-head_ang/2))
+                            B1 = np.sqrt( (obs_pos[frame][5*i+0]-x-R*np.cos(head_ang-np.pi/2))**2 + (obs_pos[frame][5*i+1]-y-R*np.sin(head_ang-np.pi/2))**2) - (obs_pos[frame][5*i+2]+R)
+                            B2 = np.sqrt( (obs_pos[frame][5*i+0]-x-R*np.cos(head_ang+np.pi/2))**2 + (obs_pos[frame][5*i+1]-y-R*np.sin(head_ang+np.pi/2))**2) - (obs_pos[frame][5*i+2]+R)
                             if ship_p.TCCBF == 1:
                                 hk[j, k] = np.min((hk[j, k], B1))
                             if ship_p.TCCBF == 2:
                                 hk[j, k] = np.min((hk[j, k], B2))
                             if ship_p.TCCBF == 3:
                                 hk[j, k] = np.min((hk[j, k], np.max((B1,B2))))
-                        if np.abs(np.arctan2((obs_pos[frame][6*i+1]-y),(obs_pos[frame][6*i+0]-x))-head_ang)>np.pi/2:
+                        if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-head_ang)>np.pi/2:
                             hk[j, k] = 30
             # Plotting
             if ship_p.CBF==2 or ship_p.CBF==1:  # Only add the colorbar once
@@ -155,9 +155,9 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         for jjj in range(0, ship_p.N):
             for i in range(5):
                 # i = 4
-                radius = obs_pos[frame][6*i+2] - ship_p.radius
-                a = obs_pos[frame][6*i+0]+dt*jjj*obs_pos[frame][6*i+3] + radius * np.cos( theta )
-                b = obs_pos[frame][6*i+1]+dt*jjj*obs_pos[frame][6*i+4] + radius * np.sin( theta )    
+                radius = obs_pos[frame][5*i+2] - ship_p.radius
+                a = obs_pos[frame][5*i+0]+dt*jjj*obs_pos[frame][5*i+3] + radius * np.cos( theta )
+                b = obs_pos[frame][5*i+1]+dt*jjj*obs_pos[frame][5*i+4] + radius * np.sin( theta )    
                 if jjj == 0:
                     ax_asv.fill(a, b, facecolor='white', hatch='///', edgecolor='black')
                 else:

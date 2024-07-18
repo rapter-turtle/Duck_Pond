@@ -170,10 +170,10 @@ int ship_acados_sim_create(ship_sim_solver_capsule * capsule)
     double* p = calloc(np, sizeof(double));
     
     p[2] = 0.01;
-    p[8] = 0.01;
-    p[14] = 0.01;
-    p[20] = 0.01;
-    p[26] = 0.01;
+    p[7] = 0.01;
+    p[12] = 0.01;
+    p[17] = 0.01;
+    p[22] = 0.01;
 
     ship_acados_sim_update_params(capsule, p, np);
     free(p);

@@ -325,7 +325,7 @@ void ship_acados_create_3_create_and_set_functions(ship_solver_capsule* capsule)
         capsule->__CAPSULE_FNC__.casadi_sparsity_in = & __MODEL_BASE_FNC__ ## _sparsity_in; \
         capsule->__CAPSULE_FNC__.casadi_sparsity_out = & __MODEL_BASE_FNC__ ## _sparsity_out; \
         capsule->__CAPSULE_FNC__.casadi_work = & __MODEL_BASE_FNC__ ## _work; \
-        external_function_param_casadi_create(&capsule->__CAPSULE_FNC__ , 30); \
+        external_function_param_casadi_create(&capsule->__CAPSULE_FNC__ , 25); \
     } while(false)
     // constraints.constr_type == "BGH" and dims.nh > 0
     capsule->nl_constr_h_fun_jac = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi)*(N-1));
@@ -393,10 +393,10 @@ void ship_acados_create_4_set_default_parameters(ship_solver_capsule* capsule) {
     // initialize parameters to nominal value
     double* p = calloc(NP, sizeof(double));
     p[2] = 0.01;
-    p[8] = 0.01;
-    p[14] = 0.01;
-    p[20] = 0.01;
-    p[26] = 0.01;
+    p[7] = 0.01;
+    p[12] = 0.01;
+    p[17] = 0.01;
+    p[22] = 0.01;
 
     for (int i = 0; i <= N; i++) {
         ship_acados_update_params(capsule, i, p, NP);
@@ -1099,7 +1099,7 @@ int ship_acados_update_params(ship_solver_capsule* capsule, int stage, double *p
 {
     int solver_status = 0;
 
-    int casadi_np = 30;
+    int casadi_np = 25;
     if (casadi_np != np) {
         printf("acados_update_params: trying to set %i parameters for external functions."
             " External function has %i parameters. Exiting.\n", np, casadi_np);
@@ -1157,7 +1157,7 @@ int ship_acados_update_params_sparse(ship_solver_capsule * capsule, int stage, i
 {
     int solver_status = 0;
 
-    int casadi_np = 30;
+    int casadi_np = 25;
     if (casadi_np < n_update) {
         printf("ship_acados_update_params_sparse: trying to set %d parameters for external functions."
             " External function has %d parameters. Exiting.\n", n_update, casadi_np);

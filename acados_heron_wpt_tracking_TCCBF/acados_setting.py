@@ -43,49 +43,38 @@ def setup_wpt_tracking(x0,mode):
     or1 = SX.sym('or1') 
     odx1 = SX.sym('odx1') 
     ody1 = SX.sym('ody1') 
-    on1 = SX.sym('on1') 
-    
     ox2 = SX.sym('ox2') 
     oy2 = SX.sym('oy2') 
     or2 = SX.sym('or2') 
     odx2 = SX.sym('odx2') 
     ody2 = SX.sym('ody2') 
-    on2 = SX.sym('on2') 
-
     ox3 = SX.sym('ox3') 
     oy3 = SX.sym('oy3') 
     or3 = SX.sym('or3') 
     odx3 = SX.sym('odx3') 
     ody3 = SX.sym('ody3') 
-    on3 = SX.sym('on3') 
-    
     ox4 = SX.sym('ox4') 
     oy4 = SX.sym('oy4') 
     or4 = SX.sym('or4') 
     odx4 = SX.sym('odx4') 
     ody4 = SX.sym('ody4') 
-    on4 = SX.sym('on4') 
-    
     ox5 = SX.sym('ox5') 
     oy5 = SX.sym('oy5') 
     or5 = SX.sym('or5') 
     odx5 = SX.sym('odx5') 
     ody5 = SX.sym('ody5') 
-    on5 = SX.sym('on5') 
-    
-    p = vertcat(ox1, oy1, or1, odx1, ody1, on1,
-                ox2, oy2, or2, odx2, ody2, on2,
-                ox3, oy3, or3, odx3, ody3, on3,
-                ox4, oy4, or4, odx4, ody4, on4,
-                ox5, oy5, or5, odx5, ody5, on5
-                )
+    p = vertcat(ox1, oy1, or1, odx1, ody1, 
+                ox2, oy2, or2, odx2, ody2, 
+                ox3, oy3, or3, odx3, ody3, 
+                ox4, oy4, or4, odx4, ody4, 
+                ox5, oy5, or5, odx5, ody5)
     
     ocp.model.p = p 
-    ocp.parameter_values = np.array([0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 
-                                     0.0, 0.0, 0.01, 0.0, 0.0, 0.0])
+    ocp.parameter_values = np.array([0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0, 
+                                     0.0, 0.0, 0.01, 0.0, 0.0])
 
     num_obs = 5
     ocp.constraints.uh = 1e10 * np.ones(num_obs)
@@ -118,12 +107,11 @@ def setup_wpt_tracking(x0,mode):
     
         ##################### MPC - Euclidean Distance-based CBF #####################
         for i in range(5):
-            ox = p[6*i+0]
-            oy = p[6*i+1]
-            obr = p[6*i+2]
-            odx = p[6*i+3]*ship_p.dt
-            ody = p[6*i+4]*ship_p.dt
-            on = p[6*i+5]
+            ox = p[5*i+0]
+            oy = p[5*i+1]
+            obr = p[5*i+2]
+            odx = p[5*i+3]*ship_p.dt
+            ody = p[5*i+4]*ship_p.dt
             ox_n = ox + odx
             oy_n = oy + ody
 
@@ -133,19 +121,18 @@ def setup_wpt_tracking(x0,mode):
             B = np.sqrt( (x0_n-ox_n)**2 + (x1_n - oy_n)**2) - obr
             Bdot = ((x0_n-ox_n)*(x3_n)*cos(x2_n) + (x1_n-oy_n)*(x3_n)*sin(x2_n))/np.sqrt((x0_n-ox_n)**2 + (x1_n - oy_n)**2)
             hkn = Bdot + ship_p.gamma1/(obr+0.0001)*B
-            h_expr[i] = (hkn - (1-ship_p.gamma2)*hk)*on
+            h_expr[i] = hkn - (1-ship_p.gamma2)*hk
             # h_expr[i] = hk
 
     if ship_p.CBF == 2:
         
         ##################### MPC - TC Distance-based CBF #####################
         for i in range(5):
-            ox = p[6*i+0]
-            oy = p[6*i+1]
-            obr = p[6*i+2]
-            odx = p[6*i+3]*ship_p.dt
-            ody = p[6*i+4]*ship_p.dt
-            on =  p[6*i+5]
+            ox = p[5*i+0]
+            oy = p[5*i+1]
+            obr = p[5*i+2]
+            odx = p[5*i+3]*ship_p.dt
+            ody = p[5*i+4]*ship_p.dt
             ox_n = ox + odx
             oy_n = oy + ody
 
@@ -169,7 +156,7 @@ def setup_wpt_tracking(x0,mode):
             if ship_p.TCCBF == 3:
                 hkn = np.log((np.exp(B1)+np.exp(B2)-1))
    
-            h_expr[i] = (hkn - (1-ship_p.gamma_TC2)*hk)*on
+            h_expr[i] = hkn - (1-ship_p.gamma_TC2)*hk
 
     
 
