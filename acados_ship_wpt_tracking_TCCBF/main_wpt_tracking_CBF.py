@@ -92,23 +92,28 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
                 ox5 = 100; oy5 = +0.01; or5 = 20.0*obsrad_param
                 obs_index = 1
 
-            obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, 0,  
-                                ox2, oy2, or2 + ship_p.radius, 0, 0,  
-                                ox3, oy3, or3 + ship_p.radius, 0, 0,  
-                                ox4, oy4, or4 + ship_p.radius, 0, 0,  
-                                ox5, oy5, or5 + ship_p.radius, 0, 0])    
+            obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, 0, 0,  
+                                ox2, oy2, or2 + ship_p.radius, 0, 0, 0,  
+                                ox3, oy3, or3 + ship_p.radius, 0, 0, 0,  
+                                ox4, oy4, or4 + ship_p.radius, 0, 0, 0,  
+                                ox5, oy5, or5 + ship_p.radius, 0, 0, 0])    
         
             for jj in range(5):
-                cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
-                cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])
+                cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[6*jj+0:6*jj+5],cbf_num)
+                cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[6*jj+0:6*jj+5])
         
             obs_list.append(obs_pos)
 
- 
-                
-            for j in range(N_horizon):
+            
+            for j in range(N_horizon+1):
+                if j == 0:
+                    for jjj in range(5):
+                        obs_pos[6*jjj+6] = 1
+                else:
+                    for jjj in range(5):
+                        obs_pos[6*jjj+6] = 0
+                        
                 ocp_solver.set(j, "p", obs_pos)
-            ocp_solver.set(N_horizon, "p", obs_pos)
 
             
         ## Static obstacles - Narrow
@@ -119,17 +124,17 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
             ox4 = 100; oy4 = +25; or4 = 20.0*obsrad_param
             ox5 = 100; oy5 = -25; or5 = 20.0*obsrad_param
             obs_index = 2
-            obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, 0,  
-                                ox2, oy2, or2 + ship_p.radius, 0, 0,  
-                                ox3, oy3, or3 + ship_p.radius, 0, 0,  
-                                ox4, oy4, or4 + ship_p.radius, 0, 0,  
-                                ox5, oy5, or5 + ship_p.radius, 0, 0])    
+            obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, 0, 0,  
+                                ox2, oy2, or2 + ship_p.radius, 0, 0, 0,  
+                                ox3, oy3, or3 + ship_p.radius, 0, 0, 0,  
+                                ox4, oy4, or4 + ship_p.radius, 0, 0, 0,  
+                                ox5, oy5, or5 + ship_p.radius, 0, 0, 0])    
         
             obs_list.append(obs_pos)
             
             for jj in range(5):
-                cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
-                cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])    
+                cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[6*jj+0:6*jj+5],cbf_num)
+                cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[6*jj+0:6*jj+5])    
                     
             for j in range(N_horizon):
                 ocp_solver.set(j, "p", obs_pos)
@@ -157,41 +162,28 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
                 or5 = 10.0*obsrad_param
                 obs_index = 1
 
-                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, obs_speed, 0,  
-                                    ox2, oy2, or2 + ship_p.radius, obs_speed, 0,  
-                                    ox3, oy3, or3 + ship_p.radius, obs_speed, 0,  
-                                    ox4, oy4, or4 + ship_p.radius, obs_speed, 0,  
-                                    ox5, oy5, or5 + ship_p.radius, obs_speed, 0])    
-                obs_pos_ignore = np.array([ox1, oy1, 0.00001, 0, 0,  
-                                            ox2, oy2, 0.00001, 0, 0,  
-                                            ox3, oy3, 0.00001, 0, 0,  
-                                            ox4, oy4, 0.00001, 0, 0,  
-                                            ox5, oy5, 0.00001, 0, 0])  
+                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox2, oy2, or2 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox3, oy3, or3 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox4, oy4, or4 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox5, oy5, or5 + ship_p.radius, obs_speed, 0, 0])    
+                obs_pos_ignore = np.array([ox1, oy1, 0.00001,  0, 0, 0,  
+                                            ox2, oy2, 0.00001, 0, 0, 0,  
+                                            ox3, oy3, 0.00001, 0, 0, 0,  
+                                            ox4, oy4, 0.00001, 0, 0, 0,  
+                                            ox5, oy5, 0.00001, 0, 0, 0])  
                 if j == 0:
                     for jj in range(5):
-                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
-                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])                
+                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[6*jj+0:6*jj+5],cbf_num)
+                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[6*jj+0:6*jj+5])                
 
                 if j == 0:
                     obs_list.append(obs_pos)
- 
 
-                # if simX[i, 0] > ox5:
-                #     obs_pos = np.array([ox1, oy1, 0.00001, 0, 0,  
-                #                         ox2, oy2, 0.00001, 0, 0,  
-                #                         ox3, oy3, 0.00001, 0, 0,  
-                #                         ox4, oy4, 0.00001, 0, 0,  
-                #                         ox5, oy5, 0.00001, 0, 0])  
-                if j == N_horizon:
-                    if np.abs(np.arctan2((oy1-simX[i, 1]),(ox1-simX[i, 0]))-simX[i, 2])>np.pi/2 or simX[i, 0] > ox5:
-                        ocp_solver.set(N_horizon, "p", obs_pos_ignore)
-                    else:
-                        ocp_solver.set(N_horizon, "p", obs_pos)
+                if np.abs(np.arctan2((oy1-simX[i, 1]),(ox1-simX[i, 0]))-simX[i, 2])>np.pi/2 or simX[i, 0] > ox5:
+                    ocp_solver.set(j, "p", obs_pos_ignore)         
                 else:
-                    if np.abs(np.arctan2((oy1-simX[i, 1]),(ox1-simX[i, 0]))-simX[i, 2])>np.pi/2 or simX[i, 0] > ox5:
-                        ocp_solver.set(j, "p", obs_pos_ignore)         
-                    else:
-                        ocp_solver.set(j, "p", obs_pos)         
+                    ocp_solver.set(j, "p", obs_pos)         
 
 
         ## Dynamic obstacles - Avoid              
@@ -219,43 +211,29 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
                 or5 = 0.1*obsrad_param
                 obs_index = 1
 
-                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, obs_speed1,  
-                                    ox2, oy2, or2 + ship_p.radius, 0, obs_speed2,  
-                                    ox3, oy3, or3 + ship_p.radius, 0, obs_speed3,  
-                                    ox4, oy4, or4 + ship_p.radius, 0, obs_speed4,  
-                                    ox5, oy5, or5 + ship_p.radius, 0, obs_speed5])    
-                obs_pos_ignore = np.array([ox1, oy1, 0.00001, 0, 0,  
-                                            ox2, oy2, 0.00001, 0, 0,  
-                                            ox3, oy3, 0.00001, 0, 0,  
-                                            ox4, oy4, 0.00001, 0, 0,  
-                                            ox5, oy5, 0.00001, 0, 0])  
+                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, obs_speed1, 0,  
+                                    ox2, oy2, or2 + ship_p.radius, 0, obs_speed2, 0,  
+                                    ox3, oy3, or3 + ship_p.radius, 0, obs_speed3, 0,  
+                                    ox4, oy4, or4 + ship_p.radius, 0, obs_speed4, 0,  
+                                    ox5, oy5, or5 + ship_p.radius, 0, obs_speed5, 0])    
+                obs_pos_ignore = np.array([ox1, oy1, 0.00001, 0, 0, 0,  
+                                            ox2, oy2, 0.00001, 0, 0, 0,  
+                                            ox3, oy3, 0.00001, 0, 0, 0,  
+                                            ox4, oy4, 0.00001, 0, 0, 0,  
+                                            ox5, oy5, 0.00001, 0, 0, 0])  
                 if j == 0:
                     for jj in range(5):
-                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
-                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])                
+                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[6*jj+0:6*jj+5],cbf_num)
+                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[6*jj+0:6*jj+5])                
 
                 if j == 0:
                     obs_list.append(obs_pos)
  
 
-                # if simX[i, 0] > ox5:
-                #     obs_pos = np.array([ox1, oy1, 0.00001, 0, 0,  
-                #                         ox2, oy2, 0.00001, 0, 0,  
-                #                         ox3, oy3, 0.00001, 0, 0,  
-                #                         ox4, oy4, 0.00001, 0, 0,  
-                #                         ox5, oy5, 0.00001, 0, 0])  
-                                    
-     
-                if j == N_horizon:
-                    if np.abs(np.arctan2((oy1-simX[i, 1]),(ox1-simX[i, 0]))-simX[i, 2])>np.pi/2 or simX[i, 0] > ox5:
-                        ocp_solver.set(N_horizon, "p", obs_pos_ignore)
-                    else:
-                        ocp_solver.set(N_horizon, "p", obs_pos)
+                if np.abs(np.arctan2((oy1-simX[i, 1]),(ox1-simX[i, 0]))-simX[i, 2])>np.pi/2 or simX[i, 0] > ox5:
+                    ocp_solver.set(j, "p", obs_pos_ignore)         
                 else:
-                    if np.abs(np.arctan2((oy1-simX[i, 1]),(ox1-simX[i, 0]))-simX[i, 2])>np.pi/2 or simX[i, 0] > ox5:
-                        ocp_solver.set(j, "p", obs_pos_ignore)         
-                    else:
-                        ocp_solver.set(j, "p", obs_pos)         
+                    ocp_solver.set(j, "p", obs_pos)         
 
 
         ## Dynamic obstacles - Overtaking              
@@ -280,26 +258,19 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
                 or5 = 10.0*obsrad_param
                 obs_index = 1
 
-                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, obs_speed, 0,  
-                                    ox2, oy2, or2 + ship_p.radius, obs_speed, 0,  
-                                    ox3, oy3, or3 + ship_p.radius, obs_speed, 0,  
-                                    ox4, oy4, or4 + ship_p.radius, obs_speed, 0,  
-                                    ox5, oy5, or5 + ship_p.radius, obs_speed, 0])    
+                obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox2, oy2, or2 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox3, oy3, or3 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox4, oy4, or4 + ship_p.radius, obs_speed, 0, 0,  
+                                    ox5, oy5, or5 + ship_p.radius, obs_speed, 0, 0])    
                 if j == 0:
                     for jj in range(5):
-                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[5*jj+0:5*jj+5],cbf_num)
-                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[5*jj+0:5*jj+5])                
+                        cbf_and_dist[i,jj] = calc_cbf(simX[i,:],obs_pos[6*jj+0:6*jj+5],cbf_num)
+                        cbf_and_dist[i,5+jj] = calc_closest_distance(simX[i,:],obs_pos[6*jj+0:6*jj+5])                
                 
                 if j == 0:
                     obs_list.append(obs_pos)
-                    
-
-                # if simX[i, 0] > (i)*dt*obs_speed:
-                #     obs_pos = np.array([ox1, oy1, 0.00001, obs_speed, 0,  
-                #                         ox2, oy2, 0.00001, obs_speed, 0,  
-                #                         ox3, oy3, 0.00001, obs_speed, 0,  
-                #                         ox4, oy4, 0.00001, obs_speed, 0,  
-                #                         ox5, oy5, 0.00001, obs_speed, 0])                       
+                                     
                 ocp_solver.set(j, "p", obs_pos)         
 
 
@@ -412,18 +383,18 @@ if __name__ == '__main__':
     # main(1,'avoid',10,1.0)
     
     # main(1,'overtaking',10,2.5)
-    main(1,'overtaking',10,1.5)
+    # main(1,'overtaking',10,1.5)
     # main(1,'overtaking',10,1.0)
     
     # main(1,'single_static_straight',10,2.5)
-    main(1,'single_static_straight',10,1.5)
+    # main(1,'single_static_straight',10,1.5)
     # main(1,'single_static_straight',10,1.0)
     
     # main(1,'static_narrow',10,2.5)
-    main(1,'static_narrow',10,1.5)
+    # main(1,'static_narrow',10,1.5)
     # main(1,'static_narrow',10,1.0)
     
     # main(1,'static_straight',10,2.5)
-    main(1,'static_straight',10,1.5)
+    # main(1,'static_straight',10,1.5)
     # main(1,'static_straight',10,1.0)
     

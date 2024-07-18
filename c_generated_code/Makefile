@@ -36,41 +36,41 @@
 
 # model
 MODEL_SRC=
-MODEL_SRC+= heron_model/heron_impl_dae_fun.c
-MODEL_SRC+= heron_model/heron_impl_dae_fun_jac_x_xdot_z.c
-MODEL_SRC+= heron_model/heron_impl_dae_jac_x_xdot_u_z.c
+MODEL_SRC+= ship_model/ship_expl_ode_fun.c
+MODEL_SRC+= ship_model/ship_expl_vde_forw.c
+MODEL_SRC+= ship_model/ship_expl_vde_adj.c
 MODEL_OBJ := $(MODEL_SRC:.c=.o)
 
 # optimal control problem - mostly CasADi exports
 OCP_SRC=
-OCP_SRC+= heron_constraints/heron_constr_h_fun_jac_uxt_zt.c
-OCP_SRC+= heron_constraints/heron_constr_h_fun.c
-OCP_SRC+= heron_constraints/heron_constr_h_e_fun_jac_uxt_zt.c
-OCP_SRC+= heron_constraints/heron_constr_h_e_fun.c
-OCP_SRC+= heron_cost/heron_cost_y_0_fun.c
-OCP_SRC+= heron_cost/heron_cost_y_0_fun_jac_ut_xt.c
-OCP_SRC+= heron_cost/heron_cost_y_0_hess.c
-OCP_SRC+= heron_cost/heron_cost_y_fun.c
-OCP_SRC+= heron_cost/heron_cost_y_fun_jac_ut_xt.c
-OCP_SRC+= heron_cost/heron_cost_y_hess.c
-OCP_SRC+= heron_cost/heron_cost_y_e_fun.c
-OCP_SRC+= heron_cost/heron_cost_y_e_fun_jac_ut_xt.c
-OCP_SRC+= heron_cost/heron_cost_y_e_hess.c
+OCP_SRC+= ship_constraints/ship_constr_h_fun_jac_uxt_zt.c
+OCP_SRC+= ship_constraints/ship_constr_h_fun.c
+OCP_SRC+= ship_constraints/ship_constr_h_e_fun_jac_uxt_zt.c
+OCP_SRC+= ship_constraints/ship_constr_h_e_fun.c
+OCP_SRC+= ship_cost/ship_cost_y_0_fun.c
+OCP_SRC+= ship_cost/ship_cost_y_0_fun_jac_ut_xt.c
+OCP_SRC+= ship_cost/ship_cost_y_0_hess.c
+OCP_SRC+= ship_cost/ship_cost_y_fun.c
+OCP_SRC+= ship_cost/ship_cost_y_fun_jac_ut_xt.c
+OCP_SRC+= ship_cost/ship_cost_y_hess.c
+OCP_SRC+= ship_cost/ship_cost_y_e_fun.c
+OCP_SRC+= ship_cost/ship_cost_y_e_fun_jac_ut_xt.c
+OCP_SRC+= ship_cost/ship_cost_y_e_hess.c
 
-OCP_SRC+= acados_solver_heron.c
+OCP_SRC+= acados_solver_ship.c
 OCP_OBJ := $(OCP_SRC:.c=.o)
 
 # for sim solver
-SIM_SRC= acados_sim_solver_heron.c
+SIM_SRC= acados_sim_solver_ship.c
 SIM_OBJ := $(SIM_SRC:.c=.o)
 
 # for target example
-EX_SRC= main_heron.c
+EX_SRC= main_ship.c
 EX_OBJ := $(EX_SRC:.c=.o)
 EX_EXE := $(EX_SRC:.c=)
 
 # for target example_sim
-EX_SIM_SRC= main_sim_heron.c
+EX_SIM_SRC= main_sim_ship.c
 EX_SIM_OBJ := $(EX_SIM_SRC:.c=.o)
 EX_SIM_EXE := $(EX_SIM_SRC:.c=)
 
@@ -111,8 +111,8 @@ LDLIBS+= -lm
 LDLIBS+= 
 
 # libraries
-LIBACADOS_SOLVER=libacados_solver_heron.so
-LIBACADOS_OCP_SOLVER=libacados_ocp_solver_heron.so
+LIBACADOS_SOLVER=libacados_solver_ship.so
+LIBACADOS_OCP_SOLVER=libacados_ocp_solver_ship.so
 LIBACADOS_SIM_SOLVER=lib$(SIM_SRC:.c=.so)
 
 # virtual targets
@@ -165,7 +165,7 @@ ocp_cython: ocp_cython_o
 	-o acados_ocp_solver_pyx.so \
 	-Wl,-rpath=$(LIB_PATH) \
 	acados_ocp_solver_pyx.o \
-	$(abspath .)/libacados_ocp_solver_heron.so \
+	$(abspath .)/libacados_ocp_solver_ship.so \
 	$(LDFLAGS) $(LDLIBS)
 
 # Sim Cython targets
@@ -192,7 +192,7 @@ sim_cython: sim_cython_o
 	-o acados_sim_solver_pyx.so \
 	-Wl,-rpath=$(LIB_PATH) \
 	acados_sim_solver_pyx.o \
-	$(abspath .)/libacados_sim_solver_heron.so \
+	$(abspath .)/libacados_sim_solver_ship.so \
 	$(LDFLAGS) $(LDLIBS)
 
 clean:
@@ -205,13 +205,13 @@ clean_ocp_shared_lib:
 	$(RM) $(OCP_OBJ)
 
 clean_ocp_cython:
-	$(RM) libacados_ocp_solver_heron.so
-	$(RM) acados_solver_heron.o
+	$(RM) libacados_ocp_solver_ship.so
+	$(RM) acados_solver_ship.o
 	$(RM) acados_ocp_solver_pyx.so
 	$(RM) acados_ocp_solver_pyx.o
 
 clean_sim_cython:
-	$(RM) libacados_sim_solver_heron.so
-	$(RM) acados_sim_solver_heron.o
+	$(RM) libacados_sim_solver_ship.so
+	$(RM) acados_sim_solver_ship.o
 	$(RM) acados_sim_solver_pyx.so
 	$(RM) acados_sim_solver_pyx.o

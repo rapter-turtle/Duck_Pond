@@ -39,7 +39,7 @@
 #define SHIP_NX     7
 #define SHIP_NZ     0
 #define SHIP_NU     2
-#define SHIP_NP     25
+#define SHIP_NP     30
 #define SHIP_NBX    4
 #define SHIP_NBX0   7
 #define SHIP_NBU    2
