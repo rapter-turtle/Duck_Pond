@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib import cm, animation
 
 
 
@@ -191,8 +192,8 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
        
 
     anim = FuncAnimation(fig, update, frames=len(states), repeat=False)
-    plt.show()
-
+    # plt.show()
+    anim.save('Recovery.mp4', writer=animation.FFMpegWriter(fps=20))  
 
 
 

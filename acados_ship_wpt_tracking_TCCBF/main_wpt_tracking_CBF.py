@@ -401,29 +401,29 @@ def calc_cbf(state,obs,type):
     return cbf
 
 if __name__ == '__main__':
-    main(2,'avoid',10)
-    main(2,'overtaking',10)
-    main(2,'single_static_straight',10)
-    main(2,'static_narrow',10)
-    main(2,'static_straight',10)
+    # main(2,'avoid',10)
+    # main(2,'overtaking',10)
+    # main(2,'single_static_straight',10)
+    # main(2,'static_narrow',10)
+    # main(2,'static_straight',10)
     
-    main(1,'avoid',10,2.5)
+    # main(1,'avoid',10,2.5)
     main(1,'avoid',10,1.5)
-    main(1,'avoid',10,1.0)
+    # main(1,'avoid',10,1.0)
     
-    main(1,'overtaking',10,2.5)
+    # main(1,'overtaking',10,2.5)
     main(1,'overtaking',10,1.5)
-    main(1,'overtaking',10,1.0)
+    # main(1,'overtaking',10,1.0)
     
-    main(1,'single_static_straight',10,2.5)
+    # main(1,'single_static_straight',10,2.5)
     main(1,'single_static_straight',10,1.5)
-    main(1,'single_static_straight',10,1.0)
+    # main(1,'single_static_straight',10,1.0)
     
-    main(1,'static_narrow',10,2.5)
+    # main(1,'static_narrow',10,2.5)
     main(1,'static_narrow',10,1.5)
-    main(1,'static_narrow',10,1.0)
+    # main(1,'static_narrow',10,1.0)
     
-    main(1,'static_straight',10,2.5)
+    # main(1,'static_straight',10,2.5)
     main(1,'static_straight',10,1.5)
-    main(1,'static_straight',10,1.0)
+    # main(1,'static_straight',10,1.0)
     

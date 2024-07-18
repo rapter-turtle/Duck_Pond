@@ -176,7 +176,7 @@ def main():
         # U_wind_force = 0.0   
         # N_wind_force = 0.0
         
-        disturbance = np.array([U_wave_force + U_wind_force, N_wave_force + N_wind_force])
+        disturbance = np.array([U_wave_force + U_wind_force, N_wave_force + N_wind_force])*0
 
         ##########################################################################################
 
@@ -204,7 +204,7 @@ def main():
 
 
     ocp_solver = None
-    plot_iter = 5
+    plot_iter = 2
     dt_gap = int(con_dt/simulation_dt)
     t = np.arange(0, T_final, simulation_dt)
 
