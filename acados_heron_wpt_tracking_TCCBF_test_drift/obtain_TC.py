@@ -15,8 +15,8 @@ def main(target_speed):
                     target_speed, # surge
                     0.0, # sway
                     0.0, # rot-vel
-                    Fx_init/2,  # Fx
-                    Fx_init/2])  # Fn    
+                    Fx_init,  # Fx
+                    0])  # Fn    
 
     simX = np.zeros((Nsim+1, 8))
     simU = np.zeros((Nsim+1, 2))

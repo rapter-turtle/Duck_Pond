@@ -30,7 +30,15 @@ def setup_wpt_tracking(x0,mode):
     ocp.cost.W = scipy.linalg.block_diag(Q_mat, R_mat)
     ocp.cost.W_e = Q_mat
 
-    ocp.model.cost_y_expr = vertcat(model.x, model.u)
+    ocp.model.cost_y_expr = vertcat(model.x[0], 
+                                    model.x[1], 
+                                    model.x[2], 
+                                    model.x[3], 
+                                    model.x[4], 
+                                    model.x[5], 
+                                    model.x[6], 
+                                    model.x[7], 
+                                    model.u)
     ocp.model.cost_y_expr_e = model.x
     ocp.cost.yref  = np.zeros((ny, ))
     ocp.cost.yref_e = np.zeros((ny_e, ))
@@ -117,16 +125,14 @@ def setup_wpt_tracking(x0,mode):
             ody = p[5*i+4]*ship_p.dt
             ox_n = ox + odx
             oy_n = oy + ody
-            U = np.sqrt(x3**2+x4**2)
-            Psi = x2 + np.arctan(x4/x3)
             B = np.sqrt( (x0-ox)**2 + (x1 - oy)**2) - obr
-            Bdot = ((x0-ox)*(x3*cos(x2)-x4*sin(x2)) + (x1-oy)*(x3*sin(x2)+x4*cos(x2)))/np.sqrt((x0-ox)**2 + (x1 - oy)**2)
+            Bdot = ((x0-ox)*(x3*cos(x2)+x4*sin(x2)) + (x1-oy)*(x3*sin(x2)-x4*cos(x2)))/np.sqrt((x0-ox)**2 + (x1 - oy)**2)
+            # Bdot = ((x0-ox)*(x3*cos(x2)+x4*sin(x2)) + (x1-oy)*(x3*sin(x2)-x4*cos(x2)))/np.sqrt((x0-ox)**2 + (x1 - oy)**2)
             hk = Bdot + ship_p.gamma1/(obr+0.0001)*B
 
-            U = np.sqrt(x3_n**2+x4_n**2)
-            Psi = x2_n + np.arctan(x4_n/x3_n)
             B = np.sqrt( (x0_n-ox_n)**2 + (x1_n - oy_n)**2) - obr
-            Bdot = ((x0_n-ox_n)*(x3_n*cos(x2_n)-x4_n*sin(x2_n)) + (x1_n-oy_n)*(x3_n*sin(x2_n)+x4_n*cos(x2_n)))/np.sqrt((x0_n-ox_n)**2 + (x1_n - oy_n)**2)
+            Bdot = ((x0_n-ox_n)*(x3_n*cos(x2_n)+x4_n*sin(x2_n)) + (x1_n-oy_n)*(x3_n*sin(x2_n)-x4_n*cos(x2_n)))/np.sqrt((x0_n-ox_n)**2 + (x1_n - oy_n)**2)
+            # Bdot = ((x0_n-ox_n)*(x3_n*cos(x2_n)+x4_n*sin(x2_n)) + (x1_n-oy_n)*(x3_n*sin(x2_n)-x4_n*cos(x2_n)))/np.sqrt((x0_n-ox_n)**2 + (x1_n - oy_n)**2)
             hkn = Bdot + ship_p.gamma1/(obr+0.0001)*B
             h_expr[i] = hkn - (1-ship_p.gamma2)*hk
 
@@ -211,8 +217,8 @@ def setup_wpt_tracking(x0,mode):
 
     ocp.constraints.idxsh = np.array([0,1,2,3,4])
     ocp.constraints.idxsh_e = np.array([0,1,2,3,4])
-    Zh = 1e4 * np.ones(num_obs)
-    zh = 1e4 * np.ones(num_obs)
+    Zh = 1e5 * np.ones(num_obs)
+    zh = 1e5 * np.ones(num_obs)
     ocp.cost.zl = zh
     ocp.cost.zu = zh
     ocp.cost.Zl = Zh

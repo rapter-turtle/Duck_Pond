@@ -19,8 +19,12 @@ def main(cbf_num,mode,prediction_horizon):
         Tf = 15
     if mode == 'avoid':   
         Tf = 30
+        # ship_p.gamma2 = 0.03
+        # ship_p.gamma_TC2 = 0.04
     if mode == 'overtaking':   
-        Tf = 25
+        Tf = 45
+        # ship_p.gamma2 = 0.25
+        # ship_p.gamma_TC2 = 0.25
     if mode == 'single_static_straight':
         Tf = 30
 
@@ -37,8 +41,8 @@ def main(cbf_num,mode,prediction_horizon):
                    target_speed, # surge
                    0.0, # sway
                    0.0, # rot-vel
-                   Fx_init/2,  # Fx
-                   Fx_init/2])  # Fn    
+                   Fx_init,  # Fx
+                   0])  # Fn    
 
     ocp_solver, integrator = setup_wpt_tracking(x0,mode)
 
@@ -68,9 +72,9 @@ def main(cbf_num,mode,prediction_horizon):
         print('CBF Num:' + str(cbf_num) + ', N:' + str(prediction_horizon) + ', Mode:' + str(mode) + ', Iter:' + str(i+1) + '/'+ str(Nsim))
         
         for j in range(N_horizon):
-            yref = np.hstack((0,0,0,target_speed,0,0,Fx_init/2,Fx_init/2,0,0))
+            yref = np.hstack((0,0,0,target_speed,0,0,Fx_init,0,0,0))
             ocp_solver.cost_set(j, "yref", yref)
-        yref_N = np.hstack((0,0,0,target_speed,0,0,Fx_init/2,Fx_init/2))
+        yref_N = np.hstack((0,0,0,target_speed,0,0,Fx_init,0))
         ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
         
@@ -137,7 +141,7 @@ def main(cbf_num,mode,prediction_horizon):
         ## Dynamic obstacles - Avoid              
         if mode == 'avoid':
             for j in range(N_horizon+1):
-                obs_speed = -0.5
+                obs_speed = -0.3
                 xinit = 30
                 ox1 = xinit + (i+j)*dt*obs_speed;  
                 oy1 = 0.001; 
@@ -288,7 +292,7 @@ def main(cbf_num,mode,prediction_horizon):
 
     ocp_solver = None
     plot_iter = len(simX)-1
-    plot_iter = 5
+    # plot_iter = 30
     animateASV(simX, simU, target_speed, mpc_pred_list, obs_array, cbf_and_dist, plot_iter, t_preparation+t_feedback, mode, obs_index)
 
     # animateCBF(plot_iter, cbf_and_dist, mode)
@@ -315,7 +319,7 @@ def calc_cbf(state,obs,type):
 
     if type == 1:    
         B = np.sqrt( (x-ox)**2 + (y - oy)**2) - orad
-        Bdot = ((x-ox)*u*cos(psi) + (y-oy)*u*sin(psi))/np.sqrt((x-ox)**2 + (y - oy)**2)
+        Bdot = ((x-ox)*(u*cos(psi)+v*sin(psi)) + (y-oy)*(u*sin(psi)-v*cos(psi)))/np.sqrt((x-ox)**2 + (y - oy)**2)
         cbf = Bdot + ship_p.gamma1/orad*B
 
     if type == 2:
@@ -348,11 +352,34 @@ def calc_cbf(state,obs,type):
 if __name__ == '__main__':
     # main(1,'single_static_straight',10)
     # main(1,'single_static_straight',15)
-    main(3,'single_static_straight',10)
-    main(3,'static_narrow',10)
-    main(3,'static_straight',10)
+    # main(1,'avoid',20)
+    # main(2,'avoid',10)
+    # main(3,'avoid',10)
+
+    # main(1,'single_static_straight',10)
+
+    main(1,'avoid',10)
     main(3,'avoid',10)
+
+    main(1,'single_static_straight',10)
+    main(3,'single_static_straight',10)
+
+    main(1,'overtaking',10)
     main(3,'overtaking',10)
+
+    main(1,'static_straight',10)
+    main(3,'static_straight',10)
+    
+    main(1,'overtaking',10)
+    main(1,'overtaking',10)
+
+
+
+
+
+    # main(1,'static_narrow',10)
+    # main(3,'static_narrow',10)
+
     # main(2,'single_static_straight',10)
     # main(1,'single_static_straight',20)
     

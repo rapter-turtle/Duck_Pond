@@ -27,12 +27,12 @@ def ship_integrator(ship, control_input, dt):
 
 
     # dynamics
-    xdot = np.array([u*np.cos(psi) - v*np.sin(psi),
-                     u*np.sin(psi) + v*np.cos(psi),
+    xdot = np.array([u*np.cos(psi) + v*np.sin(psi),
+                     u*np.sin(psi) - v*np.cos(psi),
                      r,
-                     ((Fx+Fn)+M*v*r-(Xu + Xuu*np.sqrt(u*u))*u)/M ,
+                     ((Fx)+M*v*r-(Xu + Xuu*np.sqrt(u*u))*u)/M ,
                      (-M*u*r - Yv*v) / M,
-                     ((-Fx+Fn)*L/2 - (Nr + Nrr*np.sqrt(r*r))*r)/I,
+                     ((Fn)*L/2 - (Nr + Nrr*np.sqrt(r*r))*r)/I,
                      dFx,
                      dFn
                      ])

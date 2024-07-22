@@ -10,20 +10,22 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, plot_iter, comptime, mode, obs_index):
     
-    fig, axs = plt.subplots(3,3, figsize=(12,8))
+    fig, axs = plt.subplots(3,4, figsize=(15,8))
     # Combine first two columns for the ASV plot
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[1, 0])
     fig.delaxes(axs[1, 1])
-    ax_asv = plt.subplot2grid((3, 3), (0, 0), colspan=2, rowspan=2)  # Combine first row for ASV
+    ax_asv = plt.subplot2grid((3, 4), (0, 0), colspan=2, rowspan=2)  # Combine first row for ASV
+    ax_asv_zoom = plt.subplot2grid((3, 4), (0, 2), colspan=1, rowspan=2)  # Combine first row for ASV
     # CBF animation setup
-    ax_compt = axs[0, 2]
+    ax_compt = axs[0, 3]
     # ax_cbf1 = axs[1, 0]
     # ax_cbf2 = axs[2, 1]
-    ax_cbf3 = axs[1, 2]
-    ax_speed = axs[2, 0]
-    ax_rot = axs[2, 1]
-    ax_thrust = axs[2, 2]
+    ax_cbf3 = axs[1, 3]
+    ax_surge = axs[2, 0]
+    ax_sway = axs[2, 1]
+    ax_rot = axs[2, 2]
+    ax_thrust = axs[2, 3]
 
 
     ship_p = load_ship_param
@@ -47,12 +49,12 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
     ## Create a scatter plot for the heatmap and initialize the colorbar
     # norm = Normalize(vmin=np.min(states[:, 3]), vmax=np.max(states[:, 3]))
-    norm = Normalize(vmin=0.5, vmax=2.5)
+    norm = Normalize(vmin=1.0, vmax=2.0)
     heatmap = ax_asv.scatter(states[:, 0], states[:, 1], c=states[:, 3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
-    cbar = plt.colorbar(heatmap, ax=ax_asv, fraction=0.03)
-    cbar.set_label("velocity in [m/s]",fontsize=FS-2)
+    cbar = plt.colorbar(heatmap, ax=ax_asv, fraction=0.025)
+    cbar.set_label("velocity in [m/s]",fontsize=FS, labelpad=15)
 
-    cbar_ax = fig.add_axes([0.09, 0.94, 0.5, 0.03])  # [left, bottom, width, height]
+    cbar_ax = fig.add_axes([0.08, 0.93, 0.35, 0.03])  # [left, bottom, width, height]
     sm = plt.cm.ScalarMappable(cmap='bone', norm=mcolors.Normalize(vmin=-10, vmax=30))
     sm.set_array([])
     cbar_hk = fig.colorbar(sm, ax=ax_asv, cax=cbar_ax, orientation='horizontal')
@@ -60,7 +62,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
     cbar_hk.ax.axvline(x=(0 - (-50)) / (200 - (-50)), color='red', linewidth=2)  # Adjust the normalization accordingly
 
     # Create an inset axis for the zoom-in plot
-    ax_inset = inset_axes(ax_asv, width="50%", height="35%", loc='upper right')
+    # ax_inset = inset_axes(ax_asv, width="50%", height="35%", loc='upper right')
 
     def update(frame):
         print(frame)
@@ -70,7 +72,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
         # Clear the previous plot
         ax_asv.clear()
-        ax_inset.clear()
+        ax_asv_zoom.clear()
 
         
         if (ship_p.CBF>0) and (ship_p.CBF_plot==1):
@@ -88,7 +90,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
                         if (ship_p.CBF==1):
                             B = np.sqrt((x - obs_pos[frame][5*i+0]) ** 2 + (y - obs_pos[frame][5*i+1]) ** 2) - obs_pos[frame][5*i+2]
-                            Bdot = ((x - obs_pos[frame][5*i+0]) * u * np.cos(head_ang) + (y - obs_pos[frame][5*i+1]) * u * np.sin(head_ang)) / np.sqrt((x - obs_pos[frame][5*i+0]) ** 2 + (y - obs_pos[frame][5*i+1]) ** 2)
+                            Bdot = ((x - obs_pos[frame][5*i+0]) * (u * np.cos(head_ang) + v*np.sin(head_ang)) + (y - obs_pos[frame][5*i+1]) *(u * np.sin(head_ang) - v*np.cos(head_ang))) / np.sqrt((x - obs_pos[frame][5*i+0]) ** 2 + (y - obs_pos[frame][5*i+1]) ** 2)
                             hk[j, k] = np.min((hk[j, k], Bdot + ship_p.gamma1/obs_pos[frame][5*i+2] * B))
 
                         elif (ship_p.CBF==2):
@@ -134,7 +136,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
         # Define the vertices of the body connecting the hulls
         body = np.array([[-bodyWidth/2, bodyWidth/2, bodyWidth/2, -bodyWidth/2, -bodyWidth/2],
-                        [separation/2, separation/2, -separation/2, -separation/2, separation/2]])
+                        [(separation-hullWidth)/2, (separation-hullWidth)/2, -(separation-hullWidth)/2, -(separation-hullWidth)/2, (separation-hullWidth)/2]])
 
         # Combine hulls into a single structure
         hull2[1, :] = hull2[1, :] - separation/2
@@ -201,20 +203,20 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
 
         # Update the inset axis
         zoom_size = 1  # Size of the zoomed-in area
-        ax_inset.set_xlim(position[0] - 2*zoom_size, position[0] + 2*zoom_size)
-        ax_inset.set_ylim(position[1] - 1.5*zoom_size, position[1] + 1.5*zoom_size)
-        ax_inset.scatter(states[0:frame, 0], states[0:frame, 1], c=states[0:frame, 3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
-        ax_inset.fill(hull1[0, :], hull1[1, :], 'b', alpha=0.6)
-        ax_inset.fill(hull2[0, :], hull2[1, :], 'b', alpha=0.6)
-        ax_inset.fill(body[0, :], body[1, :], 'b', alpha=0.6)
-        ax_inset.arrow(position[0], position[1], direction[0], direction[1], head_width=0.1, head_length=0.1, fc='k', ec='k')
-        ax_inset.plot([states[0, 0], states[-1, 0]], [0, 0], 'b--')
+        ax_asv_zoom.set_xlim(position[0] - 2*zoom_size, position[0] + 2*zoom_size)
+        ax_asv_zoom.set_ylim(position[1] - 1.5*zoom_size, position[1] + 1.5*zoom_size)
+        ax_asv_zoom.scatter(states[0:frame, 0], states[0:frame, 1], c=states[0:frame, 3], norm=norm, cmap=cm.rainbow, edgecolor='none', marker='o')
+        ax_asv_zoom.fill(hull1[0, :], hull1[1, :], 'b', alpha=0.35)
+        ax_asv_zoom.fill(hull2[0, :], hull2[1, :], 'b', alpha=0.35)
+        ax_asv_zoom.fill(body[0, :], body[1, :], 'b', alpha=0.3)
+        ax_asv_zoom.arrow(position[0], position[1], direction[0]*2, direction[1]*2, head_width=0.2, head_length=0.2, linewidth=2, fc='k', ec='k')
+        ax_asv_zoom.plot([states[0, 0], states[-1, 0]], [0, 0], 'b--')
         # ax_inset.plot(position[0], position[1], 'go', linewidth=2)
-        ax_inset.set_aspect('equal')
+        ax_asv_zoom.set_aspect('equal')
 
         # Plot the force vectors
-        ax_inset.arrow(force_left_position[0], force_left_position[1], force_left*np.cos(heading), force_left*np.sin(heading), head_width=0.2, head_length=0.2, linewidth=1, fc='r', ec='r')
-        ax_inset.arrow(force_right_position[0], force_right_position[1], force_right*np.cos(heading), force_right*np.sin(heading), head_width=0.2, head_length=0.2, linewidth=1, fc='g', ec='g')
+        # ax_asv_zoom.arrow(force_left_position[0], force_left_position[1], force_left*np.cos(heading), force_left*np.sin(heading), head_width=0.2, head_length=0.2, linewidth=1, fc='r', ec='r')
+        # ax_asv_zoom.arrow(force_right_position[0], force_right_position[1], force_right*np.cos(heading), force_right*np.sin(heading), head_width=0.2, head_length=0.2, linewidth=1, fc='g', ec='g')
 
         for jjj in range(0, ship_p.N):
             for i in range(5):
@@ -224,24 +226,29 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
                 b = obs_pos[frame][5*i+1]+dt*jjj*obs_pos[frame][5*i+4] + radius * np.sin( theta )    
                 if jjj == 0:
                     ax_asv.fill(a, b, facecolor='white', hatch='///', edgecolor='black')
-                    ax_inset.fill(a, b, facecolor='white', hatch='///', edgecolor='black')
+                    ax_asv_zoom.fill(a, b, facecolor='white', hatch='///', edgecolor='black')
                 else:
                     # ax_asv.fill(a, b, facecolor='white', hatch='//', edgecolor='black')
                     continue
 
+        ax_asv_zoom.grid(True)
 
         ax_asv.set_aspect('equal')
         if mode == 'avoid':
-            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-5,5))
+            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-15,15))
+            ax_asv.set(xlim=(0, 50),ylim=(-10,10))
         elif mode == 'overtaking':
-            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-7.5,7.5))
+            ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-10,10))
+            ax_asv.set(xlim=(0, 50),ylim=(-10,10))
         elif mode == 'static_narrow':
             ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-6,6))
+            ax_asv.set(xlim=(0, 20),ylim=(-10,10))
         elif mode == 'static_straight':
             ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-10,10))
+            ax_asv.set(xlim=(0, 70),ylim=(-10,10))
         elif mode == 'single_static_straight':
             ax_asv.set(xlim=(states[0, 0], states[-1, 0]),ylim=(-10,10))
-            ax_asv.set(xlim=(0, 40),ylim=(-10,10))
+            ax_asv.set(xlim=(0, 45),ylim=(-10,10))
         # ax_asv.grid(True)
 
         ax_asv.set_xlabel("x [m]", fontsize=FS)
@@ -279,15 +286,24 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         ax_compt.yaxis.label.set_size(FS)
 
         t = np.arange(0, dt*frame, dt)
-        ax_speed.plot(t, states[0:frame,3], 'r', linewidth=2) 
-        ax_speed.plot(t, states[0:frame,4], 'g', linewidth=2) 
-        ax_speed.plot(t, states[0:frame,3]*0 + target_speed, 'b--', linewidth=2) 
-        ax_speed.set_xlabel("Time", fontsize=FS)
-        ax_speed.set_ylabel("Speed [m/s]", fontsize=FS)
-        ax_speed.grid(True)
-        ax_speed.autoscale(enable=True, axis='x', tight=True)
-        ax_speed.autoscale(enable=True, axis='y', tight=True)
-        ax_speed.set_ylim(-1.0, 2.5)
+        ax_surge.plot(t, states[0:frame,3], 'k', linewidth=2) 
+        ax_surge.plot(t, np.sqrt(states[0:frame,3]**2+states[0:frame,4]**2), 'm-', linewidth=2) 
+        ax_surge.plot(t, states[0:frame,3]*0 + target_speed, 'b--', linewidth=2) 
+        ax_surge.set_xlabel("Time", fontsize=FS)
+        ax_surge.set_ylabel("Surge Speed [m/s]", fontsize=FS)
+        ax_surge.grid(True)
+        ax_surge.autoscale(enable=True, axis='x', tight=True)
+        ax_surge.autoscale(enable=True, axis='y', tight=True)
+        ax_surge.set_ylim(0.7, 2.0)
+
+        ax_sway.plot(t, states[0:frame,4], 'k', linewidth=2) 
+        ax_sway.plot(t, states[0:frame,3]*0 + target_speed, 'b--', linewidth=2) 
+        ax_sway.set_xlabel("Time", fontsize=FS)
+        ax_sway.set_ylabel("Sway Speed [m/s]", fontsize=FS)
+        ax_sway.grid(True)
+        ax_sway.autoscale(enable=True, axis='x', tight=True)
+        ax_sway.autoscale(enable=True, axis='y', tight=True)
+        ax_sway.set_ylim(-0.75, 0.75)
 
         # Plot the headings
         ax_rot.plot(t, states[0:frame,5], 'k', linewidth=2) 
@@ -309,7 +325,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
         ax_thrust.set_ylabel("Thrust", fontsize=FS)
         ax_thrust.grid(True)
         ax_thrust.autoscale(enable=True, axis='x', tight=True)
-        ax_thrust.set_ylim(ship_p.Fxmin-1, ship_p.Fxmax+1.1)
+        ax_thrust.set_ylim(-50, 100)
 
         fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
 
@@ -321,7 +337,7 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
     if ship_p.CBF == 2 or ship_p.CBF == 3:
         anim.save('Result_' + mode + '_cbf_type_' + str(ship_p.CBF) + '_TCCBF_type_=' + str(ship_p.TCCBF) + '_N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))  
     elif ship_p.CBF == 1:
-        anim.save('Result_' + mode + '_cbf_type_' + str(ship_p.CBF) + '_EDCBF_gamma1_=' + str(ship_p.gamma1) + '_N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))          
+        anim.save('Result_' + mode + '_cbf_type_' + str(ship_p.CBF) + '_EDCBF_gamma1_=' + str(0.75) + '_N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))          
     else:
         anim.save('Result_' + mode + 'cbf_type_' + str(ship_p.CBF) + 'N=' + str(ship_p.N) + '.mp4', writer=animation.FFMpegWriter(fps=20))  
 
