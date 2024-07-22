@@ -3,7 +3,7 @@ import math
 
 def L1_control(state, state_estim, param_filtered, dt, param_estim):
 
-
+ 
     M = 36 # Mass [kg]
     I = 8.35 # Inertial tensor [kg m^2]
     L = 0.73 # length [m]
@@ -12,7 +12,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
     Nr = 5
     Nrr = 13 # Nm/(rad/s)^2
 
-    w_cutoff = 1.5
+    w_cutoff = 2
     u_max = 1.2
     r_max = 0.8
 
@@ -35,6 +35,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
                      (((-n1+n2))*L/2 - (Nr + Nrr*np.sqrt(r*r+eps))*r)/I + param_estim[1] + param_filtered[1] 
                      ])
 
+    
     Am = -np.eye(5)
     state_error =  state_estim - state[:len(state_estim)]
     # print(state_error) 
@@ -43,22 +44,10 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
 
     before_param_estim = param_estim
 
-    param_estim[0] = 100*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 1.0) + before_param_estim[0]
-    param_estim[1] = 100*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 0.8) + before_param_estim[1]
-    print(param_estim[0])
-
-    # pu = 10*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 1.0) + before_param_estim[0]
-    # pr = 10*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 0.8) + before_param_estim[1]
-    
-    # if pu > u_max:
-    #     param_estim[0] = u_max
-    # elif pu < -u_max:
-    #     param_estim[0] = -u_max
-
-    # if pr > r_max:
-    #     param_estim[1] = r_max
-    # elif pr < -r_max:
-    #     param_estim[1] = -r_max
+    gain = -0.0000001
+    pi = (1/gain)*(np.exp(gain*dt)-1)
+    param_estim[0] = -np.exp(gain*dt)*state_error[3]/pi
+    param_estim[1] = -np.exp(gain*dt)*state_error[4]/pi
 
     before_param_filtered = param_filtered
     param_filtered = before_param_filtered*math.exp(-w_cutoff*dt) - param_estim*(1-math.exp(-w_cutoff*dt))
@@ -75,19 +64,23 @@ def h_function(x, eta, x_max):
 def param_dynamics(x_error, param_estim, g, input_max):
     
     P = 0.5*np.eye(5)
-
+    L = 100
     param_update = -np.dot(np.dot(g, P), x_error)
+    # print(param_update)
     
-    h, hdot = h_function(param_estim, 1.0, input_max)
-    param_dot = 0.0
+    h, hdot = h_function(param_estim, 0.001, input_max)
+    # param_dot = 0.0
     if h >= 0 and param_update*hdot > 0:
-        param_dot = param_update - (hdot/np.abs(hdot))*hdot*param_update*h
+        param_dot = 0#(param_update - (hdot/np.abs(hdot))*np.abs(param_update*h))
+        print("aa : ", param_dot)
+        print("hdot : ", hdot)
 
-    elif h >= 0 and param_update*hdot <= 0:
+    # elif h >= 0 and param_update*hdot <= 0:
+    #     param_dot = param_update
+    else:
         param_dot = param_update
-    elif h < 0:
-        param_dot = param_update
-    # print(param_dot)
+    param_dot = param_update
+    
     return param_dot
 
 

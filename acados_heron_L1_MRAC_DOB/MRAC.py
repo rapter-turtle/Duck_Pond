@@ -63,12 +63,13 @@ def param_dynamics(x_error, param_estim, g, input_max):
     param_update = -np.dot(np.dot(g, P), x_error)
     
     h, hdot = h_function(param_estim, 0.1, input_max)
-    if h > 0 and param_update*hdot > 0:
-        param_dot = 0
+    # if h > 0 and param_update*hdot > 0:
+    #     param_dot = 0
 
-    else:
-        param_dot = param_update
+    # else:
+    #     param_dot = param_update
     # print(param_dot)
+    param_dot = param_update
     return param_dot
 
 
