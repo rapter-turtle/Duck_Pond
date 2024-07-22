@@ -12,7 +12,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
     Nr = 5
     Nrr = 13 # Nm/(rad/s)^2
 
-    w_cutoff = 2
+    w_cutoff = 3
     u_max = 1.2
     r_max = 0.8
 
@@ -44,7 +44,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
 
     before_param_estim = param_estim
 
-    gain = -0.0000001
+    gain = -1
     pi = (1/gain)*(np.exp(gain*dt)-1)
     param_estim[0] = -np.exp(gain*dt)*state_error[3]/pi
     param_estim[1] = -np.exp(gain*dt)*state_error[4]/pi

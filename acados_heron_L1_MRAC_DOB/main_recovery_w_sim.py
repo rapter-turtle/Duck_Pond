@@ -14,7 +14,7 @@ def main():
     con_dt = 0.2
     Tf = int(N_horizon*con_dt)
     T_final = 50
-    simulation_dt = 0.1
+    simulation_dt = 0.05
 
     x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u
 
@@ -120,29 +120,29 @@ def main():
             mpc_pred_list.append(mpc_pred_array)
 
         ##### L1 adaptive #####
-        state_estim, param_estim, param_filtered = L1_control(simX[i, :] + noise, state_estim, param_filtered, simulation_dt, param_estim)
-        #L1 control allocation
-        M = 36 # Mass [kg]
-        I = 8.35 # Inertial tensor [kg m^2]
-        L = 0.73 # length [m]
-        l1_control[0] = (M*param_filtered[0] - 2*(I/L)*param_filtered[1])*0.5
-        l1_control[1] = (M*param_filtered[0] + 2*(I/L)*param_filtered[1])*0.5
-        extra_control = l1_control
-        # print(param_estim)
-        # print(param_filtered)
-        # ##### L1 adaptive #####
-
-        ##### MRAC #####
-        # state_estim, param_estim = MRAC_control(simX[i, :] + noise, state_estim, simulation_dt, param_estim)
+        # state_estim, param_estim, param_filtered = L1_control(simX[i, :] + noise, state_estim, param_filtered, simulation_dt, param_estim)
         # #L1 control allocation
         # M = 36 # Mass [kg]
         # I = 8.35 # Inertial tensor [kg m^2]
         # L = 0.73 # length [m]
-        # l1_control[0] = -(M*param_estim[0] - 2*(I/L)*param_estim[1])*0.5
-        # l1_control[1] = -(M*param_estim[0] + 2*(I/L)*param_estim[1])*0.5
+        # l1_control[0] = (M*param_filtered[0] - 2*(I/L)*param_filtered[1])*0.5
+        # l1_control[1] = (M*param_filtered[0] + 2*(I/L)*param_filtered[1])*0.5
         # extra_control = l1_control
         # # print(param_estim)
         # # print(param_filtered)
+        # ##### L1 adaptive #####
+
+        ##### MRAC #####
+        state_estim, param_estim = MRAC_control(simX[i, :] + noise, state_estim, simulation_dt, param_estim)
+        #L1 control allocation
+        M = 36 # Mass [kg]
+        I = 8.35 # Inertial tensor [kg m^2]
+        L = 0.73 # length [m]
+        l1_control[0] = -(M*param_estim[0] - 2*(I/L)*param_estim[1])*0.5
+        l1_control[1] = -(M*param_estim[0] + 2*(I/L)*param_estim[1])*0.5
+        extra_control = l1_control
+        # print(param_estim)
+        # print(param_filtered)
         # ##### MRAC #####
 
 
@@ -211,7 +211,7 @@ def main():
         
         disturbance = np.array([U_wave_force + U_wind_force, N_wave_force + N_wind_force])
         
-        noise = np.array([np.random.normal(0,0.5), 0.0, np.random.normal(0,0.1), np.random.normal(0,0.01), 0.0, 0.0, 0.0])
+        noise = np.array([np.random.normal(0,0.5), 0.0, np.random.normal(0,0.1), np.random.normal(0,0.01), np.random.normal(0,0.01), 0.0, 0.0])
         ##########################################################################################
 
         # simulate system

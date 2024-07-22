@@ -41,8 +41,8 @@ def MRAC_control(state, state_estim, dt, param_estim):
     x_plus = (xdot + np.dot(Am,state_error))*dt + state_estim
 
     before_param_estim = param_estim
-    pu = 200*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 1.0) + before_param_estim[0]
-    pr = 200*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 1.0) + before_param_estim[1]
+    pu = 400*dt*param_dynamics(state_error, before_param_estim[0], np.array([0, 0, 0, 1, 0]), 1.0) + before_param_estim[0]
+    pr = 400*dt*param_dynamics(state_error, before_param_estim[1], np.array([0, 0, 0, 0, 1]), 1.0) + before_param_estim[1]
 
     param_estim[0] = pu
     param_estim[1] = pr
