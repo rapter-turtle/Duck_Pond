@@ -36,12 +36,12 @@
 #include "acados_c/ocp_nlp_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define SHIP_NX     7
+#define SHIP_NX     8
 #define SHIP_NZ     0
 #define SHIP_NU     2
 #define SHIP_NP     25
 #define SHIP_NBX    4
-#define SHIP_NBX0   7
+#define SHIP_NBX0   8
 #define SHIP_NBU    2
 #define SHIP_NSBX   0
 #define SHIP_NSBU   0
@@ -60,9 +60,9 @@
 #define SHIP_NG     0
 #define SHIP_NBXN   0
 #define SHIP_NGN    0
-#define SHIP_NY0    9
-#define SHIP_NY     9
-#define SHIP_NYN    7
+#define SHIP_NY0    10
+#define SHIP_NY     10
+#define SHIP_NYN    8
 #define SHIP_N      10
 #define SHIP_NH     5
 #define SHIP_NHN    5

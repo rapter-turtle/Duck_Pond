@@ -53,15 +53,15 @@ extern "C" {
   #endif
 #endif
 
-static const casadi_int casadi_s0[11] = {7, 1, 0, 7, 0, 1, 2, 3, 4, 5, 6};
+static const casadi_int casadi_s0[12] = {8, 1, 0, 8, 0, 1, 2, 3, 4, 5, 6, 7};
 static const casadi_int casadi_s1[6] = {2, 1, 0, 2, 0, 1};
 static const casadi_int casadi_s2[3] = {0, 0, 0};
 static const casadi_int casadi_s3[29] = {25, 1, 0, 25, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-static const casadi_int casadi_s4[13] = {9, 1, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8};
-static const casadi_int casadi_s5[21] = {9, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5, 6, 7, 8, 0, 1};
-static const casadi_int casadi_s6[3] = {9, 0, 0};
+static const casadi_int casadi_s4[14] = {10, 1, 0, 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+static const casadi_int casadi_s5[23] = {10, 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1};
+static const casadi_int casadi_s6[3] = {10, 0, 0};
 
-/* ship_cost_y_0_fun_jac_ut_xt:(i0[7],i1[2],i2[],i3[],i4[25])->(o0[9],o1[9x9,9nz],o2[9x0]) */
+/* ship_cost_y_0_fun_jac_ut_xt:(i0[8],i1[2],i2[],i3[],i4[25])->(o0[10],o1[10x10,10nz],o2[10x0]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0;
   a0=arg[0]? arg[0][0] : 0;
@@ -78,10 +78,12 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   if (res[0]!=0) res[0][5]=a0;
   a0=arg[0]? arg[0][6] : 0;
   if (res[0]!=0) res[0][6]=a0;
-  a0=arg[1]? arg[1][0] : 0;
+  a0=arg[0]? arg[0][7] : 0;
   if (res[0]!=0) res[0][7]=a0;
-  a0=arg[1]? arg[1][1] : 0;
+  a0=arg[1]? arg[1][0] : 0;
   if (res[0]!=0) res[0][8]=a0;
+  a0=arg[1]? arg[1][1] : 0;
+  if (res[0]!=0) res[0][9]=a0;
   a0=1.;
   if (res[1]!=0) res[1][0]=a0;
   if (res[1]!=0) res[1][1]=a0;
@@ -92,6 +94,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   if (res[1]!=0) res[1][6]=a0;
   if (res[1]!=0) res[1][7]=a0;
   if (res[1]!=0) res[1][8]=a0;
+  if (res[1]!=0) res[1][9]=a0;
   return 0;
 }
 

@@ -49,11 +49,11 @@ extern "C" {
   #endif
 #endif
 
-static const casadi_int casadi_s0[11] = {7, 1, 0, 7, 0, 1, 2, 3, 4, 5, 6};
+static const casadi_int casadi_s0[12] = {8, 1, 0, 8, 0, 1, 2, 3, 4, 5, 6, 7};
 static const casadi_int casadi_s1[3] = {0, 0, 0};
 static const casadi_int casadi_s2[29] = {25, 1, 0, 25, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
 
-/* ship_cost_y_e_fun:(i0[7],i1[],i2[],i3[],i4[25])->(o0[7]) */
+/* ship_cost_y_e_fun:(i0[8],i1[],i2[],i3[],i4[25])->(o0[8]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0;
   a0=arg[0]? arg[0][0] : 0;
@@ -70,6 +70,8 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   if (res[0]!=0) res[0][5]=a0;
   a0=arg[0]? arg[0][6] : 0;
   if (res[0]!=0) res[0][6]=a0;
+  a0=arg[0]? arg[0][7] : 0;
+  if (res[0]!=0) res[0][7]=a0;
   return 0;
 }
 
