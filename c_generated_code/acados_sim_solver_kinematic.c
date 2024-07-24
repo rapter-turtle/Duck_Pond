@@ -74,7 +74,7 @@ int kinematic_acados_sim_create(kinematic_sim_solver_capsule * capsule)
     bool tmp_bool;
 
     
-    double Tsim = 0.2;
+    double Tsim = 0.1;
 
     
     // explicit ode

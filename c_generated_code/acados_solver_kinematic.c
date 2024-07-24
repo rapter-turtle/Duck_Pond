@@ -430,7 +430,7 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
         kinematic_acados_update_time_steps(capsule, N, new_time_steps);
     }
     else
-    {double time_step = 0.2;
+    {double time_step = 0.1;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
@@ -456,10 +456,10 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     W_0[1+(NY0) * 1] = 2;
     W_0[2+(NY0) * 2] = 20;
     W_0[3+(NY0) * 3] = 200;
-    W_0[4+(NY0) * 4] = 100;
-    W_0[5+(NY0) * 5] = 100;
-    W_0[6+(NY0) * 6] = 100;
-    W_0[7+(NY0) * 7] = 100;
+    W_0[4+(NY0) * 4] = 20;
+    W_0[5+(NY0) * 5] = 20;
+    W_0[6+(NY0) * 6] = 20;
+    W_0[7+(NY0) * 7] = 20;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -475,10 +475,10 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     W[1+(NY) * 1] = 2;
     W[2+(NY) * 2] = 20;
     W[3+(NY) * 3] = 200;
-    W[4+(NY) * 4] = 100;
-    W[5+(NY) * 5] = 100;
-    W[6+(NY) * 6] = 100;
-    W[7+(NY) * 7] = 100;
+    W[4+(NY) * 4] = 20;
+    W[5+(NY) * 5] = 20;
+    W[6+(NY) * 6] = 20;
+    W[7+(NY) * 7] = 20;
 
     for (int i = 1; i < N; i++)
     {
@@ -495,8 +495,8 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     W_e[1+(NYN) * 1] = 2;
     W_e[2+(NYN) * 2] = 20;
     W_e[3+(NYN) * 3] = 200;
-    W_e[4+(NYN) * 4] = 100;
-    W_e[5+(NYN) * 5] = 100;
+    W_e[4+(NYN) * 4] = 20;
+    W_e[5+(NYN) * 5] = 20;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
     free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun", &capsule->cost_y_0_fun);
@@ -521,26 +521,26 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     double* zl = zlumem+NS*2;
     double* zu = zlumem+NS*3;
     // change only the non-zero elements:
-    Zl[0] = 10000;
-    Zl[1] = 10000;
-    Zl[2] = 10000;
-    Zl[3] = 10000;
-    Zl[4] = 10000;
-    Zu[0] = 10000;
-    Zu[1] = 10000;
-    Zu[2] = 10000;
-    Zu[3] = 10000;
-    Zu[4] = 10000;
-    zl[0] = 10000;
-    zl[1] = 10000;
-    zl[2] = 10000;
-    zl[3] = 10000;
-    zl[4] = 10000;
-    zu[0] = 10000;
-    zu[1] = 10000;
-    zu[2] = 10000;
-    zu[3] = 10000;
-    zu[4] = 10000;
+    Zl[0] = 1000000;
+    Zl[1] = 1000000;
+    Zl[2] = 1000000;
+    Zl[3] = 1000000;
+    Zl[4] = 1000000;
+    Zu[0] = 1000000;
+    Zu[1] = 1000000;
+    Zu[2] = 1000000;
+    Zu[3] = 1000000;
+    Zu[4] = 1000000;
+    zl[0] = 1000000;
+    zl[1] = 1000000;
+    zl[2] = 1000000;
+    zl[3] = 1000000;
+    zl[4] = 1000000;
+    zu[0] = 1000000;
+    zu[1] = 1000000;
+    zu[2] = 1000000;
+    zu[3] = 1000000;
+    zu[4] = 1000000;
 
     for (int i = 1; i < N; i++)
     {
@@ -561,32 +561,32 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
 
     // change only the non-zero elements:
     
-    Zl_e[0] = 10000;
-    Zl_e[1] = 10000;
-    Zl_e[2] = 10000;
-    Zl_e[3] = 10000;
-    Zl_e[4] = 10000;
+    Zl_e[0] = 1000000;
+    Zl_e[1] = 1000000;
+    Zl_e[2] = 1000000;
+    Zl_e[3] = 1000000;
+    Zl_e[4] = 1000000;
 
     
-    Zu_e[0] = 10000;
-    Zu_e[1] = 10000;
-    Zu_e[2] = 10000;
-    Zu_e[3] = 10000;
-    Zu_e[4] = 10000;
+    Zu_e[0] = 1000000;
+    Zu_e[1] = 1000000;
+    Zu_e[2] = 1000000;
+    Zu_e[3] = 1000000;
+    Zu_e[4] = 1000000;
 
     
-    zl_e[0] = 10000;
-    zl_e[1] = 10000;
-    zl_e[2] = 10000;
-    zl_e[3] = 10000;
-    zl_e[4] = 10000;
+    zl_e[0] = 1000000;
+    zl_e[1] = 1000000;
+    zl_e[2] = 1000000;
+    zl_e[3] = 1000000;
+    zl_e[4] = 1000000;
 
     
-    zu_e[0] = 10000;
-    zu_e[1] = 10000;
-    zu_e[2] = 10000;
-    zu_e[3] = 10000;
-    zu_e[4] = 10000;
+    zu_e[0] = 1000000;
+    zu_e[1] = 1000000;
+    zu_e[2] = 1000000;
+    zu_e[3] = 1000000;
+    zu_e[4] = 1000000;
 
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zl", Zl_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zu", Zu_e);
@@ -700,7 +700,7 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     double* ubx = lubx + NBX;
     
     lbx[0] = 1;
-    ubx[0] = 3;
+    ubx[0] = 2.5;
     lbx[1] = -0.2;
     ubx[1] = 0.2;
     lbx[2] = -0.3;

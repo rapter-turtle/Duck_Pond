@@ -430,7 +430,7 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
         ship_acados_update_time_steps(capsule, N, new_time_steps);
     }
     else
-    {double time_step = 0.2;
+    {double time_step = 0.1;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
@@ -454,13 +454,13 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
     W_0[1+(NY0) * 1] = 2;
-    W_0[2+(NY0) * 2] = 20;
-    W_0[3+(NY0) * 3] = 100;
-    W_0[5+(NY0) * 5] = 100;
-    W_0[6+(NY0) * 6] = 0.002;
-    W_0[7+(NY0) * 7] = 0.002;
-    W_0[8+(NY0) * 8] = 0.0002;
-    W_0[9+(NY0) * 9] = 0.0002;
+    W_0[2+(NY0) * 2] = 10;
+    W_0[4+(NY0) * 4] = 200;
+    W_0[5+(NY0) * 5] = 30;
+    W_0[6+(NY0) * 6] = 0.02;
+    W_0[7+(NY0) * 7] = 0.02;
+    W_0[8+(NY0) * 8] = 0.2;
+    W_0[9+(NY0) * 9] = 0.2;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -474,13 +474,13 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
     W[1+(NY) * 1] = 2;
-    W[2+(NY) * 2] = 20;
-    W[3+(NY) * 3] = 100;
-    W[5+(NY) * 5] = 100;
-    W[6+(NY) * 6] = 0.002;
-    W[7+(NY) * 7] = 0.002;
-    W[8+(NY) * 8] = 0.0002;
-    W[9+(NY) * 9] = 0.0002;
+    W[2+(NY) * 2] = 10;
+    W[4+(NY) * 4] = 200;
+    W[5+(NY) * 5] = 30;
+    W[6+(NY) * 6] = 0.02;
+    W[7+(NY) * 7] = 0.02;
+    W[8+(NY) * 8] = 0.2;
+    W[9+(NY) * 9] = 0.2;
 
     for (int i = 1; i < N; i++)
     {
@@ -495,11 +495,11 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
     W_e[1+(NYN) * 1] = 2;
-    W_e[2+(NYN) * 2] = 20;
-    W_e[3+(NYN) * 3] = 100;
-    W_e[5+(NYN) * 5] = 100;
-    W_e[6+(NYN) * 6] = 0.002;
-    W_e[7+(NYN) * 7] = 0.002;
+    W_e[2+(NYN) * 2] = 10;
+    W_e[4+(NYN) * 4] = 200;
+    W_e[5+(NYN) * 5] = 30;
+    W_e[6+(NYN) * 6] = 0.02;
+    W_e[7+(NYN) * 7] = 0.02;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
     free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun", &capsule->cost_y_0_fun);
@@ -524,26 +524,26 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* zl = zlumem+NS*2;
     double* zu = zlumem+NS*3;
     // change only the non-zero elements:
-    Zl[0] = 100000;
-    Zl[1] = 100000;
-    Zl[2] = 100000;
-    Zl[3] = 100000;
-    Zl[4] = 100000;
-    Zu[0] = 100000;
-    Zu[1] = 100000;
-    Zu[2] = 100000;
-    Zu[3] = 100000;
-    Zu[4] = 100000;
-    zl[0] = 100000;
-    zl[1] = 100000;
-    zl[2] = 100000;
-    zl[3] = 100000;
-    zl[4] = 100000;
-    zu[0] = 100000;
-    zu[1] = 100000;
-    zu[2] = 100000;
-    zu[3] = 100000;
-    zu[4] = 100000;
+    Zl[0] = 10000;
+    Zl[1] = 10000;
+    Zl[2] = 10000;
+    Zl[3] = 10000;
+    Zl[4] = 10000;
+    Zu[0] = 10000;
+    Zu[1] = 10000;
+    Zu[2] = 10000;
+    Zu[3] = 10000;
+    Zu[4] = 10000;
+    zl[0] = 10000;
+    zl[1] = 10000;
+    zl[2] = 10000;
+    zl[3] = 10000;
+    zl[4] = 10000;
+    zu[0] = 10000;
+    zu[1] = 10000;
+    zu[2] = 10000;
+    zu[3] = 10000;
+    zu[4] = 10000;
 
     for (int i = 1; i < N; i++)
     {
@@ -564,32 +564,32 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
 
     // change only the non-zero elements:
     
-    Zl_e[0] = 100000;
-    Zl_e[1] = 100000;
-    Zl_e[2] = 100000;
-    Zl_e[3] = 100000;
-    Zl_e[4] = 100000;
+    Zl_e[0] = 10000;
+    Zl_e[1] = 10000;
+    Zl_e[2] = 10000;
+    Zl_e[3] = 10000;
+    Zl_e[4] = 10000;
 
     
-    Zu_e[0] = 100000;
-    Zu_e[1] = 100000;
-    Zu_e[2] = 100000;
-    Zu_e[3] = 100000;
-    Zu_e[4] = 100000;
+    Zu_e[0] = 10000;
+    Zu_e[1] = 10000;
+    Zu_e[2] = 10000;
+    Zu_e[3] = 10000;
+    Zu_e[4] = 10000;
 
     
-    zl_e[0] = 100000;
-    zl_e[1] = 100000;
-    zl_e[2] = 100000;
-    zl_e[3] = 100000;
-    zl_e[4] = 100000;
+    zl_e[0] = 10000;
+    zl_e[1] = 10000;
+    zl_e[2] = 10000;
+    zl_e[3] = 10000;
+    zl_e[4] = 10000;
 
     
-    zu_e[0] = 100000;
-    zu_e[1] = 100000;
-    zu_e[2] = 100000;
-    zu_e[3] = 100000;
-    zu_e[4] = 100000;
+    zu_e[0] = 10000;
+    zu_e[1] = 10000;
+    zu_e[2] = 10000;
+    zu_e[3] = 10000;
+    zu_e[4] = 10000;
 
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zl", Zl_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Zu", Zu_e);
@@ -615,10 +615,12 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* lbx0 = lubx0;
     double* ubx0 = lubx0 + NBX0;
     // change only the non-zero elements:
-    lbx0[3] = 1.5;
-    ubx0[3] = 1.5;
-    lbx0[6] = 53.025;
-    ubx0[6] = 53.025;
+    lbx0[3] = 1;
+    ubx0[3] = 1;
+    lbx0[6] = 8.45;
+    ubx0[6] = 8.45;
+    lbx0[7] = 8.45;
+    ubx0[7] = 8.45;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbx", idxbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
@@ -656,10 +658,10 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* lbu = lubu;
     double* ubu = lubu + NBU;
     
-    lbu[0] = -20;
-    ubu[0] = 20;
-    lbu[1] = -10;
-    ubu[1] = 10;
+    lbu[0] = -5;
+    ubu[0] = 5;
+    lbu[1] = -5;
+    ubu[1] = 5;
 
     for (int i = 0; i < N; i++)
     {
@@ -709,13 +711,14 @@ void ship_acados_create_5_set_nlp_in(ship_solver_capsule* capsule, const int N, 
     double* lbx = lubx;
     double* ubx = lubx + NBX;
     
-    ubx[0] = 3;
+    lbx[0] = 0.4;
+    ubx[0] = 1.2;
     lbx[1] = -0.2;
     ubx[1] = 0.2;
-    lbx[2] = -50;
-    ubx[2] = 100;
-    lbx[3] = -50;
-    ubx[3] = 50;
+    lbx[2] = -5;
+    ubx[2] = 15;
+    lbx[3] = -5;
+    ubx[3] = 15;
 
     for (int i = 1; i < N; i++)
     {
@@ -934,8 +937,9 @@ void ship_acados_create_7_set_nlp_out(ship_solver_capsule* capsule)
 
     // initialize with x0
     
-    x0[3] = 1.5;
-    x0[6] = 53.025;
+    x0[3] = 1;
+    x0[6] = 8.45;
+    x0[7] = 8.45;
 
 
     double* u0 = xu0 + NX;
