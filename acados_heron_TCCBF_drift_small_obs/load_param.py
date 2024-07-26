@@ -8,9 +8,9 @@ class load_ship_param:
     radius = L*1.5
     Xu = 0
     Xuu = 16.9 # N/(m/s)^2
-    Yv = 15
+    Yv = 10
     Nr = 0
-    Nrr = 139 # Nm/(rad/s)^2
+    Nrr = 139/2 # Nm/(rad/s)^2
     
     vmin = 0.4
     vmax = 1.2

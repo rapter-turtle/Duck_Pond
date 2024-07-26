@@ -46,7 +46,7 @@ def main(cbf_num,mode,prediction_horizon,gamma2):
     # Initial state
     target_speed = 1.0
     
-    obsrad_param = 1/5
+    obsrad_param = 1/2
 
     Fx_init = ship_p.Xu*target_speed + ship_p.Xuu*target_speed**2
     x0 = np.array([0.0 , # x
@@ -133,11 +133,11 @@ def main(cbf_num,mode,prediction_horizon,gamma2):
             ox5 = 50; oy5 = +20.05; or5 = 1.0*obsrad_param
             obs_index = 2
             if mode == 'single_static_straight':
-                ox1 = 1*20; oy1 = +0.01; or1 = 10.0*obsrad_param
-                ox2 = 1*20; oy2 = +0.01; or2 = 10.0*obsrad_param
-                ox3 = 1*20; oy3 = +0.01; or3 = 10.0*obsrad_param
-                ox4 = 1*20; oy4 = +0.01; or4 = 10.0*obsrad_param
-                ox5 = 1*20; oy5 = +0.01; or5 = 10.0*obsrad_param
+                ox1 = 1*25; oy1 = +0.01; or1 = 10.0*obsrad_param
+                ox2 = 1*25; oy2 = +0.01; or2 = 10.0*obsrad_param
+                ox3 = 1*25; oy3 = +0.01; or3 = 10.0*obsrad_param
+                ox4 = 1*25; oy4 = +0.01; or4 = 10.0*obsrad_param
+                ox5 = 1*25; oy5 = +0.01; or5 = 10.0*obsrad_param
                 obs_index = 1
 
             obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, 0,  
@@ -413,8 +413,15 @@ def calc_cbf(state,obs,type):
 
 if __name__ == '__main__':
     # main(1,'param_tuning',10,0.1)
-    go1 = 1
-    go2 = 1
+    cd2, at2 ,sv2 ,ru2 ,FXu1 , dFX1  = main(2,'avoid',10, 0.01)
+    cd2, at2 ,sv2 ,ru2 ,FXu2 , dFX2  = main(3,'avoid',10, 0.01)
+    print(FXu1 , dFX1)
+    print(FXu2 , dFX2)
+    plt.show()
+    
+
+    go1 = 0
+    go2 = 0
     go3 = 0
     
     if go1:
