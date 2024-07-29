@@ -11,6 +11,7 @@ import numpy as np
 import tf
 import math
 from matplotlib.widgets import Button
+from heron_msgs.msg import Drive
 
 
 x_actual_min = 352571.00
@@ -29,6 +30,11 @@ class SensorFusionEKF:
         self.u_data = []
         self.v_data = []
         self.r_data = []
+        self.thrust_left_data = []
+        self.thrust_right_data = []
+        
+        self.thrust_left = 0
+        self.thrust_right = 0
         
         self.x_sensor_data = []
         self.y_sensor_data = []
@@ -60,8 +66,8 @@ class SensorFusionEKF:
         self.start_time = rospy.Time.now()
         self.current_time = rospy.Time.now()
         
-        self.fig, self.ax = plt.subplots(2, 4, figsize=(12, 7))
-        self.ax1 = plt.subplot2grid((2, 4), (0, 0), colspan=2, rowspan=2, fig=self.fig)
+        self.fig, self.ax = plt.subplots(3, 4, figsize=(12, 7))
+        self.ax1 = plt.subplot2grid((3, 4), (0, 0), colspan=2, rowspan=3, fig=self.fig)
         self.line1_m, = self.ax1.plot([], [], 'r-',label='measurement')    
         self.line1, = self.ax1.plot([], [], 'k-',label='ekf')    
         self.line1test, = self.ax1.plot([], [], 'm.',label='plot every 1-sec')    
@@ -76,30 +82,37 @@ class SensorFusionEKF:
         self.ax1.set_title('Real-time Trajectory Plot')
         self.ax1.legend()
 
-        self.ax2 = plt.subplot2grid((2, 4), (0, 2), fig=self.fig)
+        self.ax2 = plt.subplot2grid((3, 4), (0, 2), fig=self.fig)
         self.line2_m, = self.ax2.plot([], [], 'r-', label='measurement', alpha=0.75)
         self.line2, = self.ax2.plot([], [], 'k-', label='ekf')
         self.ax2.set_xlabel('Time')
         self.ax2.set_ylabel('Surge (m/s)')
 
-        self.ax3 = plt.subplot2grid((2, 4), (1, 2), fig=self.fig)
+        self.ax3 = plt.subplot2grid((3, 4), (1, 2), fig=self.fig)
         self.line3_m, = self.ax3.plot([], [], 'r-', label='measurement', alpha=0.75)
         self.line3, = self.ax3.plot([], [], 'k-', label='ekf')
         self.ax3.set_xlabel('Time')
         self.ax3.set_ylabel('Sway (m/s)')
 
-        self.ax4 = plt.subplot2grid((2, 4), (0, 3), fig=self.fig)
+        self.ax4 = plt.subplot2grid((3, 4), (0, 3), fig=self.fig)
         self.line4_m, = self.ax4.plot([], [], 'r-', label='measurement', alpha=0.75)
         self.line4, = self.ax4.plot([], [], 'k-', label='ekf')
         self.ax4.set_xlabel('Time')
         self.ax4.set_ylabel('Yaw Rate (rad/s)')
 
-        self.ax5 = plt.subplot2grid((2, 4), (1, 3), fig=self.fig)
+        self.ax5 = plt.subplot2grid((3, 4), (1, 3), fig=self.fig)
         self.line5_m, = self.ax5.plot([], [], 'r-', label='measurement', alpha=0.75)
         self.line5, = self.ax5.plot([], [], 'k-', label='ekf')
         self.ax5.set_xlabel('Time')
         self.ax5.set_ylabel('Yaw (deg)')
+        
+        self.ax6 = plt.subplot2grid((3, 4), (2, 2), fig=self.fig)
+        self.line6_left, = self.ax6.plot([], [], 'r-', label='left')
+        self.line6_right, = self.ax6.plot([], [], 'g-', label='right')
+        self.ax6.set_xlabel('Time')
+        self.ax6.set_ylabel('Thrust Command')
 
+        self.ax6.legend()
         self.ax5.legend()
         self.ax4.legend()
         self.ax3.legend()
@@ -149,12 +162,15 @@ class SensorFusionEKF:
 
         self.fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
         self.ekf_sub = rospy.Subscriber('/ekf/estimated_state', Float64MultiArray, self.ekf_callback)
-
+        self.thrust_sub = rospy.Subscriber('/cmd_drive', Drive, self.thrust_callback)
     
         reset_ax = plt.axes([0.41, 0.05, 0.05, 0.03])
         self.reset_button = Button(reset_ax, 'Reset')
         self.reset_button.on_clicked(self.reset_plots)
         
+    def thrust_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문
+        self.thrust_left = msg.left
+        self.thrust_right = msg.right
 
     def ekf_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문
         self.x = msg.data[0]
@@ -194,6 +210,9 @@ class SensorFusionEKF:
         self.v_sensor_data.append(self.v_sensor)
         self.r_sensor_data.append(self.r_sensor)
 
+        self.thrust_left_data.append(self.thrust_left)
+        self.thrust_right_data.append(self.thrust_right)
+        
         self.time_data.append(self.current_time)
 
     
@@ -245,6 +264,10 @@ class SensorFusionEKF:
             self.line5.set_data(self.time_data, self.p_data)
             self.ax5.set_xlim(self.time_data[-1]-20, self.time_data[-1])
             
+            self.line6_left.set_data(self.time_data, self.thrust_left_data)
+            self.line6_right.set_data(self.time_data, self.thrust_right_data)
+            self.ax6.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            
             # self.ax2.set_xlim(self.time_data[0], self.time_data[-1])
             # self.ax3.set_xlim(self.time_data[0], self.time_data[-1])
             # self.ax4.set_xlim(self.time_data[0], self.time_data[-1])
@@ -255,12 +278,14 @@ class SensorFusionEKF:
             self.ax3.relim()
             self.ax4.relim()
             self.ax5.relim()
+            self.ax6.relim()
 
             self.ax1.autoscale_view()
             self.ax2.autoscale_view()
             self.ax3.autoscale_view()
             self.ax4.autoscale_view()
             self.ax5.autoscale_view()
+            self.ax6.autoscale_view()
             
             
             
@@ -301,6 +326,9 @@ class SensorFusionEKF:
         self.u_sensor_data = []
         self.v_sensor_data = []
         self.r_sensor_data = []
+        
+        self.thrust_left_data = []
+        self.thrust_right_data = []
 
         self.line1_m.set_data([], [])
         self.line1.set_data([], [])
@@ -313,6 +341,8 @@ class SensorFusionEKF:
         self.line4.set_data([], [])
         self.line5_m.set_data([], [])
         self.line5.set_data([], [])
+        self.line6_left.set_data([], [])
+        self.line6_right.set_data([], [])
 
         self.ax1.relim()
         self.ax1.autoscale_view()
@@ -324,6 +354,8 @@ class SensorFusionEKF:
         self.ax4.autoscale_view()
         self.ax5.relim()
         self.ax5.autoscale_view()
+        self.ax6.relim()
+        self.ax6.autoscale_view()
         
         
     def run(self):
