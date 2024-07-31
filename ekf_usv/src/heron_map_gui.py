@@ -13,7 +13,7 @@ import math
 from matplotlib.widgets import Button
 from heron_msgs.msg import Drive
 import pandas as pd
-
+import time
 
 x_actual_min = 352571.00 - 2
 x_actual_max = 353531.94 - 2
@@ -259,26 +259,31 @@ class SensorFusionEKF:
 
             self.line2_m.set_data(self.time_data, self.u_sensor_data)
             self.line2.set_data(self.time_data, self.u_data)
-            self.ax2.set_xlim(self.time_data[-1]-20, self.time_data[-1])
-            self.ax2.set_ylim(-0.5, 1.7)
+            # self.ax2.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax2.set_xlim(self.time_data[0], self.time_data[-1])
+            self.ax2.set_ylim(-0.5, 2)
             
             self.line3_m.set_data(self.time_data, self.v_sensor_data)
             self.line3.set_data(self.time_data, self.v_data)
-            self.ax3.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            # self.ax3.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax3.set_xlim(self.time_data[0], self.time_data[-1])
             self.ax3.set_ylim(-0.5, 0.5)
 
             self.line4_m.set_data(self.time_data, self.r_sensor_data)
             self.line4.set_data(self.time_data, self.r_data)
-            self.ax4.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            # self.ax4.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax4.set_xlim(self.time_data[0], self.time_data[-1])
             self.ax4.set_ylim(-0.5, 0.5)
 
             self.line5_m.set_data(self.time_data, self.p_sensor_data)
             self.line5.set_data(self.time_data, self.p_data)
-            self.ax5.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            # self.ax5.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax5.set_xlim(self.time_data[0], self.time_data[-1])
             
             self.line6_left.set_data(self.time_data, self.thrust_left_data)
             self.line6_right.set_data(self.time_data, self.thrust_right_data)
-            self.ax6.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            # self.ax6.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax6.set_xlim(self.time_data[0], self.time_data[-1])
             self.ax4.set_ylim(-1, 1)
 
             # self.ax2.set_xlim(self.time_data[0], self.time_data[-1])
@@ -395,7 +400,7 @@ class SensorFusionEKF:
         df = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in data_dict.items() ]))
 
         # Excel 파일로 저장 (xlsxwriter 사용)
-        df.to_excel('plot_data.xlsx', index=False, engine='xlsxwriter')
+        df.to_excel('plot_data' + time.strftime("%H%M%S") + '.xlsx', index=False, engine='xlsxwriter')
 
 
         
