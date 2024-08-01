@@ -14,6 +14,7 @@ from matplotlib.widgets import Button
 from heron_msgs.msg import Drive
 import pandas as pd
 import time
+from mpc_msgs.msg import MPCTraj, MPC_State
 
 x_actual_min = 352571.00 - 2
 x_actual_max = 353531.94 - 2
@@ -64,12 +65,22 @@ class SensorFusionEKF:
         self.v_sensor = []
         self.r_sensor = []
         
+        
+        self.pred_x = []
+        self.pred_y = []
+        self.ref_x = []
+        self.ref_y = []
+        
         self.current_time = []
         
         self.fig, self.ax = plt.subplots(3, 4, figsize=(12, 7))
         self.ax1 = plt.subplot2grid((3, 4), (0, 0), colspan=2, rowspan=3, fig=self.fig)
         self.line1_m, = self.ax1.plot([], [], 'r-',label='measurement')    
         self.line1, = self.ax1.plot([], [], 'k-',label='ekf')    
+        
+        self.pred_line, = self.ax1.plot([], [], 'm-', label='Predicted')
+        self.ref_line, = self.ax1.plot([], [], 'b--', label='Reference')
+        
         self.line1test, = self.ax1.plot([], [], 'm.',label='plot every 1-sec')    
         kaist_img = plt.imread("kaist.png")
         map_height, map_width = kaist_img.shape[:2]
@@ -165,7 +176,8 @@ class SensorFusionEKF:
         self.ekf_sub = rospy.Subscriber('/ekf/estimated_state', Float64MultiArray, self.ekf_callback)
         self.time_sub = rospy.Subscriber('/imu/data', Imu, self.time_callback)
         self.thrust_sub = rospy.Subscriber('/cmd_drive', Drive, self.thrust_callback)
-    
+        self.mpc_sub = rospy.Subscriber('mpcvis_pub', MPCTraj, self.mpc_callback)
+
         reset_ax = plt.axes([0.41, 0.05, 0.05, 0.03])
         self.reset_button = Button(reset_ax, 'Reset')
         self.reset_button.on_clicked(self.reset_plots)
@@ -175,6 +187,23 @@ class SensorFusionEKF:
         self.time_callback_on = 0
         self.thrust_callback_on = 0
         
+    def mpc_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문        
+        # Clear previous data
+        self.pred_x.clear()
+        self.pred_y.clear()
+        self.ref_x.clear()
+        self.ref_y.clear()
+
+        # Extract predicted and reference trajectories
+        for state in msg.state:
+            self.pred_x.append(state.x)
+            self.pred_y.append(state.y)
+
+        for ref in msg.ref:
+            self.ref_x.append(ref.x)
+            self.ref_y.append(ref.y)
+            
+                
     def time_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문        
         secs = msg.header.stamp.secs
         nsecs = msg.header.stamp.nsecs
