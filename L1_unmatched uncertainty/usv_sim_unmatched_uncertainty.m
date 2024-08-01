@@ -29,6 +29,11 @@ B_estim = [0, 0;
      1, 0;
      0, 1];
 
+Bum_estim = [1, 0;
+     0, 1;
+     0, 0;
+     0, 0];
+
 L = diag([1, 1, 1, 1]);
 
 % Define the state weighting matrix Q and control weighting matrix R
@@ -38,7 +43,7 @@ R = diag([1, 1]);          % Adjust the values based on your requirements
 % Calculate the LQR gain K
 [K, S, e] = lqr(A_estim, B_estim, Q, R);
 
-cutoff = 2;
+cutoff = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +59,7 @@ estim_x = zeros(4, num_steps);
 virtual_state = zeros(4, num_steps);
 virtual_u = zeros(2, num_steps);
 um = zeros(1, num_steps);
+um_dot = 0;
 filtered_um = zeros(1, num_steps);
 
 time = 0:dt:(total_time-dt); % Time vector
@@ -95,36 +101,35 @@ for k = 2:num_steps-1
                      x(5, k) + l*sin(x(6, k));
                      x(1, k)*cos(x(6, k)) - x(2, k)*sin(x(6, k)) - x(3, k)*l*sin(x(6, k));
                      x(1, k)*sin(x(6, k)) + x(2, k)*cos(x(6, k)) + x(3, k)*l*cos(x(6, k))];
-    
+    % L1 control input
     x_error = estim_x(:, k) - virtual_state(:,k);
-
     gain = -1;
     pi = (1/gain)*(exp(gain*dt)-1);
-    um(k) = -exp(gain*dt)*x_error(3)/pi;
-    filtered_um(k) = filtered_um(k-1)*exp(-cutoff*dt) - um(k)*(1-exp(-cutoff*dt));
+    um(k) = -exp(gain*dt)*x_error(1)/pi;
+    um_dot = (um(k)-um(k-1))/dt;
+    con = um_dot + 1.73*um(k);
+    filtered_um(k) = filtered_um(k-1)*exp(-cutoff*dt) - con*(1-exp(-cutoff*dt));
 
+    % Virtual control
     virtual_u(:,k) = [f_usv(1)*cos(x(6, k)) - x(1, k)*x(3, k)*sin(x(6, k)) - f_usv(2)*sin(x(6, k)) - x(2, k)*x(3, k)*cos(x(6, k)) - f_usv(3)*l*sin(x(6, k)) - x(3, k)*x(3, k)*l*cos(x(6, k));
                  f_usv(1)*sin(x(6, k)) + x(1, k)*x(3, k)*cos(x(6, k)) + f_usv(2)*sin(x(6, k)) - x(2, k)*x(3, k)*sin(x(6, k)) + f_usv(3)*l*cos(x(6, k)) - x(3, k)*x(3, k)*l*sin(x(6, k))];
 
+    % State feedback for Hurwitz matrix
     state_feedback = -K*virtual_state(:,k);
     state_feedback_u = [0.5*(m33*(state_feedback(2)*cos(x(6, k)) - state_feedback(1)*sin(x(6, k)))/(l*l) + m11*(state_feedback(1)*cos(x(6, k)) + state_feedback(2)*sin(x(6, k))));
                        0.5*(-m33*(state_feedback(2)*cos(x(6, k)) - state_feedback(1)*sin(x(6, k)))/(l*l) + m11*(state_feedback(1)*cos(x(6, k)) + state_feedback(2)*sin(x(6, k))))];
 
-    % u(:,k) = -K*virtual_state(:,k) - um(k);
+    % Real Control input
     u(:,k) = [0.5*(m11*cos(x(6, k))-m33*sin(x(6, k))/(l*l));
               0.5*(m11*cos(x(6, k))+m33*sin(x(6, k))/(l*l))]*filtered_um(k) + state_feedback_u;
-    % u(:,k) = [0;0];
+    u(:,k) = [0;0];
  
-    % Update the state using Euler method
-    % estim_dx = A_estim*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*[um(k) ; 0] - L*(x_error);
-    % dx = f_usv + B_usv*u(:, k) + B_usv*[0.5;0];
-
     Am = A_estim - B_estim*K;
-    estim_dx = Am*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*[um(k) ; 0] - L*(x_error);
+    estim_dx = Am*estim_x(:,k) + B_estim*virtual_u(:,k) + Bum_estim*[um(k) ; 0] - L*(x_error);
 
-    % disturbance = [100*sin(10*time(k))+ 500; 0.0];
-    disturbance = [-1000; 0.0];
-    dx = f_usv + B_usv*u(:, k) + B_usv*disturbance;
+    % disturbance = [sin(time(k)); 0.0];
+    disturbance = [1; 0.0];
+    dx = f_usv + B_usv*u(:, k) + B_disturbance*disturbance;
 
     x(:, k+1) = x(:, k) + dx * dt;
     estim_x(:, k+1) = estim_x(:, k) + estim_dx * dt;
