@@ -114,16 +114,12 @@ for k = 2:num_steps-1
     u(:,k) = [0.5*(m11*cos(x(6, k))-m33*sin(x(6, k))/(l*l));
               0.5*(m11*cos(x(6, k))+m33*sin(x(6, k))/(l*l))]*filtered_um(k) + state_feedback_u;
     % u(:,k) = [0;0];
- 
-    % Update the state using Euler method
-    % estim_dx = A_estim*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*[um(k) ; 0] - L*(x_error);
-    % dx = f_usv + B_usv*u(:, k) + B_usv*[0.5;0];
 
     Am = A_estim - B_estim*K;
-    estim_dx = Am*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*[um(k) ; 0] - L*(x_error);
+    estim_dx = Am*estim_x(:,k) + B_estim*virtual_u(:,k)+ B_estim*[filtered_um(k);0] + B_estim*[um(k) ; 0] - L*(x_error);
 
-    % disturbance = [100*sin(10*time(k))+ 500; 0.0];
-    disturbance = [-1000; 0.0];
+    disturbance = [100*sin(10*time(k))+ 1500; 0.0];
+    % disturbance = [-1500; 0.0];
     dx = f_usv + B_usv*u(:, k) + B_usv*disturbance;
 
     x(:, k+1) = x(:, k) + dx * dt;
