@@ -42,14 +42,14 @@ R = diag([1, 1]);          % Adjust the values based on your requirements
 
 % Calculate the LQR gain K
 [K, S, e] = lqr(A_estim, B_estim, Q, R);
-
+% K = [1, 0, 1.73, 0;0,1,0,1.73];
 cutoff = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simulation parameters
 dt = 0.01; % Time step (seconds)
-total_time = 1000; % Total simulation time (seconds)
+total_time = 100; % Total simulation time (seconds)
 num_steps = total_time / dt; % Number of simulation steps
 
 % Initialize state vectors
@@ -66,7 +66,7 @@ time = 0:dt:(total_time-dt); % Time vector
 
 % Initial condition
 x(:, 1) = [0; 0; 0; 0; 0; 0]; % Initial position and velocity
-estim_x(:, 1) = [l; 0; 0; 0];
+estim_x(:, 1) = [x(4,1)+l; 0; 0; 0];
 
 B_usv = [1/M(1,1), 1/M(1,1);
          0, 0;
@@ -122,15 +122,21 @@ for k = 2:num_steps-1
     % Real Control input
     u(:,k) = [0.5*(m11*cos(x(6, k))-m33*sin(x(6, k))/(l*l));
               0.5*(m11*cos(x(6, k))+m33*sin(x(6, k))/(l*l))]*filtered_um(k) + state_feedback_u;
-    u(:,k) = [0;0];
+    % u(:,k) = [0;0];
  
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     Am = A_estim - B_estim*K;
-    estim_dx = Am*estim_x(:,k) + B_estim*virtual_u(:,k) + Bum_estim*[um(k) ; 0] - L*(x_error);
+    estim_dx = Am*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*[filtered_um(k);0] + Bum_estim*[um(k) ; 0] - L*(x_error);
 
     % disturbance = [sin(time(k)); 0.0];
     disturbance = [1; 0.0];
     dx = f_usv + B_usv*u(:, k) + B_disturbance*disturbance;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+    %System update
     x(:, k+1) = x(:, k) + dx * dt;
     estim_x(:, k+1) = estim_x(:, k) + estim_dx * dt;
 
@@ -138,20 +144,27 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 figure;
-subplot(3,1,1);
+subplot(4,1,1);
 plot(time, x(4, :));
 title('Position real vs Time');
 xlabel('Time (s)');
 ylabel('Position real');
 
-subplot(3,1,2);
-plot(time, um);
-title('Disturbance vs Time');
+subplot(4,1,2);
+plot(time, virtual_state(1,:));
+title('head point');
 xlabel('Time (s)');
 ylabel('Disturbance');
 
-subplot(3,1,3);
-plot(time, u);
-title('Control vs Time');
+subplot(4,1,3);
+plot(time,x(6,:));
+title('Heading');
+xlabel('Time (s)');
+ylabel('Control');
+
+
+subplot(4,1,4);
+plot(time, filtered_um);
+title('filtered u');
 xlabel('Time (s)');
 ylabel('Control');
