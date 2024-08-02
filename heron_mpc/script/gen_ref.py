@@ -6,7 +6,7 @@ from scipy.integrate import cumtrapz
 from scipy.interpolate import interp1d
 
 
-def generate_figure_eight_trajectory(tfinal, dt, A=8, B=6, C=8):
+def generate_figure_eight_trajectory(tfinal, dt, translation, theta, A=8, B=6, C=8):
     t = np.arange(0, tfinal, dt)
     x = A * np.sin(t/C)
     y = B * np.sin(t/C) * np.cos(t/C)
@@ -23,10 +23,13 @@ def generate_figure_eight_trajectory(tfinal, dt, A=8, B=6, C=8):
     rot_speed = np.gradient(headings,dt)
 
     ref = np.hstack((positions, headings.reshape(-1, 1), velocity_magnitudes.reshape(-1, 1), rot_speed.reshape(-1,1)))
+    ref = transform_trajectory(ref, translation, theta)
+    np.save('ref_data.npy',ref)
+
     return ref
 
 
-def generate_figure_eight_trajectory_con(tfinal, dt, A=8, B=6, C=8):
+def generate_figure_eight_trajectory_con(tfinal, dt, translation, theta, A=8, B=6, C=8):
     t = np.arange(0, tfinal, dt)
     x = A * np.sin(t/C)
     y = B * np.sin(t/C) * np.cos(t/C)
@@ -53,8 +56,48 @@ def generate_figure_eight_trajectory_con(tfinal, dt, A=8, B=6, C=8):
     headings = np.unwrap(headings)
     rot_speed = np.gradient(headings,dt)
     ref = np.hstack((positions, headings.reshape(-1, 1), velocity_magnitudes.reshape(-1, 1), rot_speed.reshape(-1, 1)))
-    
+    ref = transform_trajectory(ref, translation, theta)
+    np.save('ref_data.npy',ref)
+
     return ref
+
+def transform_trajectory(trajectory, translation, theta):
+    """
+    Transform the trajectory by translating and rotating.
+
+    Parameters:
+    - trajectory: numpy array of shape (n, 5) where n is the number of points.
+    - translation: tuple (tx, ty) specifying the translation vector.
+    - theta: rotation angle in radians.
+
+    Returns:
+    - Transformed trajectory.
+    """
+    # Translation
+    translated_positions = trajectory[:, :2]
+
+    # Rotation matrix
+    cos_theta = np.cos(theta)
+    sin_theta = np.sin(theta)
+    rotation_matrix = np.array([[cos_theta, -sin_theta],
+                                [sin_theta, cos_theta]])
+
+    # Rotate positions
+    rotated_positions = translated_positions @ rotation_matrix.T  + np.array(translation)
+
+    # Adjust headings by adding rotation angle
+    adjusted_headings = trajectory[:, 2] + theta
+
+    # Maintain velocity magnitudes and rotational speeds
+    velocity_magnitudes = trajectory[:, 3]
+    rot_speed = trajectory[:, 4]
+
+    transformed_trajectory = np.hstack((rotated_positions,
+                                        adjusted_headings.reshape(-1, 1),
+                                        velocity_magnitudes.reshape(-1, 1),
+                                        rot_speed.reshape(-1, 1)))
+
+    return transformed_trajectory
 
 
 
@@ -62,10 +105,14 @@ if __name__ == '__main__':
     tfinal = 250
     dt = 0.01
     t = np.arange(0, tfinal, dt)
-    positions = generate_figure_eight_trajectory(tfinal, dt)
-    positions_con = generate_figure_eight_trajectory_con(tfinal, dt)
+    positions = generate_figure_eight_trajectory(tfinal, dt, (100,50), 30*np.pi/180)
+    positions_con = generate_figure_eight_trajectory_con(tfinal, dt, (100,50), 30*np.pi/180)
 
 
+    # Save data to files
+    np.save('ref_data.npy',positions)
+    np.save('ref_data_con.npy',positions_con)
+    
     fig, axs = plt.subplots(2, 4, figsize=(12, 10))
 
     # Plot the figure-eight trajectory

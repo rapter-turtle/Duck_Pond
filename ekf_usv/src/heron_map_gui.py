@@ -14,7 +14,7 @@ from matplotlib.widgets import Button
 from heron_msgs.msg import Drive
 import pandas as pd
 import time
-from mpc_msgs.msg import MPCTraj, MPC_State
+from mpc_msgs.msg import MPCTraj, Obs_State
 
 x_actual_min = 352571.00 - 2
 x_actual_max = 353531.94 - 2
@@ -71,27 +71,42 @@ class SensorFusionEKF:
         self.ref_x = []
         self.ref_y = []
         
+        self.obs_list = [0,0,0,0,0,0]
+        
         self.current_time = []
         
-        self.fig, self.ax = plt.subplots(3, 4, figsize=(12, 7))
-        self.ax1 = plt.subplot2grid((3, 4), (0, 0), colspan=2, rowspan=3, fig=self.fig)
-        self.line1_m, = self.ax1.plot([], [], 'r-',label='measurement')    
-        self.line1, = self.ax1.plot([], [], 'k-',label='ekf')    
-        
-        self.pred_line, = self.ax1.plot([], [], 'm-', label='Predicted')
-        self.ref_line, = self.ax1.plot([], [], 'b--', label='Reference')
-        
-        self.line1test, = self.ax1.plot([], [], 'm.',label='plot every 1-sec')    
+
         kaist_img = plt.imread("kaist.png")
         map_height, map_width = kaist_img.shape[:2]
         self.map_height = map_height
         self.map_width = map_width
+        trajectory_data =  np.load('ref_data.npy')
+        map_traj_data = np.empty_like(trajectory_data)        
+        for i in range(trajectory_data.shape[0]):
+            pos_x, pos_y = trajectory_data[i, 0], trajectory_data[i, 1]
+            pos_x_map, pos_y_map = self.utm_to_map(pos_x, pos_y)
+            map_traj_data[i, 0] = pos_x_map
+            map_traj_data[i, 1] = pos_y_map    
+        # print(map_traj_data)         
+        
+        
+        
+        self.fig, self.ax = plt.subplots(3, 4, figsize=(12, 7))
+        self.ax1 = plt.subplot2grid((3, 4), (0, 0), colspan=2, rowspan=3, fig=self.fig)
+        self.line1_m, = self.ax1.plot([], [], 'r-',label='measurement')    
+        self.refs, = self.ax1.plot(map_traj_data[:,0],map_traj_data[:,1],'b--',label='reference traj.')
+        self.line1, = self.ax1.plot([], [], 'k-',label='ekf')            
+        self.pred_line, = self.ax1.plot([], [], 'm-', label='Predicted')
+        self.ref_line, = self.ax1.plot([], [], 'm.', label='Reference')        
+        self.line1test, = self.ax1.plot([], [], 'm.',label='plot every 1-sec')    
         self.ax1.imshow(kaist_img[::-1],origin='lower')
         self.ax1.grid()
         self.ax1.set_xlabel('x position')
         self.ax1.set_ylabel('y position')
         self.ax1.set_title('Real-time Trajectory Plot')
         self.ax1.legend()
+                           
+
 
         self.ax2 = plt.subplot2grid((3, 4), (0, 2), fig=self.fig)
         self.line2_m, = self.ax2.plot([], [], 'r-', label='measurement', alpha=0.75)
@@ -128,6 +143,11 @@ class SensorFusionEKF:
         self.ax4.legend()
         self.ax3.legend()
         self.ax2.legend()
+        self.ax6.grid()
+        self.ax5.grid()
+        self.ax4.grid()
+        self.ax3.grid()
+        self.ax2.grid()
 
         self.arrow_length = 0.5
         size = 1.5
@@ -171,12 +191,30 @@ class SensorFusionEKF:
 
         # self.axins = self.ax1.inset_axes([0.65, 0.01, 0.34, 0.34])  # position and size of inset axis
         self.axins = plt.subplot2grid((3, 4), (2, 2), fig=self.fig)
+        self.refszoom, = self.axins.plot(map_traj_data[:,0],map_traj_data[:,1],'b--',label='reference traj.')
+        self.pred_line_in, = self.axins.plot([], [], 'm-', label='Predicted')
+        self.ref_line_in, = self.axins.plot([], [], 'm.', label='Reference')   
+        self.line1_in, = self.axins.plot([], [], 'k-',label='ekf')            
+        self.heron_p1_in = self.axins.fill(hull1_R[0, :], hull1_R[1, :], 'b', alpha=0.35)
+        self.heron_p2_in = self.axins.fill(hull2_R[0, :], hull2_R[1, :], 'b', alpha=0.35)
+        self.heron_p3_in = self.axins.fill(body_R[0, :], body_R[1, :], 'b', alpha=0.35)
+        self.heron_p4_in = self.axins.arrow(0,0, direction[0], direction[1], head_width=0.1, head_length=0.1, fc='b', ec='b')
+        self.axins.grid()
+
+        self.theta = np.linspace( 0 , 2 * np.pi , 150 )        
+        radius = 1.0
+        self.obs_a = self.ax1.fill(0.0 + radius * np.cos( self.theta ), 0.0 + radius * np.sin( self.theta ), color='red', alpha=0.3)
+        self.obs_b = self.ax1.fill(0.0 + radius * np.cos( self.theta ), 0.0 + radius * np.sin( self.theta ), color='red', alpha=0.3)
+
+        self.obs_a_in = self.axins.fill(0.0 + radius * np.cos( self.theta ), 0.0 + radius * np.sin( self.theta ), color='red', alpha=0.3)
+        self.obs_b_in = self.axins.fill(0.0 + radius * np.cos( self.theta ), 0.0 + radius * np.sin( self.theta ), color='red', alpha=0.3)
+
 
         self.fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
         self.ekf_sub = rospy.Subscriber('/ekf/estimated_state', Float64MultiArray, self.ekf_callback)
         self.time_sub = rospy.Subscriber('/imu/data', Imu, self.time_callback)
         self.thrust_sub = rospy.Subscriber('/cmd_drive', Drive, self.thrust_callback)
-        self.mpc_sub = rospy.Subscriber('mpcvis_pub', MPCTraj, self.mpc_callback)
+        self.mpc_sub = rospy.Subscriber('/mpc_vis', MPCTraj, self.mpc_callback)
 
         reset_ax = plt.axes([0.41, 0.05, 0.05, 0.03])
         self.reset_button = Button(reset_ax, 'Reset')
@@ -193,15 +231,23 @@ class SensorFusionEKF:
         self.pred_y.clear()
         self.ref_x.clear()
         self.ref_y.clear()
+        
+        self.obs_list[0:2] = self.utm_to_map(msg.obs[0].x,msg.obs[0].y)
+        self.obs_list[2] = msg.obs[0].rad
+        self.obs_list[3:5] = self.utm_to_map(msg.obs[1].x,msg.obs[1].y)
+        self.obs_list[5] = msg.obs[1].rad
 
         # Extract predicted and reference trajectories
         for state in msg.state:
-            self.pred_x.append(state.x)
-            self.pred_y.append(state.y)
+            pred_x, pred_y = self.utm_to_map(state.x,state.y)
+            self.pred_x.append(pred_x)
+            self.pred_y.append(pred_y)
 
         for ref in msg.ref:
-            self.ref_x.append(ref.x)
-            self.ref_y.append(ref.y)
+            ref_x, ref_y = self.utm_to_map(ref.x,ref.y)
+            self.ref_x.append(ref_x)
+            self.ref_y.append(ref_y)
+            
             
                 
     def time_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문        
@@ -215,6 +261,12 @@ class SensorFusionEKF:
         self.thrust_right = msg.right
         self.thrust_callback_on = 1
 
+
+    def utm_to_map(self,pos_x,pos_y):        
+        pos_x_map = (pos_x - x_actual_min)/(x_actual_max - x_actual_min)*self.map_width
+        pos_y_map = self.map_height-(pos_y - y_actual_min)/(y_actual_max - y_actual_min)*self.map_height        
+        return pos_x_map, pos_y_map
+    
     def ekf_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문
         self.x = msg.data[0]
         self.y = msg.data[1]
@@ -232,11 +284,13 @@ class SensorFusionEKF:
         
         # self.current_time = (rospy.Time.now() - self.start_time).to_sec()
             
-        self.x_map = (self.x - x_actual_min)/(x_actual_max - x_actual_min)*self.map_width
-        self.y_map = self.map_height-(self.y - y_actual_min)/(y_actual_max - y_actual_min)*self.map_height
+        # self.x_map = (self.x - x_actual_min)/(x_actual_max - x_actual_min)*self.map_width
+        # self.y_map = self.map_height-(self.y - y_actual_min)/(y_actual_max - y_actual_min)*self.map_height
+        self.x_map, self.y_map = self.utm_to_map(self.x, self.y)
         
-        self.x_map_sensor = (self.x_sensor - x_actual_min)/(x_actual_max - x_actual_min)*self.map_width
-        self.y_map_sensor = self.map_height-(self.y_sensor - y_actual_min)/(y_actual_max - y_actual_min)*self.map_height
+        # self.x_map_sensor = (self.x_sensor - x_actual_min)/(x_actual_max - x_actual_min)*self.map_width
+        # self.y_map_sensor = self.map_height-(self.y_sensor - y_actual_min)/(y_actual_max - y_actual_min)*self.map_height
+        self.x_map_sensor, self.y_map_sensor = self.utm_to_map(self.x_sensor, self.y_sensor)
         # print(x_map,y_map)
 
         if self.thrust_callback_on and self.time_callback_on:
@@ -262,9 +316,12 @@ class SensorFusionEKF:
 
             self.line1_m.set_data(self.x_sensor_data, self.y_sensor_data)
             self.line1.set_data(self.x_data, self.y_data)
-            self.line1test.set_data(self.x_data[::20], self.y_data[::20])
-            self.ax1.set_xlim(540, 630)
-            self.ax1.set_ylim(205, 295)
+            # self.line1test.set_data(self.x_data[::20], self.y_data[::20])
+            self.pred_line.set_data(self.pred_x,self.pred_y)
+            self.ref_line.set_data(self.ref_x,self.ref_y)
+
+            self.ax1.set_xlim(550, 620)
+            self.ax1.set_ylim(235, 295)
             
             # Rotation matrix for the heading
             R = np.array([[np.cos(self.p), -np.sin(self.p)],
@@ -288,37 +345,54 @@ class SensorFusionEKF:
 
             self.line2_m.set_data(self.time_data, self.u_sensor_data)
             self.line2.set_data(self.time_data, self.u_data)
-            # self.ax2.set_xlim(self.time_data[-1]-20, self.time_data[-1])
-            self.ax2.set_xlim(self.time_data[0], self.time_data[-1])
             self.ax2.set_ylim(-0.5, 2)
             
             self.line3_m.set_data(self.time_data, self.v_sensor_data)
             self.line3.set_data(self.time_data, self.v_data)
-            # self.ax3.set_xlim(self.time_data[-1]-20, self.time_data[-1])
-            self.ax3.set_xlim(self.time_data[0], self.time_data[-1])
             self.ax3.set_ylim(-0.5, 0.5)
 
             self.line4_m.set_data(self.time_data, self.r_sensor_data)
             self.line4.set_data(self.time_data, self.r_data)
-            # self.ax4.set_xlim(self.time_data[-1]-20, self.time_data[-1])
-            self.ax4.set_xlim(self.time_data[0], self.time_data[-1])
             self.ax4.set_ylim(-0.5, 0.5)
 
             self.line5_m.set_data(self.time_data, self.p_sensor_data)
             self.line5.set_data(self.time_data, self.p_data)
-            # self.ax5.set_xlim(self.time_data[-1]-20, self.time_data[-1])
-            self.ax5.set_xlim(self.time_data[0], self.time_data[-1])
             
             self.line6_left.set_data(self.time_data, self.thrust_left_data)
             self.line6_right.set_data(self.time_data, self.thrust_right_data)
-            # self.ax6.set_xlim(self.time_data[-1]-20, self.time_data[-1])
-            self.ax6.set_xlim(self.time_data[0], self.time_data[-1])
-            self.ax4.set_ylim(-1, 1)
+            self.ax6.set_ylim(-1, 1)
+
+            self.ax2.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax3.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax4.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax5.set_xlim(self.time_data[-1]-20, self.time_data[-1])
+            self.ax6.set_xlim(self.time_data[-1]-20, self.time_data[-1])
 
             # self.ax2.set_xlim(self.time_data[0], self.time_data[-1])
             # self.ax3.set_xlim(self.time_data[0], self.time_data[-1])
             # self.ax4.set_xlim(self.time_data[0], self.time_data[-1])
             # self.ax5.set_xlim(self.time_data[0], self.time_data[-1])
+            # self.ax6.set_xlim(self.time_data[0], self.time_data[-1])
+            
+        
+            self.line1_in.set_data(self.x_data, self.y_data)
+            self.pred_line_in.set_data(self.pred_x,self.pred_y)
+            self.ref_line_in.set_data(self.ref_x,self.ref_y)            
+            self.heron_p1_in[0].set_xy(np.column_stack((hull1_R[0, :], hull1_R[1, :])))
+            self.heron_p2_in[0].set_xy(np.column_stack((hull2_R[0, :], hull2_R[1, :])))
+            self.heron_p3_in[0].set_xy(np.column_stack((body_R[0, :], body_R[1, :])))
+            self.heron_p4_in.remove()
+            self.heron_p4_in = self.axins.arrow(self.x_map, self.y_map, direction[0], direction[1], head_width=0.1, head_length=0.1, fc='g', ec='g')                  
+            
+            self.obs_a[0].set_xy(np.column_stack((self.obs_list[0] + self.obs_list[2] * np.cos( self.theta ), self.obs_list[1] + self.obs_list[2] * np.sin( self.theta ))))
+            self.obs_b[0].set_xy(np.column_stack((self.obs_list[3] + self.obs_list[5] * np.cos( self.theta ), self.obs_list[4] + self.obs_list[5] * np.sin( self.theta ))))
+            self.obs_a_in[0].set_xy(np.column_stack((self.obs_list[0] + self.obs_list[2] * np.cos( self.theta ), self.obs_list[1] + self.obs_list[2] * np.sin( self.theta ))))
+            self.obs_b_in[0].set_xy(np.column_stack((self.obs_list[3] + self.obs_list[5] * np.cos( self.theta ), self.obs_list[4] + self.obs_list[5] * np.sin( self.theta ))))
+
+
+            self.axins.axis('equal')
+            self.axins.set_xlim(self.x_map-5, self.x_map+5)
+            self.axins.set_ylim(self.y_map-5, self.y_map+5)
 
             self.ax1.relim()
             self.ax2.relim()
@@ -332,27 +406,8 @@ class SensorFusionEKF:
             self.ax3.autoscale_view()
             self.ax4.autoscale_view()
             self.ax5.autoscale_view()
-            self.ax6.autoscale_view()
+            self.ax6.autoscale_view()                        
             
-            
-            
-            # Update the inset plot
-            self.axins.clear()
-            self.axins.plot(self.x_data, self.y_data, 'k-')
-            self.axins.plot(self.x_sensor_data, self.y_sensor_data, 'r-')
-            self.axins.fill(hull1_R[0, :], hull1_R[1, :], 'b', alpha=0.35)
-            self.axins.fill(hull2_R[0, :], hull2_R[1, :], 'b', alpha=0.35)
-            self.axins.fill(body_R[0, :], body_R[1, :], 'b', alpha=0.35)
-            self.axins.arrow(self.x_map, self.y_map, direction[0], direction[1], head_width=0.1, head_length=0.1, fc='g', ec='g')
-            self.axins.axis('equal')
-            self.axins.set_xlim(self.x_map-5, self.x_map+5)
-            self.axins.set_ylim(self.y_map-5, self.y_map+5)
-            # self.axins.get_xaxis().set_visible(False)
-            # self.axins.get_yaxis().set_visible(False)
-            
-            
-            # self.fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
-
             return self.line1, self.line2, self.line3, self.line4, self.line5
 
     def reset_plots(self, event):
@@ -403,7 +458,6 @@ class SensorFusionEKF:
         self.ax5.autoscale_view()
         self.ax6.relim()
         self.ax6.autoscale_view()
-        self.axins.clear()
 
     def save_plots(self, event):
         data_dict = {
