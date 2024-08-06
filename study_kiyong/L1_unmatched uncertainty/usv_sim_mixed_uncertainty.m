@@ -50,6 +50,7 @@ x = zeros(6, num_steps); % State vector [position; velocity]
 u = zeros(2, num_steps);
 matched_u = zeros(2, num_steps); % Control input vector
 unmatched_u = zeros(2, num_steps);
+disturbance_list = zeros(4, num_steps);
 statefeedback_u = zeros(2, num_steps);
 
 estim_x = zeros(4, num_steps);
@@ -122,6 +123,9 @@ for k = 2:num_steps-1
     filtered_um(:,k) = filtered_um(:,k-1)*exp(-cutoff*dt) - con*(1-exp(-cutoff*dt));
     matched_u(:,k) = filtered_um(3:4,k);
     unmatched_u(:,k) = filtered_um(1:2,k);
+    % unmatched_u(:,k) = [0;0];
+    % matched_u(:,k) = [0;0];
+
 
     % Nominal control
     % nominal_control = [0;0];
@@ -131,30 +135,36 @@ for k = 2:num_steps-1
     % Virtual control
     virtual_u(:,k) = [f_usv(1)*cos(x(6, k)) - x(1, k)*x(3, k)*sin(x(6, k)) - f_usv(2)*sin(x(6, k)) - x(2, k)*x(3, k)*cos(x(6, k)) - f_usv(3)*l*sin(x(6, k)) - x(3, k)*x(3, k)*l*cos(x(6, k));
                  f_usv(1)*sin(x(6, k)) + x(1, k)*x(3, k)*cos(x(6, k)) + f_usv(2)*sin(x(6, k)) - x(2, k)*x(3, k)*sin(x(6, k)) + f_usv(3)*l*cos(x(6, k)) - x(3, k)*x(3, k)*l*sin(x(6, k))];
-    % State feedback for Hurwitz matrix
-    state_feedback = -K*virtual_state(:,k);
-    state_feedback_u = [0.5*(m33*(state_feedback(2)*cos(x(6, k)) - state_feedback(1)*sin(x(6, k)))/(l*l) + m11*(state_feedback(1)*cos(x(6, k)) + state_feedback(2)*sin(x(6, k))));
-                       0.5*(-m33*(state_feedback(2)*cos(x(6, k)) - state_feedback(1)*sin(x(6, k)))/(l*l) + m11*(state_feedback(1)*cos(x(6, k)) + state_feedback(2)*sin(x(6, k))))];
-    statefeedback_u(:,k) = state_feedback_u;
 
-    % unmatched_u(:,k) = [0;0];
-    matched_u(:,k) = [0;0];
+    % State feedback for Hurwitz matrix
+    % state_feedback = -K*virtual_state(:,k);
+    % state_feedback_u = [0.5*(m33*(state_feedback(2)*cos(x(6, k)) - state_feedback(1)*sin(x(6, k)))/(l*l) + m11*(state_feedback(1)*cos(x(6, k)) + state_feedback(2)*sin(x(6, k))));
+    %                    0.5*(-m33*(state_feedback(2)*cos(x(6, k)) - state_feedback(1)*sin(x(6, k)))/(l*l) + m11*(state_feedback(1)*cos(x(6, k)) + state_feedback(2)*sin(x(6, k))))];
+    % statefeedback_u(:,k) = state_feedback_u;
+
+
     % Real Control input
     u(:,k) = [0.5*(m11*cos(x(6, k)) - m33*sin(x(6, k))/(l*l)), 0.5*(m11*sin(x(6, k))+m33*cos(x(6, k))/(l*l));
               0.5*(m11*cos(x(6, k)) + m33*sin(x(6, k))/(l*l)), 0.5*(m11*sin(x(6, k))-m33*cos(x(6, k))/(l*l))]*(matched_u(:,k) + unmatched_u(:,k) - virtual_u(:,k));% + state_feedback_u;
-
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     estim_dx = (A_estim)*estim_x(:,k) + B_estim*(matched_u(:,k) + unmatched_u(:,k)) + B_estim*um(3:4,k) + Bum_estim*um(1:2,k) - L*(x_error);
     % estim_dx = (A_estim)*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*(matched_u(:,k) + unmatched_u(:,k)) + B_estim*um(3:4,k) + Bum_estim*um(1:2,k) - L*(x_error);
 
-    xy_dis = [500*sin(0.5*dt*k);500*sin(0.5*dt*k)];
-    disturbance = [1; 2; xy_dis(1)*cos(x(6,k)) + xy_dis(2)*sin(x(6,k)); -xy_dis(1)*sin(x(6,k)) + xy_dis(2)*cos(x(6,k)); 0];
+
+    xy_dis = [500*sin(0.5*dt*k);500*cos(0.5*dt*k)];
+    disturbance = [0.5; 1; xy_dis(1)*cos(x(6,k)) + xy_dis(2)*sin(x(6,k)); -xy_dis(1)*sin(x(6,k)) + xy_dis(2)*cos(x(6,k)); 0];
+    disturbance_list(:,k) = [disturbance(1:2) ; xy_dis];
     
+
+    if u(1,k) < -2000
+        u(1,k) = -2000;
+    end
+    if u(2,k) < -2000
+        u(2,k) = -2000;
+    end    
     dx = f_usv + B_usv*u(:, k) + Bm_disturbance*disturbance(3:5) + Bum_disturbance*disturbance(1:2);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
     %System update
     x(:, k+1) = x(:, k) + dx * dt;
@@ -170,27 +180,131 @@ for k = 2:num_steps-1
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Data Plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure;
-subplot(4,1,1);
-plot(time, virtual_state(1,:));
-title('Headpoint x');
-xlabel('Time (s)');
-ylabel('Headpoint x');
+subplot(4,2,1);
+plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+title('Head Point Position X');
+xlabel('Time(s)');
+ylabel('X(m)');
+ylim([0, 5]);
 
-subplot(4,1,2);
-plot(time, virtual_state(2,:));
-title('Headpoint y');
-xlabel('Time (s)');
-ylabel('Headpoint y');
 
-subplot(4,1,3);
-plot(time,um(1:2,:));
-title('vel dis');
-xlabel('Time (s)');
-ylabel('vel dis');
+subplot(4,2,2);
+plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+title('Head Point Position Y');
+xlabel('Time(s)');
+ylabel('Y(m)');
+ylim([0, 5]);
 
-subplot(4,1,4);
-plot(time,[um(3,:); -filtered_um(3,:)]);
-title('Estimated disturbance 3, 4');
-xlabel('Time (s)');
-ylabel('Estimated disturbance');
+
+subplot(4,2,3);
+plot(time, um(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+hold on;
+plot(time, disturbance_list(1,:), 'DisplayName', 'Ground truth'); % Label for the second line
+hold off;
+title('Unmatched Uncertainty : Vx current');
+xlabel('Time(s)');
+ylabel('Current(m/s)');
+ylim([0, 2]);
+legend('show'); % Display the legend with labels
+
+subplot(4,2,4);
+plot(time, um(2,:), 'DisplayName', 'Estimated'); % Label for the first line
+hold on;
+plot(time, disturbance_list(2,:), 'DisplayName', 'Ground truth'); % Label for the second line
+hold off;
+title('Unmatched Uncertainty : Vy current');
+xlabel('Time(s)');
+ylabel('Current(m/s)');
+ylim([0, 2]);
+legend('show'); % Display the legend with labels
+
+subplot(4,2,5);
+plot(time, m11*um(3,:), 'DisplayName', 'Estimated'); % Label for the first line
+hold on;
+plot(time, disturbance_list(3,:), 'DisplayName', 'Ground truth'); % Label for the second line
+hold off;
+title('Matched Uncertainty : X Wave Force');
+xlabel('Time(s)');
+ylabel('Force(N)');
+ylim([-800, 800]);
+legend('show'); % Display the legend with labels
+
+subplot(4,2,6);
+plot(time, m11*um(4,:), 'DisplayName', 'Estimated'); % Label for the first line
+hold on;
+plot(time, disturbance_list(4,:), 'DisplayName', 'Ground truth'); % Label for the second line
+hold off;
+title('Matched Uncertainty : Y Wave Force');
+xlabel('Time(s)');
+ylabel('Force(N)');
+ylim([-800, 800]);
+legend('show'); % Display the legend with labels
+
+subplot(4,2,7);
+plot(time, u(1,:), 'DisplayName', 'Thruster L'); % Label for the first line
+title('Thruster Control Input Left');
+xlabel('Time(s)');
+ylabel('Force(N)');
+% ylim([0, 3]);
+legend('show'); % Display the legend with labels
+
+subplot(4,2,8);
+plot(time, u(2,:), 'DisplayName', 'Thruster R'); % Label for the first line
+title('Thruster Control Input Right');
+xlabel('Time(s)');
+ylabel('Force(N)');
+% ylim([0, 3]);
+legend('show'); % Display the legend with labels
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Simulation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Define the ship polygon
+% ship_length = 7; % Length of the ship
+% ship_width = 3; % Width of the ship
+% ship_shape = [-ship_length/2 + ship_width, -ship_width/2; 
+%               ship_length/2, 0; 
+%               -ship_length/2 + ship_width, ship_width/2; 
+%               -ship_length/2 - ship_width, ship_width/2; 
+%               -ship_length/2 - ship_width, -ship_width/2];
+% 
+% % Create a figure for animation
+% figure;
+% hold on;
+% axis equal;
+% xlabel('X Position');
+% ylabel('Y Position');
+% title('Ship state');
+% xlim([-30, 30]); % Set the X-axis limits
+% ylim([-30, 30]); % Set the Y-axis limits
+% grid on;
+% legend('Own ship');
+% 
+% % Animation loop
+% for k = 1:10:num_steps
+%     % Compute ship's current position and orientation
+%     X = x(4, k);
+%     Y = x(5, k);
+%     psi = x(6, k);
+% 
+%     % Rotate and translate the ship shape
+%     R = [cos(psi), -sin(psi); sin(psi), cos(psi)];
+%     ship_position = (R * ship_shape')';
+%     ship_position(:, 1) = ship_position(:, 1) + X;
+%     ship_position(:, 2) = ship_position(:, 2) + Y;
+% 
+%     % Plot the ship
+%     ship_plot = fill(ship_position(:, 1), ship_position(:, 2), 'b', 'FaceAlpha', 0.5, 'DisplayName', 'Own Ship');
+% 
+%     % Pause to create animation effect
+%     pause(0.01);
+% 
+%     % Remove the current plot to update the next frame
+%     if k < num_steps
+%         delete(ship_plot);
+%     end
+% end
+% 
+% hold off;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
