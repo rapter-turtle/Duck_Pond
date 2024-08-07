@@ -85,11 +85,11 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
             ox5 = 250; oy5 = +60.05; or5 = 1.0*obsrad_param
             obs_index = 3
             if mode == 'single_static_straight':
-                ox1 = 100; oy1 = +0.01; or1 = 20.0*obsrad_param
-                ox2 = 100; oy2 = +0.01; or2 = 20.0*obsrad_param
-                ox3 = 100; oy3 = +0.01; or3 = 20.0*obsrad_param
-                ox4 = 100; oy4 = +0.01; or4 = 20.0*obsrad_param
-                ox5 = 100; oy5 = +0.01; or5 = 20.0*obsrad_param
+                ox1 = 100; oy1 = +0.01; or1 = 15.0*obsrad_param
+                ox2 = 100; oy2 = +0.01; or2 = 15.0*obsrad_param
+                ox3 = 100; oy3 = +0.01; or3 = 15.0*obsrad_param
+                ox4 = 100; oy4 = +0.01; or4 = 15.0*obsrad_param
+                ox5 = 100; oy5 = +0.01; or5 = 15.0*obsrad_param
                 obs_index = 1
 
             obs_pos = np.array([ox1, oy1, or1 + ship_p.radius, 0, 0,  
@@ -352,8 +352,8 @@ def main(cbf_num,mode,prediction_horizon,gamma1=1.5):
     obs_array = np.array(obs_list)
 
     ocp_solver = None
-    # plot_iter = len(simX)-1
-    plot_iter = 10
+    plot_iter = len(simX)-1
+    # plot_iter = 10
     animateASV(simX, simU, target_speed, mpc_pred_list, obs_array, cbf_and_dist, plot_iter, t_preparation+t_feedback, mode, obs_index)
 
     # animateCBF(plot_iter, cbf_and_dist, mode)
@@ -386,7 +386,7 @@ def calc_cbf(state,obs,type):
         B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
         B2 = np.sqrt( (ox-x-R*  cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
         if ship_p.TCCBF == 3:
-            cbf = np.log((np.exp(B1)+np.exp(B2)-1))
+            cbf = np.log((np.exp(B1)+np.exp(B2))/2)
         if ship_p.TCCBF == 2:
             cbf = B2
         if ship_p.TCCBF == 1:
@@ -408,22 +408,32 @@ if __name__ == '__main__':
     # main(2,'static_straight',10)
     
     # main(1,'avoid',10,2.5)
-    main(1,'avoid',10,1.5)
+    # main(1,'avoid',10,1.5)
     # main(1,'avoid',10,1.0)
     
     # main(1,'overtaking',10,2.5)
-    main(1,'overtaking',10,1.5)
+    # main(1,'overtaking',10,1.5)
     # main(1,'overtaking',10,1.0)
     
     # main(1,'single_static_straight',10,2.5)
-    main(1,'single_static_straight',10,1.5)
+    # main(1,'single_static_straight',10,1.5)
     # main(1,'single_static_straight',10,1.0)
     
     # main(1,'static_narrow',10,2.5)
-    main(1,'static_narrow',10,1.5)
+    # main(1,'static_narrow',10,1.5)
     # main(1,'static_narrow',10,1.0)
     
     # main(1,'static_straight',10,2.5)
-    main(1,'static_straight',10,1.5)
+    # main(1,'static_straight',10,1.5)
     # main(1,'static_straight',10,1.0)
+    
+    
+    main(0,'single_static_straight',20,2.5)
+    main(1,'single_static_straight',20,1.5)
+    main(2,'single_static_straight',20,1.0)
+    
+    
+    main(0,'single_static_straight',10,2.5)
+    main(1,'single_static_straight',10,1.5)
+    main(2,'single_static_straight',10,1.0)
     

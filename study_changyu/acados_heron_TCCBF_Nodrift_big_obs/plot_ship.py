@@ -98,7 +98,8 @@ def animateASV(states, inputs, target_speed, mpc_result, obs_pos, cbf_and_dist, 
                             if ship_p.TCCBF == 2:
                                 hk[j, k] = np.min((hk[j, k], B2))
                             if ship_p.TCCBF == 3:
-                                hk[j, k] = np.min((hk[j, k], np.max((B1,B2))))
+                                # hk[j, k] = np.min((hk[j, k], np.max((B1,B2))))
+                                hk[j, k] = np.min((hk[j, k],  np.log((np.exp(B1)+np.exp(B2))/2)))
                         if np.abs(np.arctan2((obs_pos[frame][5*i+1]-y),(obs_pos[frame][5*i+0]-x))-head_ang)>np.pi/2:
                             hk[j, k] = 30
             # Plotting
