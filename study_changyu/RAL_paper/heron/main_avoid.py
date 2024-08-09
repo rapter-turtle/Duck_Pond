@@ -252,7 +252,8 @@ def main(cbf_num,mode,prediction_horizon,gamma1, gamma2, target_speed):
     rot_usage = np.sum(simX[:,5]**2)
     FX_usage =  np.sum((simX[:,6]-Fx_init/2)**2) + np.sum((simX[:,7]-Fx_init/2)**2)
     dFX_usage = np.sum(simU[:,0]**2) + np.sum(simU[:,1]**2)
-    return closest_dist, arrival_time , speed_var ,rot_usage ,FX_usage , dFX_usage, simX, simU, target_speed, obs_array, cbf_and_dist, time_save
+    con_usage =  1e-4*FX_usage + 1e-2*dFX_usage
+    return closest_dist, arrival_time , speed_var ,rot_usage , con_usage, simX, simU, target_speed, obs_array, cbf_and_dist, time_save
 
 
 def calc_closest_distance(state,obs):
@@ -310,8 +311,8 @@ if __name__ == '__main__':
     target_x = 50
     tf = 50
     
-    cd1, at1 ,sv1 ,rot1, FX1, dFX1, simX1, simU1, target_speed1, obs_array1, cbf_and_dist1, time_save1  = main(1,'avoid', 10, 1, 0.01, target_speed)
-    cd2, at2 ,sv2 ,rot2, FX2, dFX2, simX2, simU2, target_speed2, obs_array2, cbf_and_dist2, time_save2  = main(3,'avoid', 10, 1, 0.01, target_speed)
+    cd1, at1 ,sv1 ,rot1, con1, simX1, simU1, target_speed1, obs_array1, cbf_and_dist1, time_save1  = main(1,'avoid', 10, 1, 0.01, target_speed)
+    cd2, at2 ,sv2 ,rot2, con2, simX2, simU2, target_speed2, obs_array2, cbf_and_dist2, time_save2  = main(3,'avoid', 10, 1, 0.01, target_speed)
     # cd3, at3 ,sv3 ,rot3, FX3, dFX3, simX3, simU3, target_speed3, obs_array3, cbf_and_dist3, time_save3  = main(3,'avoid', 10, 1, 0.02, target_speed)
         
 
@@ -321,261 +322,264 @@ if __name__ == '__main__':
         # {"simX": simX3, "simU": simU3, "target_speed": target_speed3, "obs_array": obs_array3, "cbf_and_dist": cbf_and_dist3},
     ]
     
-    colors = plt.cm.tab10(np.linspace(0, 1, 10))
-    fig, axs = plt.subplots(2,4, figsize=(16,6))
-    # Combine first two columns for the ASV plot
-    fig.delaxes(axs[0, 1])
-    ax_asv = plt.subplot2grid((2, 4), (0, 0), colspan=2, rowspan=1)  # Combine first row for ASV
-    ax_compt = axs[0, 3]
-    ax_cbf3 = axs[1, 3]
-    ax_surge = axs[1, 0]
-    ax_sway = axs[1, 1]
-    ax_rot = axs[1, 2]
+    visualize = 0
+    visualize_result = 1
+    if visualize:
+        colors = plt.cm.tab10(np.linspace(0, 1, 10))
+        fig, axs = plt.subplots(2,4, figsize=(16,6))
+        # Combine first two columns for the ASV plot
+        fig.delaxes(axs[0, 1])
+        ax_asv = plt.subplot2grid((2, 4), (0, 0), colspan=2, rowspan=1)  # Combine first row for ASV
+        ax_compt = axs[0, 3]
+        ax_cbf3 = axs[1, 3]
+        ax_surge = axs[1, 0]
+        ax_sway = axs[1, 1]
+        ax_rot = axs[1, 2]
 
-    ax_acc = axs[0, 2]
-    
-    vehicle_p = load_ship_param
-    dt = vehicle_p.dt
+        ax_acc = axs[0, 2]
+        
+        vehicle_p = load_ship_param
+        dt = vehicle_p.dt
 
-    size = 2
-    hullLength = 0.7 * size # Length of the hull
-    hullWidth = 0.2 * size   # Width of each hull
-    separation = 0.45 * size  # Distance between the two hulls
-    bodyLength = hullLength  # Length of the body connecting the hulls
-    bodyWidth = 0.25 * size  # Width of the body connecting the hulls
+        size = 2
+        hullLength = 0.7 * size # Length of the hull
+        hullWidth = 0.2 * size   # Width of each hull
+        separation = 0.45 * size  # Distance between the two hulls
+        bodyLength = hullLength  # Length of the body connecting the hulls
+        bodyWidth = 0.25 * size  # Width of the body connecting the hulls
 
-    # Define the grid for plotting
-    x_range = np.linspace(simX2[0,0], simX2[-1,0], 200)
-    y_range = np.linspace(-10, 10, 200)
-    
+        # Define the grid for plotting
+        x_range = np.linspace(simX2[0,0], simX2[-1,0], 200)
+        y_range = np.linspace(-10, 10, 200)
+        
 
-    X, Y = np.meshgrid(x_range, y_range)
-    
-    FS = 16
-    theta = np.linspace( 0 , 2 * np.pi , 100 )
+        X, Y = np.meshgrid(x_range, y_range)
+        
+        FS = 16
+        theta = np.linspace( 0 , 2 * np.pi , 100 )
 
-    ax_asv.clear()    
-    for idx, data in enumerate(sim_data):
-        simX = data["simX"]
-        simU = data["simU"]
-        target_speed = data["target_speed"]
-        obs_array = data["obs_array"]
-        cbf_and_dist = data["cbf_and_dist"]
+        ax_asv.clear()    
+        for idx, data in enumerate(sim_data):
+            simX = data["simX"]
+            simU = data["simU"]
+            target_speed = data["target_speed"]
+            obs_array = data["obs_array"]
+            cbf_and_dist = data["cbf_and_dist"]
 
+            for i in range(len(simX)):
+                if i%50 == 0:
+                    position = simX[i,0:2]
+                    heading = simX[i,2]
+                    hull1 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
+                                    [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
+
+                    hull2 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
+                                    [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
+
+                    # Define the vertices of the body connecting the hulls
+                    body = np.array([[-bodyWidth/2, bodyWidth/2, bodyWidth/2, -bodyWidth/2, -bodyWidth/2],
+                                    [(separation-hullWidth)/2, (separation-hullWidth)/2, -(separation-hullWidth)/2, -(separation-hullWidth)/2, (separation-hullWidth)/2]])
+
+                    # Combine hulls into a single structure
+                    hull2[1, :] = hull2[1, :] - separation/2
+                    hull1[1, :] = hull1[1, :] + separation/2
+
+                    # Rotation matrix for the heading
+                    R = np.array([[np.cos(heading), -np.sin(heading)],
+                                [np.sin(heading), np.cos(heading)]])
+
+                    # Rotate the hulls and body
+                    hull1 = R @ hull1
+                    hull2 = R @ hull2
+                    body = R @ body
+
+                    # Translate the hulls and body to the specified position
+                    hull1 = hull1 + np.array(position).reshape(2, 1)
+                    hull2 = hull2 + np.array(position).reshape(2, 1)
+                    body = body + np.array(position).reshape(2, 1)
+
+                    # Calculate the direction vector for the heading
+                    arrow_length = 1
+                    direction = np.array([np.cos(heading), np.sin(heading)]) * arrow_length
+
+                    # Plot the ASV
+                    ax_asv.fill(hull1[0, :], hull1[1, :], color=colors[idx], alpha=0.3)
+                    ax_asv.fill(hull2[0, :], hull2[1, :], color=colors[idx], alpha=0.3)
+                    ax_asv.fill(body[0, :], body[1, :],   color=colors[idx], alpha=0.3)
+                    ax_asv.arrow(position[0], position[1], direction[0], direction[1], head_width=0.5, head_length=0.3, fc='w', ec=colors[idx])
+
+                    a = position[0] + vehicle_p.radius * np.cos( theta )
+                    b = position[1] + vehicle_p.radius * np.sin( theta )    
+                    ax_asv.fill(a, b, color=colors[idx], alpha=(0.1), edgecolor='k')
+                    # if idx == 1 and i > 0:
+                    #     label = f'{i / 10:.1f} s'
+                    #     if i < 250:
+                    #         ax_asv.annotate(label, (position[0], position[1]), textcoords="offset points", xytext=(0, -20), ha='center', fontsize=FS-5, color='black')
+                    #     else:
+                    #         ax_asv.annotate(label, (position[0], position[1]), textcoords="offset points", xytext=(-10, 15), ha='center', fontsize=FS-5, color='black')
+                        
+            if idx == 0:
+                lgd = 'MPC-EDCBF'
+            elif idx == 1:             
+                lgd = 'MPC-TCCBF'
+            elif idx == 2:             
+                lgd = 'MPC-TCCBF (drift)'
+
+            ax_asv.plot(simX[:,0], simX[:,1], linewidth=2, color=colors[idx],label=lgd)
+        ax_asv.plot([simX[0,0], simX[-1,0]], [0, 0], 'k--')
+        
+        # ax_asv.annotate('0.0 s', (obs_array[0][0], obs_array[0][1]), textcoords="offset points", xytext=(0, 27), ha='center', fontsize=FS-5, color='black')
+        # ax_asv.annotate('20.0 s', (obs_array[-1][0], obs_array[-1][1]), textcoords="offset points", xytext=(-4, 27), ha='center', fontsize=FS-5, color='black')
+        # start_position = obs_array[0][0:2] + [1.5,1.75]
+        # end_position = obs_array[-1][0:2] + [-1.5,1.75]
+        # print(start_position)
+        # ax_asv.annotate('', xy=end_position, xytext=start_position, arrowprops=dict(arrowstyle="->", color='black', lw=1.5))
+        
         for i in range(len(simX)):
-            if i%50 == 0:
-                position = simX[i,0:2]
-                heading = simX[i,2]
-                hull1 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
-                                [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
+            if i%50 == 0:                    
+                radius = obs_array[i][2] - vehicle_p.radius
+                a = obs_array[i][0] + radius * np.cos( theta )
+                b = obs_array[i][1] + radius * np.sin( theta )    
+                ax_asv.fill(a, b, facecolor='k', alpha=0.1, edgecolor='gray')
 
-                hull2 = np.array([[-hullLength/2, hullLength/2, hullLength/2, -hullLength/2, -hullLength/2, -hullLength/2],
-                                [hullWidth/2, hullWidth/2, -hullWidth/2, -hullWidth/2, 0, hullWidth/2]])
+        ax_asv.set_xlabel('x [m]', fontsize=FS)  # Set x-axis label and font size
+        ax_asv.set_ylabel('y [m]', fontsize=FS)  # Set y-axis label and font size
 
-                # Define the vertices of the body connecting the hulls
-                body = np.array([[-bodyWidth/2, bodyWidth/2, bodyWidth/2, -bodyWidth/2, -bodyWidth/2],
-                                [(separation-hullWidth)/2, (separation-hullWidth)/2, -(separation-hullWidth)/2, -(separation-hullWidth)/2, (separation-hullWidth)/2]])
-
-                # Combine hulls into a single structure
-                hull2[1, :] = hull2[1, :] - separation/2
-                hull1[1, :] = hull1[1, :] + separation/2
-
-                # Rotation matrix for the heading
-                R = np.array([[np.cos(heading), -np.sin(heading)],
-                            [np.sin(heading), np.cos(heading)]])
-
-                # Rotate the hulls and body
-                hull1 = R @ hull1
-                hull2 = R @ hull2
-                body = R @ body
-
-                # Translate the hulls and body to the specified position
-                hull1 = hull1 + np.array(position).reshape(2, 1)
-                hull2 = hull2 + np.array(position).reshape(2, 1)
-                body = body + np.array(position).reshape(2, 1)
-
-                # Calculate the direction vector for the heading
-                arrow_length = 1
-                direction = np.array([np.cos(heading), np.sin(heading)]) * arrow_length
-
-                # Plot the ASV
-                ax_asv.fill(hull1[0, :], hull1[1, :], color=colors[idx], alpha=0.3)
-                ax_asv.fill(hull2[0, :], hull2[1, :], color=colors[idx], alpha=0.3)
-                ax_asv.fill(body[0, :], body[1, :],   color=colors[idx], alpha=0.3)
-                ax_asv.arrow(position[0], position[1], direction[0], direction[1], head_width=0.5, head_length=0.3, fc='w', ec=colors[idx])
-
-                a = position[0] + vehicle_p.radius * np.cos( theta )
-                b = position[1] + vehicle_p.radius * np.sin( theta )    
-                ax_asv.fill(a, b, color=colors[idx], alpha=(0.1), edgecolor='k')
-                # if idx == 1 and i > 0:
-                #     label = f'{i / 10:.1f} s'
-                #     if i < 250:
-                #         ax_asv.annotate(label, (position[0], position[1]), textcoords="offset points", xytext=(0, -20), ha='center', fontsize=FS-5, color='black')
-                #     else:
-                #         ax_asv.annotate(label, (position[0], position[1]), textcoords="offset points", xytext=(-10, 15), ha='center', fontsize=FS-5, color='black')
-                    
-        if idx == 0:
-            lgd = 'MPC-EDCBF'
-        elif idx == 1:             
-            lgd = 'MPC-TCCBF'
-        elif idx == 2:             
-            lgd = 'MPC-TCCBF (drift)'
-
-        ax_asv.plot(simX[:,0], simX[:,1], linewidth=2, color=colors[idx],label=lgd)
-    ax_asv.plot([simX[0,0], simX[-1,0]], [0, 0], 'k--')
-    
-    # ax_asv.annotate('0.0 s', (obs_array[0][0], obs_array[0][1]), textcoords="offset points", xytext=(0, 27), ha='center', fontsize=FS-5, color='black')
-    # ax_asv.annotate('20.0 s', (obs_array[-1][0], obs_array[-1][1]), textcoords="offset points", xytext=(-4, 27), ha='center', fontsize=FS-5, color='black')
-    # start_position = obs_array[0][0:2] + [1.5,1.75]
-    # end_position = obs_array[-1][0:2] + [-1.5,1.75]
-    # print(start_position)
-    # ax_asv.annotate('', xy=end_position, xytext=start_position, arrowprops=dict(arrowstyle="->", color='black', lw=1.5))
-    
-    for i in range(len(simX)):
-        if i%50 == 0:                    
-            radius = obs_array[i][2] - vehicle_p.radius
-            a = obs_array[i][0] + radius * np.cos( theta )
-            b = obs_array[i][1] + radius * np.sin( theta )    
-            ax_asv.fill(a, b, facecolor='k', alpha=0.1, edgecolor='gray')
-
-    ax_asv.set_xlabel('x [m]', fontsize=FS)  # Set x-axis label and font size
-    ax_asv.set_ylabel('y [m]', fontsize=FS)  # Set y-axis label and font size
-
-    ax_asv.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_asv.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
-    ax_asv.set_aspect('equal')
-    ax_asv.set(xlim=(0, target_x),ylim=(-10,5))
-    # ax_asv.grid(True)
-    ax_asv.legend(fontsize=FS)
+        ax_asv.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_asv.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
+        ax_asv.set_aspect('equal')
+        ax_asv.set(xlim=(0, target_x),ylim=(-10,5))
+        # ax_asv.grid(True)
+        ax_asv.legend(fontsize=FS)
 
 
-    times = np.linspace(0, dt*(len(simX)-1), len(simX))
-    ax_cbf3.clear()
-    ax_compt.clear()
-    ax_surge.clear()
-    ax_sway.clear()
-    ax_rot.clear()
-    ax_acc.clear()
+        times = np.linspace(0, dt*(len(simX)-1), len(simX))
+        ax_cbf3.clear()
+        ax_compt.clear()
+        ax_surge.clear()
+        ax_sway.clear()
+        ax_rot.clear()
+        ax_acc.clear()
 
-    ax_compt.grid(True)
-    j = 0
-    
-    for idx, data in enumerate(sim_data):
-        cbf_and_dist = data["cbf_and_dist"]
-        ax_compt.plot(times,cbf_and_dist[:,j], color=colors[idx])
-    ax_compt.plot([0, len(cbf_and_dist)*dt],[0,0],'k--',linewidth=1)
-    ax_compt.set_xlim([0, tf])
-    ax_compt.set_ylim([-1, 15])
-    ax_compt.set_xlabel("Time [s]", fontsize=FS)
-    ax_compt.set_ylabel("CBF", fontsize=FS)
-    ax_compt.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_compt.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
-    ax_cbf3.grid(True)
-    for idx, data in enumerate(sim_data):
-        cbf_and_dist = data["cbf_and_dist"]
-        ax_cbf3.plot(times,cbf_and_dist[:,5+j], color=colors[idx])
-    ax_cbf3.plot([0, len(cbf_and_dist)*dt],[0,0],'k--',linewidth=1)
-    ax_cbf3.set_xlim([0, tf])
-    ax_cbf3.set_ylim([-1, 20])
-    ax_cbf3.set_xlabel("Time [s]", fontsize=FS)
-    ax_cbf3.set_ylabel("Closest Distance [m]", fontsize=FS)
+        ax_compt.grid(True)
+        j = 0
+        
+        for idx, data in enumerate(sim_data):
+            cbf_and_dist = data["cbf_and_dist"]
+            ax_compt.plot(times,cbf_and_dist[:,j], color=colors[idx])
+        ax_compt.plot([0, len(cbf_and_dist)*dt],[0,0],'k--',linewidth=1)
+        ax_compt.set_xlim([0, tf])
+        ax_compt.set_ylim([-1, 15])
+        ax_compt.set_xlabel("Time [s]", fontsize=FS)
+        ax_compt.set_ylabel("CBF", fontsize=FS)
+        ax_compt.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_compt.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
+        ax_cbf3.grid(True)
+        for idx, data in enumerate(sim_data):
+            cbf_and_dist = data["cbf_and_dist"]
+            ax_cbf3.plot(times,cbf_and_dist[:,5+j], color=colors[idx])
+        ax_cbf3.plot([0, len(cbf_and_dist)*dt],[0,0],'k--',linewidth=1)
+        ax_cbf3.set_xlim([0, tf])
+        ax_cbf3.set_ylim([-1, 20])
+        ax_cbf3.set_xlabel("Time [s]", fontsize=FS)
+        ax_cbf3.set_ylabel("Closest Distance [m]", fontsize=FS)
 
-    ax_cbf3.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_cbf3.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
+        ax_cbf3.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_cbf3.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
 
-    t = np.linspace(0, dt*(len(simX)-1), len(simX))
-    
-    ax_surge.plot(t, simX[:,3]*0 + target_speed, 'k--', linewidth=1) 
-    for idx, data in enumerate(sim_data):
-        simX = data["simX"]    
-        ax_surge.plot(t, simX[:,3], linewidth=1, color=colors[idx],linestyle='--') 
-        ax_surge.plot(t, np.sqrt(simX[:,3]**2+simX[:,4]**2), linewidth=2, color=colors[idx]) 
-    ax_surge.set_xlabel("Time [s]", fontsize=FS)
-    ax_surge.set_ylabel(r"$u$ [m/s]", fontsize=FS)
-    ax_surge.grid(True)
-    ax_surge.autoscale(enable=True, axis='x', tight=True)
-    ax_surge.autoscale(enable=True, axis='y', tight=True)
-    ax_surge.set_xlim([0, tf])
-    ax_surge.set_ylim(0.3, 1.2)
-    ax_surge.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_surge.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
-    for idx, data in enumerate(sim_data):
-        simX = data["simX"]    
-        ax_sway.plot(t, simX[:,4], linewidth=2, color=colors[idx]) 
-    ax_sway.set_xlabel("Time [s]", fontsize=FS)
-    ax_sway.set_ylabel(r"$v$ [m/s]", fontsize=FS)
-    ax_sway.grid(True)
-    ax_sway.autoscale(enable=True, axis='x', tight=True)
-    ax_sway.autoscale(enable=True, axis='y', tight=True)
-    ax_sway.set_xlim([0, tf])
-    ax_sway.set_ylim(-0.6, 0.6)
-    ax_sway.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_sway.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
+        t = np.linspace(0, dt*(len(simX)-1), len(simX))
+        
+        ax_surge.plot(t, simX[:,3]*0 + target_speed, 'k--', linewidth=1) 
+        for idx, data in enumerate(sim_data):
+            simX = data["simX"]    
+            ax_surge.plot(t, simX[:,3], linewidth=1, color=colors[idx],linestyle='--') 
+            ax_surge.plot(t, np.sqrt(simX[:,3]**2+simX[:,4]**2), linewidth=2, color=colors[idx]) 
+        ax_surge.set_xlabel("Time [s]", fontsize=FS)
+        ax_surge.set_ylabel(r"$u$ [m/s]", fontsize=FS)
+        ax_surge.grid(True)
+        ax_surge.autoscale(enable=True, axis='x', tight=True)
+        ax_surge.autoscale(enable=True, axis='y', tight=True)
+        ax_surge.set_xlim([0, tf])
+        ax_surge.set_ylim(0.3, 1.2)
+        ax_surge.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_surge.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
+        for idx, data in enumerate(sim_data):
+            simX = data["simX"]    
+            ax_sway.plot(t, simX[:,4], linewidth=2, color=colors[idx]) 
+        ax_sway.set_xlabel("Time [s]", fontsize=FS)
+        ax_sway.set_ylabel(r"$v$ [m/s]", fontsize=FS)
+        ax_sway.grid(True)
+        ax_sway.autoscale(enable=True, axis='x', tight=True)
+        ax_sway.autoscale(enable=True, axis='y', tight=True)
+        ax_sway.set_xlim([0, tf])
+        ax_sway.set_ylim(-0.6, 0.6)
+        ax_sway.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_sway.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
 
-    # Plot the headings
-    for idx, data in enumerate(sim_data):
-        simX = data["simX"]   
-        ax_rot.plot(t, simX[:,5], linewidth=2, color=colors[idx]) 
-        # ax_rot.plot(t, simX[:,2], linewidth=2, color=colors[idx],linestyle='--') 
-    # ax_rot.plot(t, simX[:,4]*0 - vehicle_p.rmax, 'r--')
-    # ax_rot.plot(t, simX[:,4]*0 + vehicle_p.rmax, 'r--')
-    ax_rot.set_xlabel("Time [s]", fontsize=FS)
-    ax_rot.set_ylabel(r"$r$ [rad/s]", fontsize=FS)
-    ax_rot.grid(True)
-    ax_rot.autoscale(enable=True, axis='x', tight=True)
-    ax_rot.autoscale(enable=True, axis='y', tight=True)
-    ax_rot.set_xlim([0, tf])
-    ax_rot.set_ylim(-vehicle_p.rmax-0.01, vehicle_p.rmax+0.01)
-    ax_rot.set_ylim(-vehicle_p.rmax-0.0, vehicle_p.rmax+0.0)
-    ax_rot.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_rot.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
+        # Plot the headings
+        for idx, data in enumerate(sim_data):
+            simX = data["simX"]   
+            ax_rot.plot(t, simX[:,5], linewidth=2, color=colors[idx]) 
+            # ax_rot.plot(t, simX[:,2], linewidth=2, color=colors[idx],linestyle='--') 
+        # ax_rot.plot(t, simX[:,4]*0 - vehicle_p.rmax, 'r--')
+        # ax_rot.plot(t, simX[:,4]*0 + vehicle_p.rmax, 'r--')
+        ax_rot.set_xlabel("Time [s]", fontsize=FS)
+        ax_rot.set_ylabel(r"$r$ [rad/s]", fontsize=FS)
+        ax_rot.grid(True)
+        ax_rot.autoscale(enable=True, axis='x', tight=True)
+        ax_rot.autoscale(enable=True, axis='y', tight=True)
+        ax_rot.set_xlim([0, tf])
+        ax_rot.set_ylim(-vehicle_p.rmax-0.01, vehicle_p.rmax+0.01)
+        ax_rot.set_ylim(-vehicle_p.rmax-0.0, vehicle_p.rmax+0.0)
+        ax_rot.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_rot.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
 
-    for idx, data in enumerate(sim_data):
-        simX = data["simX"]   
-        ax_acc.plot(t, simX[:,6], linewidth=2, color=colors[idx],label='left')
-        ax_acc.plot(t, simX[:,7], linewidth=2, color=colors[idx], linestyle='--',label='right')
-    # ax_acc.plot(t, simX[:,5]*0 + vehicle_p.accmin, 'r--')
-    # ax_acc.plot(t, simX[:,5]*0 + vehicle_p.accmax, 'r--')
-    ax_acc.set_xlabel("Time [s]", fontsize=FS)
-    ax_acc.set_ylabel(r"Thrust [$\rm N$]", fontsize=FS)
-    ax_acc.grid(True)
-    ax_acc.autoscale(enable=True, axis='x', tight=True)
-    ax_acc.autoscale(enable=True, axis='y', tight=True)
-    ax_acc.set_xlim([0, tf])
-    ax_acc.set_ylim(-8, 25)
-    ax_acc.legend()
-    # ax_acc.set_ylim(vehicle_p.accmin-0.0, vehicle_p.accmax+0.0)
-    ax_acc.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
-    ax_acc.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
-    
-    
-    fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
+        for idx, data in enumerate(sim_data):
+            simX = data["simX"]   
+            ax_acc.plot(t, simX[:,6], linewidth=2, color=colors[idx],label='left')
+            ax_acc.plot(t, simX[:,7], linewidth=2, color=colors[idx], linestyle='--',label='right')
+        # ax_acc.plot(t, simX[:,5]*0 + vehicle_p.accmin, 'r--')
+        # ax_acc.plot(t, simX[:,5]*0 + vehicle_p.accmax, 'r--')
+        ax_acc.set_xlabel("Time [s]", fontsize=FS)
+        ax_acc.set_ylabel(r"Thrust [$\rm N$]", fontsize=FS)
+        ax_acc.grid(True)
+        ax_acc.autoscale(enable=True, axis='x', tight=True)
+        ax_acc.autoscale(enable=True, axis='y', tight=True)
+        ax_acc.set_xlim([0, tf])
+        ax_acc.set_ylim(-8, 25)
+        ax_acc.legend()
+        # ax_acc.set_ylim(vehicle_p.accmin-0.0, vehicle_p.accmax+0.0)
+        ax_acc.tick_params(axis='x', labelsize=FS)  # Set x-axis tick label size
+        ax_acc.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
+        
+        
+        fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
 
-    plt.show()
-    
+        plt.show()
+        
 
     
-    result_box = 0
-    if result_box:
+    if visualize_result:
         plt.pause(0.01)
         plt.close('all')
         
         # Sample data based on the provided outputs for each case
         data = {
             "Case": [
-                "1 - avoid", "2 - avoid",
+                "MPC-ED-CBF", "MPC-TC-CBF",
             ],
-            "closest_dist": [cd1,cd2,cd3],
-            "arrival_time":[at1, at2, at3],
-            "speed_var":  [sv1, sv2, sv3],
-            "dFX_usage": [dFX1, dFX2, dFX3],
+            "closest_dist": [cd1, cd2],
+            "arrival_time":[at1, at2],
+            "speed_var":  [sv1, sv2 ],
+            "con_usage": [con1, con2],
         }
+
 
         # Create DataFrame
         df = pd.DataFrame(data)
