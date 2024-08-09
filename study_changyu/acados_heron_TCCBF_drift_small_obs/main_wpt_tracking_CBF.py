@@ -413,10 +413,11 @@ def calc_cbf(state,obs,type):
 
 if __name__ == '__main__':
     # main(1,'param_tuning',10,0.1)
-    cd2, at2 ,sv2 ,ru2 ,FXu1 , dFX1  = main(2,'avoid',10, 0.01)
-    cd2, at2 ,sv2 ,ru2 ,FXu2 , dFX2  = main(3,'avoid',10, 0.01)
-    print(FXu1 , dFX1)
-    print(FXu2 , dFX2)
+    cd2, at2 ,sv2 ,ru2 ,FXu1 , dFX1  = main(1,'single_static_straight',10, 0.02)
+    # cd2, at2 ,sv2 ,ru2 ,FXu1 , dFX1  = main(2,'avoid',10, 0.01)
+    # cd2, at2 ,sv2 ,ru2 ,FXu2 , dFX2  = main(3,'avoid',10, 0.01)
+    # print(FXu1 , dFX1)
+    # print(FXu2 , dFX2)
     plt.show()
     
 

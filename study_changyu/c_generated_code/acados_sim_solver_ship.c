@@ -74,7 +74,7 @@ int ship_acados_sim_create(ship_sim_solver_capsule * capsule)
     bool tmp_bool;
 
     
-    double Tsim = 0.2;
+    double Tsim = 0.1;
 
     
     // explicit ode
@@ -181,8 +181,8 @@ int ship_acados_sim_create(ship_sim_solver_capsule * capsule)
 
     /* initialize input */
     // x
-    double x0[7];
-    for (int ii = 0; ii < 7; ii++)
+    double x0[8];
+    for (int ii = 0; ii < 8; ii++)
         x0[ii] = 0.0;
 
     sim_in_set(ship_sim_config, ship_sim_dims,
@@ -198,11 +198,11 @@ int ship_acados_sim_create(ship_sim_solver_capsule * capsule)
                ship_sim_in, "u", u0);
 
     // S_forw
-    double S_forw[63];
-    for (int ii = 0; ii < 63; ii++)
+    double S_forw[80];
+    for (int ii = 0; ii < 80; ii++)
         S_forw[ii] = 0.0;
-    for (int ii = 0; ii < 7; ii++)
-        S_forw[ii + ii * 7 ] = 1.0;
+    for (int ii = 0; ii < 8; ii++)
+        S_forw[ii + ii * 8 ] = 1.0;
 
 
     sim_in_set(ship_sim_config, ship_sim_dims,

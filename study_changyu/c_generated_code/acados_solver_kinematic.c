@@ -453,13 +453,13 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
-    W_0[1+(NY0) * 1] = 2;
-    W_0[2+(NY0) * 2] = 20;
+    W_0[1+(NY0) * 1] = 4;
+    W_0[2+(NY0) * 2] = 50;
     W_0[3+(NY0) * 3] = 200;
-    W_0[4+(NY0) * 4] = 20;
-    W_0[5+(NY0) * 5] = 20;
-    W_0[6+(NY0) * 6] = 20;
-    W_0[7+(NY0) * 7] = 20;
+    W_0[4+(NY0) * 4] = 100;
+    W_0[5+(NY0) * 5] = 100;
+    W_0[6+(NY0) * 6] = 10;
+    W_0[7+(NY0) * 7] = 10;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -472,13 +472,13 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     free(yref);
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
-    W[1+(NY) * 1] = 2;
-    W[2+(NY) * 2] = 20;
+    W[1+(NY) * 1] = 4;
+    W[2+(NY) * 2] = 50;
     W[3+(NY) * 3] = 200;
-    W[4+(NY) * 4] = 20;
-    W[5+(NY) * 5] = 20;
-    W[6+(NY) * 6] = 20;
-    W[7+(NY) * 7] = 20;
+    W[4+(NY) * 4] = 100;
+    W[5+(NY) * 5] = 100;
+    W[6+(NY) * 6] = 10;
+    W[7+(NY) * 7] = 10;
 
     for (int i = 1; i < N; i++)
     {
@@ -492,11 +492,11 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
-    W_e[1+(NYN) * 1] = 2;
-    W_e[2+(NYN) * 2] = 20;
+    W_e[1+(NYN) * 1] = 4;
+    W_e[2+(NYN) * 2] = 50;
     W_e[3+(NYN) * 3] = 200;
-    W_e[4+(NYN) * 4] = 20;
-    W_e[5+(NYN) * 5] = 20;
+    W_e[4+(NYN) * 4] = 100;
+    W_e[5+(NYN) * 5] = 100;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
     free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun", &capsule->cost_y_0_fun);

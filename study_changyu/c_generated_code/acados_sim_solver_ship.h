@@ -34,7 +34,7 @@
 #include "acados_c/sim_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define SHIP_NX     7
+#define SHIP_NX     8
 #define SHIP_NZ     0
 #define SHIP_NU     2
 #define SHIP_NP     25

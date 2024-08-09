@@ -368,14 +368,14 @@ if __name__ == '__main__':
 
     g2 = 0.1
     g2_tc = 0.1
-    # cd1, at1 ,sv1 ,ru1 ,au1 ,dru1 ,dau1  = main(1,'avoid', 10, 0.03)
-    # cd2, at2 ,sv2 ,ru2 ,au2 ,dru2 ,dau2  = main(2,'avoid', 10, 0.03)
+    cd1, at1 ,sv1 ,ru1 ,au1 ,dru1 ,dau1  = main(1,'avoid', 10, 0.03)
+    cd2, at2 ,sv2 ,ru2 ,au2 ,dru2 ,dau2  = main(2,'avoid', 10, 0.03)
     # cd3, at3 ,sv3 ,ru3 ,au3 ,dru3 ,dau3  = main(1,'overtaking',10, g2)
     # cd4, at4 ,sv4 ,ru4 ,au4 ,dru4 ,dau4  = main(2,'overtaking',10, g2_tc)
     # cd5, at5 ,sv5 ,ru5 ,au5 ,dru5 ,dau5  = main(1,'static_narrow',10, g2)
     # cd6, at6 ,sv6 ,ru6 ,au6 ,dru6 ,dau6  = main(2,'static_narrow',10, g2_tc)
-    cd7, at7 ,sv7 ,ru7 ,au7 ,dru7 ,dau7  = main(1,'single_static_straight',10, g2)
-    cd8, at8 ,sv8 ,ru8 ,au8 ,dru8 ,dau8  = main(2,'single_static_straight',10, g2_tc)
+    # cd7, at7 ,sv7 ,ru7 ,au7 ,dru7 ,dau7  = main(1,'single_static_straight',10, g2)
+    # cd8, at8 ,sv8 ,ru8 ,au8 ,dru8 ,dau8  = main(2,'single_static_straight',10, g2_tc)
 
     # plt.pause(0.01)
     # plt.close('all')

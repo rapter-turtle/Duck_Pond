@@ -60,10 +60,10 @@ def main():
             Bdot = ((x - ox) * (u * np.cos(head_ang)) + (y - oy) *(u * np.sin(head_ang))) / np.sqrt((x - ox) ** 2 + (y - oy) ** 2)
             hk[j, k] = np.min((hk[j, k], Bdot + gamma1 * B))
 
-        ax_asv.imshow(hk, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap=cm.bone, aspect='auto', alpha=1)
+    ax_asv.imshow(hk, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap=cm.bone, aspect='auto', alpha=1)
 
-        # ax_asv.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),40), alpha=1, cmap=cm.bone)
-        ax_asv.contourf(X, Y, hk, levels=[-0.015, 0.015], colors=['red'], alpha=1)
+    # ax_asv.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),40), alpha=1, cmap=cm.bone)
+    ax_asv.contourf(X, Y, hk, levels=[-0.015, 0.015], colors=['red'], alpha=0.88)
 
     cbf_min = np.min(hk)
     cbf_max = np.max(hk)
@@ -93,11 +93,11 @@ def main():
             B1 = np.sqrt( (ox-x-R*np.cos(head_ang-np.pi/2))**2 + (oy-y-R*np.sin(head_ang-np.pi/2))**2) - (orad+R)
             B2 = np.sqrt( (ox-x-R*np.cos(head_ang+np.pi/2))**2 + (oy-y-R*np.sin(head_ang+np.pi/2))**2) - (orad+R)
             hk[j, k] = np.min((hk[j, k], np.max((B1,B2))))
-        ax_asv2.imshow(hk, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap=cm.bone, aspect='auto', alpha=1)
-        # ax_asv2.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),40), alpha=1, cmap=cm.bone)
-        ax_asv2.contourf(X, Y, hk, levels=[-0.02, 0.02], colors=['red'], alpha=1)
+    ax_asv2.imshow(hk, extent=[xmin, xmax, ymin, ymax], origin='lower', cmap=cm.bone, aspect='auto', alpha=1)
+    # ax_asv2.contourf(X, Y, hk, levels=np.linspace(hk.min(),hk.max(),40), alpha=1, cmap=cm.bone)
+    ax_asv2.contourf(X, Y, hk, levels=[-0.02, 0.02], colors=['red'], alpha=0.88)
 
-    
+
     
     cbf_min = np.min(hk)
     cbf_max = np.max(hk)
@@ -168,6 +168,7 @@ def main():
 
     fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
     plt.savefig('cbf_compare.pdf')
+    
     # plt.show()
 
 if __name__ == '__main__':
