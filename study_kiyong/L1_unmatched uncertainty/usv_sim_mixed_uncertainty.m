@@ -36,7 +36,7 @@ Bum_estim = [1, 0;
 
 L = diag([1, 1, 1, 1]);
 K = [1, 0, 1.73, 0;0,1,0,1.73];
-cutoff = 4;
+cutoff = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,8 +123,8 @@ for k = 2:num_steps-1
     filtered_um(:,k) = filtered_um(:,k-1)*exp(-cutoff*dt) - con*(1-exp(-cutoff*dt));
     matched_u(:,k) = filtered_um(3:4,k);
     unmatched_u(:,k) = filtered_um(1:2,k);
-    % unmatched_u(:,k) = [0;0];
-    % matched_u(:,k) = [0;0];
+    unmatched_u(:,k) = [0;0];
+    matched_u(:,k) = [0;0];
 
 
     % Nominal control
@@ -152,9 +152,9 @@ for k = 2:num_steps-1
     % estim_dx = (A_estim)*estim_x(:,k) + B_estim*virtual_u(:,k) + B_estim*(matched_u(:,k) + unmatched_u(:,k)) + B_estim*um(3:4,k) + Bum_estim*um(1:2,k) - L*(x_error);
 
 
-    xy_dis = [500*sin(0.5*dt*k);500*cos(0.5*dt*k)];
-    disturbance = [0.5; 1; xy_dis(1)*cos(x(6,k)) + xy_dis(2)*sin(x(6,k)); -xy_dis(1)*sin(x(6,k)) + xy_dis(2)*cos(x(6,k)); 0];
-    disturbance_list(:,k) = [disturbance(1:2) ; xy_dis];
+    xy_dis = [500*sin(0.5*dt*k);500*cos(0.5*dt*k);200*cos(0.1*dt*k)/l];
+    disturbance = [0.5; 1; xy_dis(1)*cos(x(6,k)) + xy_dis(2)*sin(x(6,k)); -xy_dis(1)*sin(x(6,k)) + xy_dis(2)*cos(x(6,k)); xy_dis(3)];
+    disturbance_list(:,k) = [disturbance(1:2) ; xy_dis(1) - xy_dis(3)*sin(x(6,k)); xy_dis(2) + xy_dis(3)*cos(x(6,k))];
     
 
     if u(1,k) < -2000
@@ -181,85 +181,165 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Data Plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure;
-subplot(4,2,1);
-plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
-title('Head Point Position X');
-xlabel('Time(s)');
-ylabel('X(m)');
-ylim([0, 5]);
-
-
-subplot(4,2,2);
-plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
-title('Head Point Position Y');
-xlabel('Time(s)');
-ylabel('Y(m)');
-ylim([0, 5]);
-
-
-subplot(4,2,3);
-plot(time, um(1,:), 'DisplayName', 'Estimated'); % Label for the first line
-hold on;
-plot(time, disturbance_list(1,:), 'DisplayName', 'Ground truth'); % Label for the second line
-hold off;
-title('Unmatched Uncertainty : Vx current');
-xlabel('Time(s)');
-ylabel('Current(m/s)');
-ylim([0, 2]);
-legend('show'); % Display the legend with labels
-
-subplot(4,2,4);
-plot(time, um(2,:), 'DisplayName', 'Estimated'); % Label for the first line
-hold on;
-plot(time, disturbance_list(2,:), 'DisplayName', 'Ground truth'); % Label for the second line
-hold off;
-title('Unmatched Uncertainty : Vy current');
-xlabel('Time(s)');
-ylabel('Current(m/s)');
-ylim([0, 2]);
-legend('show'); % Display the legend with labels
-
-subplot(4,2,5);
-plot(time, m11*um(3,:), 'DisplayName', 'Estimated'); % Label for the first line
-hold on;
-plot(time, disturbance_list(3,:), 'DisplayName', 'Ground truth'); % Label for the second line
-hold off;
-title('Matched Uncertainty : X Wave Force');
-xlabel('Time(s)');
-ylabel('Force(N)');
-ylim([-800, 800]);
-legend('show'); % Display the legend with labels
-
-subplot(4,2,6);
-plot(time, m11*um(4,:), 'DisplayName', 'Estimated'); % Label for the first line
-hold on;
-plot(time, disturbance_list(4,:), 'DisplayName', 'Ground truth'); % Label for the second line
-hold off;
-title('Matched Uncertainty : Y Wave Force');
-xlabel('Time(s)');
-ylabel('Force(N)');
-ylim([-800, 800]);
-legend('show'); % Display the legend with labels
-
-subplot(4,2,7);
-plot(time, u(1,:), 'DisplayName', 'Thruster L'); % Label for the first line
-title('Thruster Control Input Left');
-xlabel('Time(s)');
-ylabel('Force(N)');
-% ylim([0, 3]);
-legend('show'); % Display the legend with labels
-
-subplot(4,2,8);
-plot(time, u(2,:), 'DisplayName', 'Thruster R'); % Label for the first line
-title('Thruster Control Input Right');
-xlabel('Time(s)');
-ylabel('Force(N)');
-% ylim([0, 3]);
-legend('show'); % Display the legend with labels
+% fontSize = 15;
+% axisfontSize = 12;
+% fontSize_T = 18;
+% 
+% figure;
+% subplot(4,2,1);
+% plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+% title('Head Point Position X', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('X(m)', 'FontSize', fontSize);
+% ylim([0, 5]);
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,2);
+% plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+% title('Head Point Position Y', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Y(m)', 'FontSize', fontSize);
+% ylim([0, 5]);
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,3);
+% plot(time, um(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+% hold on;
+% plot(time, disturbance_list(1,:), 'DisplayName', 'Ground truth'); % Label for the second line
+% hold off;
+% title('Unmatched Uncertainty : Vx current', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Current(m/s)', 'FontSize', fontSize);
+% ylim([0, 2]);
+% legend('show'); % Display the legend with labels
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,4);
+% plot(time, um(2,:), 'DisplayName', 'Estimated'); % Label for the first line
+% hold on;
+% plot(time, disturbance_list(2,:), 'DisplayName', 'Ground truth'); % Label for the second line
+% hold off;
+% title('Unmatched Uncertainty : Vy current', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Current(m/s)', 'FontSize', fontSize);
+% ylim([0, 2]);
+% legend('show'); % Display the legend with labels
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,5);
+% plot(time, m11*um(3,:), 'DisplayName', 'Estimated'); % Label for the first line
+% hold on;
+% plot(time, disturbance_list(3,:), 'DisplayName', 'Ground truth'); % Label for the second line
+% hold off;
+% title('Matched Uncertainty : X Wave Force', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Force(N)', 'FontSize', fontSize);
+% ylim([-800, 800]);
+% legend('show'); % Display the legend with labels
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,6);
+% plot(time, m11*um(4,:), 'DisplayName', 'Estimated'); % Label for the first line
+% hold on;
+% plot(time, disturbance_list(4,:), 'DisplayName', 'Ground truth'); % Label for the second line
+% hold off;
+% title('Matched Uncertainty : Y Wave Force', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Force(N)', 'FontSize', fontSize);
+% ylim([-800, 800]);
+% legend('show'); % Display the legend with labels
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,7);
+% plot(time, u(1,:), 'DisplayName', 'Thruster L'); % Label for the first line
+% title('Thruster Control Input Left', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Force(N)', 'FontSize', fontSize);
+% % ylim([0, 3]);
+% legend('show'); % Display the legend with labels
+% set(gca, 'FontSize', axisfontSize);
+% 
+% 
+% subplot(4,2,8);
+% plot(time, u(2,:), 'DisplayName', 'Thruster R'); % Label for the first line
+% title('Thruster Control Input Right', 'FontSize', fontSize_T);
+% xlabel('Time(s)', 'FontSize', fontSize);
+% ylabel('Force(N)', 'FontSize', fontSize);
+% % ylim([0, 3]);
+% legend('show'); % Display the legend with labels
+% set(gca, 'FontSize', axisfontSize);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Simulation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define the ship polygon
+ship_length = 7; % Length of the ship
+ship_width = 3; % Width of the ship
+ship_shape = [-ship_length/2 + ship_width, -ship_width/2; 
+              ship_length/2, 0; 
+              -ship_length/2 + ship_width, ship_width/2; 
+              -ship_length/2 - ship_width, ship_width/2; 
+              -ship_length/2 - ship_width, -ship_width/2];
+
+% Create a figure for animation
+figure;
+hold on;
+axis equal;
+xlabel('X Position');
+ylabel('Y Position');
+title('No control');
+xlim([-30, 30]); % Set the X-axis limits
+ylim([-30, 30]); % Set the Y-axis limits
+grid on;
+legend('Own ship');
+
+
+% Set up the video writer
+video = VideoWriter('L1.avi'); % Create a video writer object
+video.FrameRate = 30; % Set the frame rate
+open(video); % Open the video file
+
+% Animation loop
+for k = 1:10:num_steps
+    % Compute ship's current position and orientation
+    X = x(4, k);
+    Y = x(5, k);
+    psi = x(6, k);
+
+    % Rotate and translate the ship shape
+    R = [cos(psi), -sin(psi); sin(psi), cos(psi)];
+    ship_position = (R * ship_shape')';
+    ship_position(:, 1) = ship_position(:, 1) + X;
+    ship_position(:, 2) = ship_position(:, 2) + Y;
+
+    % Plot the ship
+    ship_plot = fill(ship_position(:, 1), ship_position(:, 2), 'r', 'FaceAlpha', 0.5, 'DisplayName', 'Own Ship');
+
+    % Capture the current frame
+    frame = getframe(gcf);
+    writeVideo(video, frame);
+
+    % Pause to create animation effect
+    pause(0.01);
+
+    % Remove the current plot to update the next frame
+    if k < num_steps
+        delete(ship_plot);
+    end
+end
+
+hold off;
+
+% Close the video file
+close(video);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Stamp trace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Define the ship polygon
 % ship_length = 7; % Length of the ship
 % ship_width = 3; % Width of the ship
@@ -269,42 +349,40 @@ legend('show'); % Display the legend with labels
 %               -ship_length/2 - ship_width, ship_width/2; 
 %               -ship_length/2 - ship_width, -ship_width/2];
 % 
-% % Create a figure for animation
+% % Create a figure for the plot
 % figure;
 % hold on;
 % axis equal;
 % xlabel('X Position');
 % ylabel('Y Position');
-% title('Ship state');
+% title('USV Position Stamps');
 % xlim([-30, 30]); % Set the X-axis limits
 % ylim([-30, 30]); % Set the Y-axis limits
 % grid on;
-% legend('Own ship');
 % 
-% % Animation loop
-% for k = 1:10:num_steps
-%     % Compute ship's current position and orientation
-%     X = x(4, k);
-%     Y = x(5, k);
-%     psi = x(6, k);
 % 
-%     % Rotate and translate the ship shape
-%     R = [cos(psi), -sin(psi); sin(psi), cos(psi)];
-%     ship_position = (R * ship_shape')';
-%     ship_position(:, 1) = ship_position(:, 1) + X;
-%     ship_position(:, 2) = ship_position(:, 2) + Y;
 % 
-%     % Plot the ship
-%     ship_plot = fill(ship_position(:, 1), ship_position(:, 2), 'b', 'FaceAlpha', 0.5, 'DisplayName', 'Own Ship');
+% % Plot USV position stamps every 10 seconds
+% for k = 1:num_steps
+%     if k == 1 || mod(k, 3/dt) == 0
+%         % Compute ship's current position and orientation
+%         X = x(4, k);
+%         Y = x(5, k);
+%         psi = x(6, k);
 % 
-%     % Pause to create animation effect
-%     pause(0.01);
+%         % Rotate and translate the ship shape
+%         R = [cos(psi), -sin(psi); sin(psi), cos(psi)];
+%         ship_position = (R * ship_shape')';
+%         ship_position(:, 1) = ship_position(:, 1) + X;
+%         ship_position(:, 2) = ship_position(:, 2) + Y;
 % 
-%     % Remove the current plot to update the next frame
-%     if k < num_steps
-%         delete(ship_plot);
+%         % Plot the ship
+%         fill(ship_position(:, 1), ship_position(:, 2), 'b', 'FaceAlpha', 0.5, 'DisplayName', 'Own Ship');
 %     end
 % end
+% 
+% % Add a legend after the loop to ensure it doesn't duplicate entries
+% legend('USV Position');
 % 
 % hold off;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
