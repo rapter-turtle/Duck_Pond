@@ -147,6 +147,50 @@ def setup_wpt_tracking(x0,mode):
             hkn = np.log((np.exp(B1)+np.exp(B2))/2)
             h_expr[i] = hkn - (1-vehicle_p.gamma_TC2)*hk
 
+    if vehicle_p.CBF == 3:        
+        ##################### MPC - TC Distance-based CBF #####################
+        for i in range(5):
+            ox = p[5*i+0]
+            oy = p[5*i+1]
+            obr = p[5*i+2]
+            odx = p[5*i+3]*vehicle_p.dt
+            ody = p[5*i+4]*vehicle_p.dt
+            ox_n = ox + odx
+            oy_n = oy + ody
+
+            R = x3/vehicle_p.rmax*vehicle_p.gamma_TC1
+            B1 = np.sqrt( (ox-x0-R*cos(x2-np.pi/2))**2 + (oy-x1-R*sin(x2-np.pi/2))**2) - (obr+R)
+            B2 = np.sqrt( (ox-x0-R*cos(x2+np.pi/2))**2 + (oy-x1-R*sin(x2+np.pi/2))**2) - (obr+R)
+            hk = B1
+            
+            R = x3_n/vehicle_p.rmax*vehicle_p.gamma_TC1
+            B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
+            B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
+            hkn = B1
+            h_expr[i] = hkn - (1-vehicle_p.gamma_TC2)*hk
+
+    if vehicle_p.CBF == 4:        
+        ##################### MPC - TC Distance-based CBF #####################
+        for i in range(5):
+            ox = p[5*i+0]
+            oy = p[5*i+1]
+            obr = p[5*i+2]
+            odx = p[5*i+3]*vehicle_p.dt
+            ody = p[5*i+4]*vehicle_p.dt
+            ox_n = ox + odx
+            oy_n = oy + ody
+
+            R = x3/vehicle_p.rmax*vehicle_p.gamma_TC1
+            B1 = np.sqrt( (ox-x0-R*cos(x2-np.pi/2))**2 + (oy-x1-R*sin(x2-np.pi/2))**2) - (obr+R)
+            B2 = np.sqrt( (ox-x0-R*cos(x2+np.pi/2))**2 + (oy-x1-R*sin(x2+np.pi/2))**2) - (obr+R)
+            hk = B2
+            
+            R = x3_n/vehicle_p.rmax*vehicle_p.gamma_TC1
+            B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
+            B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
+            hkn = B2
+            h_expr[i] = hkn - (1-vehicle_p.gamma_TC2)*hk
+
     
 
     ocp.model.con_h_expr = h_expr

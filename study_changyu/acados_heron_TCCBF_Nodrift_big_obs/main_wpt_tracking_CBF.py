@@ -428,12 +428,20 @@ if __name__ == '__main__':
     # main(1,'static_straight',10,1.0)
     
     
-    main(0,'single_static_straight',20,2.5)
-    main(1,'single_static_straight',20,1.5)
-    main(2,'single_static_straight',20,1.0)
+    # main(0,'single_static_straight',20,2.5)
+    # main(1,'single_static_straight',20,1.5)
+    # main(2,'single_static_straight',20,1.0)
     
     
-    main(0,'single_static_straight',10,2.5)
-    main(1,'single_static_straight',10,1.5)
-    main(2,'single_static_straight',10,1.0)
+    # main(0,'single_static_straight',10,2.5)
+    # main(1,'single_static_straight',10,1.5)
+    # main(2,'single_static_straight',10,1.0)
     
+    
+    
+    main(0,'crossing',20,2.5)
+    main(1,'crossing',20,1.5)
+    main(2,'crossing',20,1.0)    
+    main(0,'crossing',10,2.5)
+    main(1,'crossing',10,1.5)
+    main(2,'crossing',10,1.0)

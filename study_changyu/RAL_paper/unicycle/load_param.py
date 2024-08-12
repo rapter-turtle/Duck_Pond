@@ -17,7 +17,7 @@ class load_kinematic_param:
                    5e0]) # N=20
     
     # CBF param
-    CBF = 2 # 0-DC 1-ED 2-TC   
+    CBF = 2 # 0-DC 1-ED 2-TC   3- TC (B1) 4- TC(B2)
     CBF_plot = 1 # 0-plot off / 1-Plot on
 
     #### CBF = 1 ####
@@ -25,7 +25,7 @@ class load_kinematic_param:
     gamma2 = 0.20
 
     #### CBF = 2 ####
-    TCCBF = 3 # 1-B1(right avoid), 2-B2, 3-B1+B2
+    # TCCBF = 3 # 1-B1(right avoid), 2-B2, 3-B1+B2
     rmax = 0.2
     gamma_TC1 = 2
     gamma_TC2 = gamma2

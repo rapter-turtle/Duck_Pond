@@ -314,6 +314,8 @@ if __name__ == '__main__':
     cd2, at2 ,sv2 ,rot2, con2, simX2, simU2, target_speed2, obs_array2, cbf_and_dist2, time_save2  = main(3,'static', 10, 1, 0.01, target_speed)
     # cd3, at3 ,sv3 ,rot3, FX3, dFX3, simX3, simU3, target_speed3, obs_array3, cbf_and_dist3, time_save3  = main(2,'static', 10, 1, 0.025, target_speed)
         
+    print(np.mean(time_save1),np.mean(time_save2))
+    print(np.max(time_save1),np.max(time_save2))
 
     sim_data = [
         {"simX": simX1, "simU": simU1, "target_speed": target_speed1, "obs_array": obs_array1, "cbf_and_dist": cbf_and_dist1},

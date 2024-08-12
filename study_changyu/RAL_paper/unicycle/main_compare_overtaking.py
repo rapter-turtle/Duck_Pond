@@ -306,12 +306,19 @@ def calc_cbf(state,obs,type):
         # R = 10
         B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
         B2 = np.sqrt( (ox-x-R*cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
-        if vehicle_p.TCCBF == 3:
-            cbf = np.log((np.exp(B1)+np.exp(B2)-1))
-        if vehicle_p.TCCBF == 2:
-            cbf = B2
-        if vehicle_p.TCCBF == 1:
-            cbf = B1
+        cbf = np.log((np.exp(B1)+np.exp(B2)-1))
+
+    if type == 3:
+        R = u/vehicle_p.rmax*vehicle_p.gamma_TC1
+        # R = 10
+        B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
+        cbf = B1
+
+    if type == 4:
+        R = u/vehicle_p.rmax*vehicle_p.gamma_TC1
+        # R = 10
+        B2 = np.sqrt( (ox-x-R*cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
+        cbf = B2
 
     return cbf
 
@@ -331,7 +338,10 @@ if __name__ == '__main__':
     # cd4, at4 ,sv4 ,con4, simX4, simU4, target_speed4, obs_array4, cbf_and_dist4, time_save4  = main(1,'static', 10, 0.25, 0.01, target_speed)
     # cd5, at5 ,sv5 ,con5, simX5, simU5, target_speed5, obs_array5, cbf_and_dist5, time_save5  = main(1,'static', 10, 0.25, 0.10, target_speed)
     cd6, at6 ,sv6 ,con6, simX6, simU6, target_speed6, obs_array6, cbf_and_dist6, time_save6  = main(2,'overtaking', 10, 1, 0.03, target_speed)
-    cd7, at7 ,sv7 ,con7, simX7, simU7, target_speed7, obs_array7, cbf_and_dist7, time_save7  = main(2,'overtaking', 10, 3, 0.03, target_speed)
+    # cd7, at7 ,sv7 ,con7, simX7, simU7, target_speed7, obs_array7, cbf_and_dist7, time_save7  = main(2,'overtaking', 10, 3, 0.03, target_speed)
+    
+    cd7, at7 ,sv7 ,con7, simX7, simU7, target_speed7, obs_array7, cbf_and_dist7, time_save7  = main(3,'overtaking', 10, 1, 0.03, target_speed)
+    cd8, at8 ,sv8 ,con8, simX8, simU8, target_speed8, obs_array8, cbf_and_dist8, time_save8  = main(4,'overtaking', 10, 1, 0.03, target_speed)
     # cd8, at8 ,sv8 ,con8, simX8, simU8, target_speed8, obs_array8, cbf_and_dist8, time_save8  = main(2,'overtaking', 10, 3, 0.03, target_speed)
     # Combine data into a list of dictionaries
     sim_data = [
@@ -342,7 +352,7 @@ if __name__ == '__main__':
         # {"simX": simX5, "simU": simU5, "target_speed": target_speed5, "obs_array": obs_array5, "cbf_and_dist": cbf_and_dist5},
         {"simX": simX6, "simU": simU6, "target_speed": target_speed6, "obs_array": obs_array6, "cbf_and_dist": cbf_and_dist6},
         {"simX": simX7, "simU": simU7, "target_speed": target_speed7, "obs_array": obs_array7, "cbf_and_dist": cbf_and_dist7},
-        # {"simX": simX8, "simU": simU8, "target_speed": target_speed8, "obs_array": obs_array8, "cbf_and_dist": cbf_and_dist8},
+        {"simX": simX8, "simU": simU8, "target_speed": target_speed8, "obs_array": obs_array8, "cbf_and_dist": cbf_and_dist8},
     ]
     
     colors = plt.cm.tab10(np.linspace(0, 1, 10))
@@ -418,16 +428,20 @@ if __name__ == '__main__':
             lgd = 'MPC-EDCBF'
         elif idx == 1:             
             lgd = 'MPC-TCCBF'
+        elif idx == 2:             
+            lgd = 'MPC-TCCBF (Right)'
+        elif idx == 3:             
+            lgd = 'MPC-TCCBF (Left)'
 
         ax_asv.plot(simX[:,0], simX[:,1], linewidth=2, color=colors[idx],label=lgd)
     ax_asv.plot([simX[0,0], simX[-1,0]], [0, 0], 'k--')
     # Annotate specific times
     
-    ax_asv.annotate('0.0 s', (obs_array[0][0], obs_array[0][1]), textcoords="offset points", xytext=(0, 27), ha='center', fontsize=FS-5, color='black')
-    ax_asv.annotate('20.0 s', (obs_array[-1][0], obs_array[-1][1]), textcoords="offset points", xytext=(-4, 27), ha='center', fontsize=FS-5, color='black')
+    ax_asv.annotate('0.0 s', (obs_array[0][0], obs_array[0][1]), textcoords="offset points", xytext=(0, 34), ha='center', fontsize=FS-5, color='black')
+    ax_asv.annotate('20.0 s', (obs_array[-1][0], obs_array[-1][1]), textcoords="offset points", xytext=(-4, 34), ha='center', fontsize=FS-5, color='black')
     # Draw an arrow between the two annotated points
-    start_position = obs_array[0][0:2] + [1.5,1.75]
-    end_position = obs_array[-1][0:2] + [-1.5,1.75]
+    start_position = obs_array[0][0:2] + [1.5,2.25]
+    end_position = obs_array[-1][0:2] + [-1.5,2.25]
     print(start_position)
     ax_asv.annotate('', xy=end_position, xytext=start_position, arrowprops=dict(arrowstyle="->", color='black', lw=1.5))
     
@@ -446,9 +460,9 @@ if __name__ == '__main__':
     ax_asv.tick_params(axis='y', labelsize=FS)  # Set y-axis tick label size
     
     ax_asv.set_aspect('equal')
-    ax_asv.set(xlim=(0, target_x),ylim=(-5,2.5))
+    ax_asv.set(xlim=(0, target_x),ylim=(-6,3.5))
     # ax_asv.grid(True)
-    ax_asv.legend(fontsize=FS)
+    ax_asv.legend(fontsize=FS-3)
 
 
     times = np.linspace(0, dt*(len(simX)-1), len(simX))

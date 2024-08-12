@@ -79,8 +79,8 @@ int main()
     x_current[3] = 1;
     x_current[4] = 0;
     x_current[5] = 0;
-    x_current[6] = 10.0625;
-    x_current[7] = 10.0625;
+    x_current[6] = 8.45;
+    x_current[7] = 8.45;
     
   
 
