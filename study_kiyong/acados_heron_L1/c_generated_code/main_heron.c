@@ -43,6 +43,7 @@
 #include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
 
 #define NX     HERON_NX
+#define NP     HERON_NP
 #define NU     HERON_NU
 #define NBX0   HERON_NBX0
 
@@ -75,8 +76,8 @@ int main()
     double ubx0[NBX0];
     lbx0[0] = 0;
     ubx0[0] = 0;
-    lbx0[1] = 2;
-    ubx0[1] = 2;
+    lbx0[1] = 0;
+    ubx0[1] = 0;
     lbx0[2] = 0;
     ubx0[2] = 0;
     lbx0[3] = 0;

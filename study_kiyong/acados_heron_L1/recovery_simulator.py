@@ -33,8 +33,8 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
     n2_extra = extra_control[1]
 
     # dynamics
-    xdot = np.array([u*cos(psi) + v*sin(psi),
-                     u*sin(psi) - v*cos(psi),
+    xdot = np.array([u*cos(psi) - v*sin(psi),
+                     u*sin(psi) + v*cos(psi),
                      r,
                      ((n1+n2)-(Xu + Xuu*np.sqrt(u*u))*u + disturbance[0] + (n1_extra + n2_extra))/M ,
                      ( -Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r + disturbance[1])/M,
@@ -45,6 +45,12 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
 
 
     ship = xdot*dt + ship
+    ppsi = ship[2]
+    
+    if ppsi > 3.141592:
+        ship[2] = ppsi - 2*3.141592
+    if ppsi < -3.141592:
+        ship[2] = ppsi + 2*3.141592
 
 
     tpsi  = tship[2]
