@@ -23,11 +23,11 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
     u    = ship[3]
     v    = ship[4]
     r    = ship[5]
-    n1  = 0.0#ship[6]
-    n2  = 0.0#ship[7]
+    n1  = ship[6]
+    n2  = ship[7]
 
-    n1d  = 0.0#control_input[0]
-    n2d  = 0.0#control_input[1]
+    n1d  = control_input[0]
+    n2d  = control_input[1]
 
     n1_extra = extra_control[0]
     n2_extra = extra_control[1]
@@ -38,7 +38,7 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
                      r,
                      ((n1+n2)-(Xu + Xuu*np.sqrt(u*u))*u + disturbance[0] + (n1_extra + n2_extra))/M ,
                      ( -Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r + disturbance[1])/M,
-                     ((-n1+n2)*dist - (Nr + Nrrr*np.sqrt(r*r))*r + disturbance[2] + (-n1_extra + n2_extra)*dist)/I,
+                     ((-n1+n2)*dist - (Nr + Nrrr*r*r)*r - Nv*v + disturbance[2] + (-n1_extra + n2_extra)*dist)/I,
                      n1d,
                      n2d
                      ])
@@ -51,7 +51,7 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
         ship[2] = ppsi - 2*3.141592
     if ppsi < -3.141592:
         ship[2] = ppsi + 2*3.141592
-
+    
 
     tpsi  = tship[2]
     tu    = tship[3]

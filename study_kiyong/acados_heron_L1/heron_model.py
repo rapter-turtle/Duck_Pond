@@ -47,6 +47,7 @@ def export_heron_model() -> AcadosModel:
     Yr = 6
     Nv = 6
     dist = 0.3 # 30cm
+    head_dist = 1
 
     # set up states & controls
     xn   = SX.sym('xn')
@@ -89,12 +90,12 @@ def export_heron_model() -> AcadosModel:
 
 
     # dynamics
-    f_expl = vertcat(un*cos(psi) + vn*sin(psi),
-                     un*sin(psi) - vn*cos(psi),
+    f_expl = vertcat(un*cos(psi) - vn*sin(psi) - head_dist*r*sin(psi),
+                     un*sin(psi) + vn*cos(psi) + head_dist*r*cos(psi),
                      r,
                      ( (n1+n2) - Xu*un - Xuu*sqrt(un*un+eps)*un )/M,
                      ( -Yv*vn - Yvv*sqrt(vn*vn+eps)*vn - Yr*r )/M,
-                     ( (-n1+n2)*dist - Nr*r - Nrrr*r*r - Nv*vn)/I,
+                     ( (-n1+n2)*dist - Nr*r - Nrrr*r*r*r - Nv*vn)/I,
                      n1d,
                      n2d
                      )

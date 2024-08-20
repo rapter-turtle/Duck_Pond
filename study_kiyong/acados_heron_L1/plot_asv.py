@@ -205,11 +205,11 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
 
 
         # Plot the figure-eight trajectory
-        ax_thrust.plot(t[0:frame], states[0:frame,6], 'g--', label='Left (MPC)')
-        ax_thrust.plot(t[0:frame], states[0:frame,7], 'b--', label='Right (MPC)')
+        ax_thrust.plot(t[0:frame], states[0:frame,6], 'g--', label='Right (MPC)')
+        ax_thrust.plot(t[0:frame], states[0:frame,7], 'b--', label='Left (MPC)')
         
-        ax_thrust.plot(t[0:frame], disturb[0:frame,3], 'g', label='Left (MPC+L1)')
-        ax_thrust.plot(t[0:frame], disturb[0:frame,4], 'b', label='Right (MPC+L1)')
+        ax_thrust.plot(t[0:frame], states[0:frame,6] + disturb[0:frame,3], 'g', label='Right (MPC+L1)')
+        ax_thrust.plot(t[0:frame], states[0:frame,7] + disturb[0:frame,4], 'b', label='Left (MPC+L1)')
         
         ax_thrust.plot(t[0:frame], states[0:frame,5]*0 + Fmax, 'r--')
         ax_thrust.plot(t[0:frame], states[0:frame,5]*0 - Fmax, 'r--')
@@ -220,10 +220,10 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
         ax_thrust.autoscale(enable=True, axis='x', tight=True)
         ax_thrust.set_ylim(-Fmax-1, Fmax+1)
 
-        ax_disturb.plot(t[0:frame], -disturb[0:frame,0], label='(-) Disturb. X')
-        ax_disturb.plot(t[0:frame], -disturb[0:frame,1], label='(-) Disturb. Y')
-        ax_disturb.plot(t[0:frame], disturb[0:frame,4], label='L1 X')
-        ax_disturb.plot(t[0:frame], disturb[0:frame,5], label='L1 Y')
+        ax_disturb.plot(t[0:frame], disturb[0:frame,0], label='(-) Disturb. X')
+        ax_disturb.plot(t[0:frame], disturb[0:frame,1], label='(-) Disturb. Y')
+        ax_disturb.plot(t[0:frame], disturb[0:frame,5], label='L1 X')
+        ax_disturb.plot(t[0:frame], disturb[0:frame,6], label='L1 Y')
         ax_disturb.set_xlabel("Time", fontsize=FS)
         ax_disturb.set_title("Disturbance vs DOB", fontsize=FS)
         ax_disturb.grid(True)
