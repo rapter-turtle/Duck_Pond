@@ -12,7 +12,7 @@ def main():
     N_horizon = 10
     con_dt = 0.2
     Tf = int(N_horizon*con_dt)
-    T_final = 50
+    T_final = 100
     simulation_dt = 0.05
 
     x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u

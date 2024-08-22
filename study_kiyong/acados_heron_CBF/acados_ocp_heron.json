@@ -1,7 +1,7 @@
 {
     "acados_include_path": "/home/kiyong/acados/include",
     "acados_lib_path": "/home/kiyong/acados/lib",
-    "code_export_directory": "/home/kiyong/Kiyong/Duck pond/acados_heron_L1_v2/c_generated_code",
+    "code_export_directory": "/home/kiyong/Kiyong/Duck pond/acados_heron_CBF/c_generated_code",
     "constraints": {
         "C": [],
         "C_e": [],

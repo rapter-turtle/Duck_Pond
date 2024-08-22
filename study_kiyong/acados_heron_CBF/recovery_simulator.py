@@ -36,7 +36,7 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
 
     param = np.array([ 0.10033467, -1.0 ,6.48410098]) 
     # param = np.array([ 0.10033467, -1.0 ,11.5])
-    con = CBF_QP(ship, np.array([n1+n1_extra, n2+n2_extra]), param, np.array([1, 1, 1000000]), np.array([0.2, 0.1]))
+    con = CBF_QP(ship, np.array([n1+n1_extra, n2+n2_extra]), param, np.array([1, 1, 100000000]), np.array([0.2, 0.1]))
     # print("slack : ",con)
 
     # dynamics
