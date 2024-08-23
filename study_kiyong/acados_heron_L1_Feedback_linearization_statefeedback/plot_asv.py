@@ -166,13 +166,14 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
         # ax_speed.autoscale(enable=True, axis='y', tight=True)   
 
         # Plot CBF 1    
-        ax_speed.plot(t[0:frame], CBF[0:frame,0], 'k', linewidth=2, label='CBF') 
-        ax_speed.plot(t[0:frame], CBF[0:frame,1], 'r', linewidth=2, label='CBF barrier') 
+        ax_speed.plot(t[0:frame], tship[0:frame,0] - (states[0:frame,0] + np.cos(tship[0:frame,2])), 'k', linewidth=2, label='X error') 
+        # ax_speed.plot(t[0:frame], states[0:frame,0], 'r', linewidth=2, label='Own ship X') 
         ax_speed.set_xlabel("Time", fontsize=FS)
-        ax_speed.set_title("CBF", fontsize=FS)
+        ax_speed.set_title("X", fontsize=FS)
         ax_speed.grid(True)
         ax_speed.autoscale(enable=True, axis='x', tight=True)
-        ax_speed.autoscale(enable=True, axis='y', tight=True)            
+        ax_speed.autoscale(enable=True, axis='y', tight=True)    
+        ax_speed.set_ylim(-2, 2)        
 
 
 
@@ -193,14 +194,15 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
         # ax_rot_speed.autoscale(enable=True, axis='y', tight=True)     
 
         # Plot CBF 2
-        ax_rot_speed.plot(t[0:frame], CBF[0:frame,2], 'k', linewidth=2, label='2nd CBF') 
-        ax_rot_speed.plot(t[0:frame], CBF[0:frame,3], 'r', linewidth=2, label='2nd CBF barrier') 
+        ax_rot_speed.plot(t[0:frame], tship[0:frame,1] - (states[0:frame,1] + np.sin(tship[0:frame,2])), 'k', linewidth=2, label='Y error') 
+        # ax_rot_speed.plot(t[0:frame], states[0:frame,1], 'r', linewidth=2, label='Own ship Y') 
         ax_rot_speed.set_xlabel("Time", fontsize=FS)
-        ax_rot_speed.set_title("2nd CBF", fontsize=FS)
+        ax_rot_speed.set_title("Y", fontsize=FS)
         ax_rot_speed.grid(True)
         ax_rot_speed.legend()
         ax_rot_speed.autoscale(enable=True, axis='x', tight=True)
-        ax_rot_speed.autoscale(enable=True, axis='y', tight=True)             
+        ax_rot_speed.autoscale(enable=True, axis='y', tight=True)  
+        ax_rot_speed.set_ylim(-2, 2)           
 
 
 

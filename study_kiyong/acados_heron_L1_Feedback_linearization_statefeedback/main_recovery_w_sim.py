@@ -11,7 +11,7 @@ def main():
     N_horizon = 10
     con_dt = 0.2
     Tf = int(N_horizon*con_dt)
-    T_final = 50
+    T_final = 100
     simulation_dt = 0.05
 
     x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u
@@ -55,6 +55,9 @@ def main():
     disturbance_v = 0.0
     disturbance_r = 0.0
 
+    disturbances_list = []
+    disturbances_list = np.load('disturbances.npy')
+
     dob_save = np.zeros((int(T_final/simulation_dt)+1, 9))
 
     extra_control = np.array([0.0,0.0])
@@ -81,13 +84,13 @@ def main():
             for j in range(N_horizon):
                 yref = np.array([x_tship[0]+v_x_tship*j*con_dt, 
                                 x_tship[1]+v_y_tship*j*con_dt,
-                                0, 0, 0, 0])
+                                v_x_tship, v_y_tship, 0, 0])
                 ocp_solver.cost_set(j, "yref", yref)
 
 
             yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt, 
                             x_tship[1]+v_y_tship*N_horizon*con_dt,
-                            0, 0])
+                            v_x_tship, v_y_tship])
             ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
             dist = 2.5
@@ -139,7 +142,7 @@ def main():
 
 
         #################################### Disturbance ####################################
-        wind_direction = 100*3.141592/180
+        wind_direction = 0.1#100*3.141592/180
         wind_speed = 5.0
         psi = simX[i,2]
         un = simX[i,3]
@@ -185,10 +188,13 @@ def main():
         M = 37.758 
         I = 18.35
         head_dist = 1.0        
-        disturbance = np.array([U_wave_force + U_wind_force, V_wave_force + V_wind_force, N_wave_force + N_wind_force])
+        disturbance = (1 - np.exp(-10*i))*np.array([U_wave_force + U_wind_force, V_wave_force + V_wind_force, N_wave_force + N_wind_force])
         disturbance_head = np.array([disturbance[0]*np.cos(psi) - disturbance[1]*np.sin(psi) - disturbance[2]*head_dist*np.sin(psi), disturbance[0]*np.sin(psi) + disturbance[1]*np.cos(psi) + disturbance[2]*head_dist*np.cos(psi), 0.0])
-        disturbance = np.array([0.0,0.0,0.0])
-        disturbance_head = np.array([0.0,0.0,0.0])
+        # disturbances_list.append(disturbance)
+        disturbance = disturbances_list[i] 
+        # print(disturbance)
+        # disturbance = np.array([0.0,0.0,0.0])
+        # disturbance_head = np.array([0.0,0.0,0.0])
         ##########################################################################################
         
         
@@ -227,6 +233,7 @@ def main():
     print(f'Computation time in feedback phase in ms:    \
             min {np.min(t_feedback):.3f} median {np.median(t_feedback):.3f} max {np.max(t_feedback):.3f}')
 
+    # np.save('disturbances.npy', disturbances_list)
 
     ocp_solver = None
     plot_iter = 5
