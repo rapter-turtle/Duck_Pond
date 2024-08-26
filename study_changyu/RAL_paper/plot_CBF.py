@@ -88,7 +88,6 @@ def main():
             y = Y[j, k]
             head_ang = heading  # Assume theta = 0 for simplicity
             u = speed  # Assume constant speed for simplicity
-
             R = u/rmax*gamma_TC1
             B1 = np.sqrt( (ox-x-R*np.cos(head_ang-np.pi/2))**2 + (oy-y-R*np.sin(head_ang-np.pi/2))**2) - (orad+R)
             B2 = np.sqrt( (ox-x-R*np.cos(head_ang+np.pi/2))**2 + (oy-y-R*np.sin(head_ang+np.pi/2))**2) - (orad+R)
@@ -167,9 +166,9 @@ def main():
     ax_asv2.set(xlim=(xmin, xmax),ylim=(ymin, ymax))
 
     fig.tight_layout()  # axes 사이 간격을 적당히 벌려줍니다.
-    plt.savefig('cbf_compare.pdf')
+    # plt.savefig('cbf_compare.pdf')
     
-    # plt.show()
+    plt.show()
 
 if __name__ == '__main__':
     main()

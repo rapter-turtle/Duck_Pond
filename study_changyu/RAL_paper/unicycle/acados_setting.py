@@ -135,16 +135,18 @@ def setup_wpt_tracking(x0,mode):
             ody = p[5*i+4]*vehicle_p.dt
             ox_n = ox + odx
             oy_n = oy + ody
+            
+            k = vehicle_p.TC_k
 
             R = x3/vehicle_p.rmax*vehicle_p.gamma_TC1
             B1 = np.sqrt( (ox-x0-R*cos(x2-np.pi/2))**2 + (oy-x1-R*sin(x2-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox-x0-R*cos(x2+np.pi/2))**2 + (oy-x1-R*sin(x2+np.pi/2))**2) - (obr+R)
-            hk = np.log((np.exp(B1)+np.exp(B2))/2)
+            hk = 1/k*np.log((np.exp(k*B1)+np.exp(k*B2))/2)
             
             R = x3_n/vehicle_p.rmax*vehicle_p.gamma_TC1
             B1 = np.sqrt( (ox_n-x0_n-R*cos(x2_n-np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox_n-x0_n-R*cos(x2_n+np.pi/2))**2 + (oy_n-x1_n-R*sin(x2_n+np.pi/2))**2) - (obr+R)
-            hkn = np.log((np.exp(B1)+np.exp(B2))/2)
+            hkn = 1/k*np.log((np.exp(k*B1)+np.exp(k*B2))/2)
             h_expr[i] = hkn - (1-vehicle_p.gamma_TC2)*hk
 
     if vehicle_p.CBF == 3:        

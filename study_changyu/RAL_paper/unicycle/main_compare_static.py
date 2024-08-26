@@ -304,15 +304,10 @@ def calc_cbf(state,obs,type):
 
     if type == 2:
         R = u/vehicle_p.rmax*vehicle_p.gamma_TC1
-        # R = 10
+        k = vehicle_p.TC_k
         B1 = np.sqrt( (ox-x-R*cos(psi-np.pi/2))**2 + (oy-y-R*sin(psi-np.pi/2))**2) - (orad+R)
         B2 = np.sqrt( (ox-x-R*cos(psi+np.pi/2))**2 + (oy-y-R*sin(psi+np.pi/2))**2) - (orad+R)
-        if vehicle_p.TCCBF == 3:
-            cbf = np.log((np.exp(B1)+np.exp(B2)-1))
-        if vehicle_p.TCCBF == 2:
-            cbf = B2
-        if vehicle_p.TCCBF == 1:
-            cbf = B1
+        cbf = 1/k*np.log((np.exp(k*B1)+np.exp(k*B2))/2)
 
     return cbf
 

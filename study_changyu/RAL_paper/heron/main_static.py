@@ -16,12 +16,11 @@ def main(cbf_num,mode,prediction_horizon,gamma1, gamma2, target_speed):
     
     ship_p.gamma1 = gamma1
     ship_p.gamma2 = gamma2
-    ship_p.gamma_TC1 = gamma1
+    ship_p.gamma_TC_k = gamma1
     ship_p.gamma_TC2 = gamma2
     if cbf_num == 3:
-        ship_p.Q[4,4] = ship_p.Q[3,3]
+        ship_p.Q[4,4] = 100
         ship_p.Q[3,3] = 0
-
     if mode == 'static':
         Tf = 60  
         target_x = 50
@@ -296,7 +295,7 @@ def calc_cbf(state,obs,type):
         B1 = np.sqrt( (ox-x-R*cos(psi-np.arctan(v/u)-np.pi/2))**2 + (oy-y-R*sin(psi-np.arctan(v/u)-np.pi/2))**2) - (orad+R)
         B2 = np.sqrt( (ox-x-R*cos(psi-np.arctan(v/u)+np.pi/2))**2 + (oy-y-R*sin(psi-np.arctan(v/u)+np.pi/2))**2) - (orad+R)
         if ship_p.TCCBF == 3:
-            cbf = np.log((np.exp(B1)+np.exp(B2))/2)
+            cbf = 1/ship_p.gamma_TC_k*np.log((np.exp(ship_p.gamma_TC_k*B1)+np.exp(ship_p.gamma_TC_k*B2))/2)
         if ship_p.TCCBF == 2:
             cbf = B2
         if ship_p.TCCBF == 1:
@@ -311,8 +310,8 @@ if __name__ == '__main__':
     tf = 50
     
     cd1, at1 ,sv1 ,rot1, con1, simX1, simU1, target_speed1, obs_array1, cbf_and_dist1, time_save1  = main(1,'static', 10, 1, 0.01, target_speed)
-    cd2, at2 ,sv2 ,rot2, con2, simX2, simU2, target_speed2, obs_array2, cbf_and_dist2, time_save2  = main(3,'static', 10, 1, 0.01, target_speed)
-    # cd3, at3 ,sv3 ,rot3, FX3, dFX3, simX3, simU3, target_speed3, obs_array3, cbf_and_dist3, time_save3  = main(2,'static', 10, 1, 0.025, target_speed)
+    cd2, at2 ,sv2 ,rot2, con2, simX2, simU2, target_speed2, obs_array2, cbf_and_dist2, time_save2  = main(1,'static', 10, 1, 0.02, target_speed)
+    cd3, at3 ,sv3 ,rot3, con3, simX3, simU3, target_speed3, obs_array3, cbf_and_dist3, time_save3  = main(3,'static', 10, 5, 0.015, target_speed)
         
     print(np.mean(time_save1),np.mean(time_save2))
     print(np.max(time_save1),np.max(time_save2))
@@ -320,10 +319,10 @@ if __name__ == '__main__':
     sim_data = [
         {"simX": simX1, "simU": simU1, "target_speed": target_speed1, "obs_array": obs_array1, "cbf_and_dist": cbf_and_dist1},
         {"simX": simX2, "simU": simU2, "target_speed": target_speed2, "obs_array": obs_array2, "cbf_and_dist": cbf_and_dist2},
-        # {"simX": simX3, "simU": simU3, "target_speed": target_speed3, "obs_array": obs_array3, "cbf_and_dist": cbf_and_dist3},
+        {"simX": simX3, "simU": simU3, "target_speed": target_speed3, "obs_array": obs_array3, "cbf_and_dist": cbf_and_dist3},
     ]
-    visualize = 0
-    visualize_result = 1
+    visualize = 1
+    visualize_result = 0
     if visualize:
         colors = plt.cm.tab10(np.linspace(0, 1, 10))
         fig, axs = plt.subplots(2,4, figsize=(16,6))

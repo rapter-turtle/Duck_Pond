@@ -14,6 +14,7 @@ class HeronMPC:
         # ROS settings
         self.rate = rospy.Rate(10)  # 10 Hz for ROS loop rate
         self.ekf_sub = rospy.Subscriber('/ekf/estimated_state', Float64MultiArray, self.ekf_callback)
+        self.weight_sub = rospy.Subscriber('/weight', Float64MultiArray, self.weight_callback)
         self.thrust_pub = rospy.Publisher('/cmd_drive', Drive)
         self.mpcvis_pub = rospy.Publisher('/mpc_vis', MPCTraj)  
         

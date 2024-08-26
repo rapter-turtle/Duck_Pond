@@ -196,6 +196,7 @@ def setup_wpt_tracking(x0,mode):
             oy_n = oy + ody
 
             R = np.sqrt(x3**2+x4**2)/ship_p.rmax*ship_p.gamma_TC1
+            k = ship_p.gamma_TC_k
             # R = 10
             B1 = np.sqrt( (ox-x0-R*cos(x2-np.arctan(x4/x3)-np.pi/2))**2 + (oy-x1-R*sin(x2-np.arctan(x4/x3)-np.pi/2))**2) - (obr+R)
             B2 = np.sqrt( (ox-x0-R*cos(x2-np.arctan(x4/x3)+np.pi/2))**2 + (oy-x1-R*sin(x2-np.arctan(x4/x3)+np.pi/2))**2) - (obr+R)
@@ -204,7 +205,7 @@ def setup_wpt_tracking(x0,mode):
             if ship_p.TCCBF == 2:
                 hk = B2
             if ship_p.TCCBF == 3:
-                hk = np.log((np.exp(B1)+np.exp(B2))/2)
+                hk = 1/k*np.log((np.exp(k*B1)+np.exp(k*B2))/2)
             
             # R = x3/ship_p.rmax*ship_p.gamma_TC1
             # R = np.sqrt(x3_n**2+x4_n**2)/ship_p.rmax*ship_p.gamma_TC1
@@ -215,7 +216,7 @@ def setup_wpt_tracking(x0,mode):
             if ship_p.TCCBF == 2:
                 hkn = B2
             if ship_p.TCCBF == 3:
-                hkn = np.log((np.exp(B1)+np.exp(B2))/2)
+                hkn = 1/k*np.log((np.exp(k*B1)+np.exp(k*B2))/2)
    
             h_expr[i] = hkn - (1-ship_p.gamma_TC2)*hk
 

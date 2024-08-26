@@ -37,6 +37,7 @@ class load_ship_param:
     TCCBF = 3 # 1-B1(right avoid), 2-B2, 3-B1+B2
     rmax = 0.2
     gamma_TC1 = 1
+    gamma_TC_k = 1
     gamma_TC2 = 0.1
 
     

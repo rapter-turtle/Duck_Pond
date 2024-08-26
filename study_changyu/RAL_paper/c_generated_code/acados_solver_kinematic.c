@@ -453,7 +453,7 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
-    W_0[1+(NY0) * 1] = 4;
+    W_0[1+(NY0) * 1] = 5;
     W_0[2+(NY0) * 2] = 50;
     W_0[3+(NY0) * 3] = 200;
     W_0[4+(NY0) * 4] = 100;
@@ -472,7 +472,7 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     free(yref);
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
-    W[1+(NY) * 1] = 4;
+    W[1+(NY) * 1] = 5;
     W[2+(NY) * 2] = 50;
     W[3+(NY) * 3] = 200;
     W[4+(NY) * 4] = 100;
@@ -492,7 +492,7 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
-    W_e[1+(NYN) * 1] = 4;
+    W_e[1+(NYN) * 1] = 5;
     W_e[2+(NYN) * 2] = 50;
     W_e[3+(NYN) * 3] = 200;
     W_e[4+(NYN) * 4] = 100;
@@ -700,7 +700,7 @@ void kinematic_acados_create_5_set_nlp_in(kinematic_solver_capsule* capsule, con
     double* ubx = lubx + NBX;
     
     lbx[0] = 1;
-    ubx[0] = 2.5;
+    ubx[0] = 2.25;
     lbx[1] = -0.2;
     ubx[1] = 0.2;
     lbx[2] = -0.3;

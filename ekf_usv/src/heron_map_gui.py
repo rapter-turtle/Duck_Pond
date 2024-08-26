@@ -70,6 +70,8 @@ class SensorFusionEKF:
         self.pred_y = []
         self.ref_x = []
         self.ref_y = []
+        self.ref_u = 0
+        self.ref_u_list = []
         
         self.obs_list = [0,0,0,0,0,0]
         
@@ -111,6 +113,7 @@ class SensorFusionEKF:
         self.ax2 = plt.subplot2grid((3, 4), (0, 2), fig=self.fig)
         self.line2_m, = self.ax2.plot([], [], 'r-', label='measurement', alpha=0.75)
         self.line2, = self.ax2.plot([], [], 'k-', label='ekf')
+        self.line2_ref, = self.ax2.plot([], [], 'b--', label='reference')
         self.ax2.set_xlabel('Time')
         self.ax2.set_ylabel('Surge (m/s)')
 
@@ -247,9 +250,10 @@ class SensorFusionEKF:
             ref_x, ref_y = self.utm_to_map(ref.x,ref.y)
             self.ref_x.append(ref_x)
             self.ref_y.append(ref_y)
-            
-            
-                
+        
+        if msg.ref:
+            self.ref_u = msg.ref[0].u
+
     def time_callback(self, msg):# - 주기가 gps callback 주기랑 같음 - gps data callback받으면 ekf에서 publish 하기때문        
         secs = msg.header.stamp.secs
         nsecs = msg.header.stamp.nsecs
@@ -300,6 +304,7 @@ class SensorFusionEKF:
             self.u_data.append(self.u)
             self.v_data.append(self.v)
             self.r_data.append(self.r)
+            self.ref_u_list.append(self.ref_u)
             self.x_sensor_data.append(self.x_map_sensor)
             self.y_sensor_data.append(self.y_map_sensor)        
             self.p_sensor_data.append(self.p_sensor*180/np.pi)       
@@ -345,6 +350,7 @@ class SensorFusionEKF:
 
             self.line2_m.set_data(self.time_data, self.u_sensor_data)
             self.line2.set_data(self.time_data, self.u_data)
+            self.line2_ref.set_data(self.time_data, self.ref_u_list)
             self.ax2.set_ylim(-0.5, 2)
             
             self.line3_m.set_data(self.time_data, self.v_sensor_data)
@@ -429,6 +435,8 @@ class SensorFusionEKF:
         self.v_sensor_data = []
         self.r_sensor_data = []
         
+        self.ref_u_list = []
+        
         self.thrust_left_data = []
         self.thrust_right_data = []
 
@@ -437,6 +445,7 @@ class SensorFusionEKF:
         self.line1test.set_data([], [])
         self.line2_m.set_data([], [])
         self.line2.set_data([], [])
+        self.line2_ref.set_data([], [])
         self.line3_m.set_data([], [])
         self.line3.set_data([], [])
         self.line4_m.set_data([], [])

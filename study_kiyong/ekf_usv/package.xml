@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ekf_usv</name>
+  <name>ekf_usv_ky</name>
   <version>0.0.0</version>
   <description>The ekf_usv package</description>
 
