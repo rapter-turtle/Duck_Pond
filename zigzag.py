@@ -45,12 +45,15 @@ class HeronMPC:
 
     def run(self,args):
         del_heading = int(args[1])
-        del_input = int(args[2])
+        del_input_max = int(args[2])
         thrust = int(args[3])
         print('del heading [deg] :', del_heading)
-        print('del input :', del_input)
+        print('del input :', del_input_max)
         print('Thrust :', thrust)
-
+        
+        del_input = 0.5
+        self.n1 = thrust
+        self.n2 = thrust
         flag = 1
         k = 0
         while not rospy.is_shutdown():
@@ -58,14 +61,22 @@ class HeronMPC:
                 k += 1
                 # Publish the control inputs (e.g., thrust commands)
                 drive_msg = Drive()                
-                if k < 100:            
-                    self.n1 = thrust/2
-                    self.n2 = thrust/2
+                if k < 50:           
+                    print(k)
+                    print('time delay') 
                 else:                        
-                    self.n1 = (thrust-del_input)/2
-                    self.n2 = (thrust+del_input)/2
+                    self.n1 -= del_input
+                    self.n2 += del_input
+                    self.n1 = np.clip(self.n1,thrust-del_input_max,thrust+del_input_max)
+                    self.n2 = np.clip(self.n2,thrust-del_input_max,thrust+del_input_max)
+                    
+                self.n1 = np.clip(self.n1,-8,25)
+                self.n2 = np.clip(self.n2,-8,25)
+
                 drive_msg.left = self.force_to_heron_command(self.n1,1)
                 drive_msg.right = self.force_to_heron_command(self.n2,2)                        
+                print(self.init_p, self.p)
+                print(drive_msg.left, drive_msg.right)
                 self.thrust_pub.publish(drive_msg)                                    
                 self.rate.sleep()
 
