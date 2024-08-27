@@ -5,6 +5,7 @@ from mpc_msgs.msg import MPCTraj, MPC_State, Obs_State
 import math
 import time
 import numpy as np
+import sys
 
 class HeronMPC:
     def __init__(self):
@@ -42,7 +43,13 @@ class HeronMPC:
             self.receive_gps = 1
 
 
-    def run(self):
+    def run(self,args):
+        del_heading = int(args[1])
+        del_input = int(args[2])
+        thrust = int(args[3])
+        print('del heading [deg] :', del_heading)
+        print('del input :', del_input)
+        print('Thrust :', thrust)
 
         while not rospy.is_shutdown():
             if self.receive_gps:
@@ -60,6 +67,6 @@ if __name__ == '__main__':
         rospy.init_node('heron_zigzag', anonymous=True)
         mpc = HeronMPC()
         rospy.loginfo("Starting zigzag control loop.")
-        mpc.run()
+        mpc.run(sys.argv)
     except rospy.ROSInterruptException:
         pass
