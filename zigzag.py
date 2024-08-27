@@ -51,15 +51,27 @@ class HeronMPC:
         print('del input :', del_input)
         print('Thrust :', thrust)
 
+        flag = 1
+        k = 0
         while not rospy.is_shutdown():
             if self.receive_gps:
-           
+                k += 1
                 # Publish the control inputs (e.g., thrust commands)
-                drive_msg = Drive()
+                drive_msg = Drive()                
+                if k < 100:            
+                    self.n1 = thrust/2
+                    self.n2 = thrust/2
+                else:                        
+                    self.n1 = (thrust-del_input)/2
+                    self.n2 = (thrust+del_input)/2
                 drive_msg.left = self.force_to_heron_command(self.n1,1)
                 drive_msg.right = self.force_to_heron_command(self.n2,2)                        
                 self.thrust_pub.publish(drive_msg)                                    
                 self.rate.sleep()
+
+                if flag*(self.p - self.init_p) > del_heading*np.pi/180:
+                    del_input = del_input * -1
+                    flag = flag * -1
 
 
 if __name__ == '__main__':
