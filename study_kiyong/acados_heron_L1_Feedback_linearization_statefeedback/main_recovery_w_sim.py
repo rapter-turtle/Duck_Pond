@@ -56,7 +56,7 @@ def main():
     disturbance_r = 0.0
 
     disturbances_list = []
-    disturbances_list = np.load('disturbances.npy')
+    disturbances_list = np.loadtxt('disturbances.txt')
 
     dob_save = np.zeros((int(T_final/simulation_dt)+1, 9))
 
@@ -80,16 +80,17 @@ def main():
 
             v_x_tship = x_tship[3]*np.cos(x_tship[2])
             v_y_tship = x_tship[3]*np.sin(x_tship[2])
+            
 
             for j in range(N_horizon):
-                yref = np.array([x_tship[0]+v_x_tship*j*con_dt, 
-                                x_tship[1]+v_y_tship*j*con_dt,
+                yref = np.array([x_tship[0]+v_x_tship*j*con_dt - 2.5*np.cos(x_tship[2] + 3.141592*0.5), 
+                                x_tship[1]+v_y_tship*j*con_dt - 2.5*np.sin(x_tship[2] + 3.141592*0.5),
                                 v_x_tship, v_y_tship, 0, 0])
                 ocp_solver.cost_set(j, "yref", yref)
 
 
-            yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt, 
-                            x_tship[1]+v_y_tship*N_horizon*con_dt,
+            yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt- 2.5*np.cos(x_tship[2] + 3.141592*0.5), 
+                            x_tship[1]+v_y_tship*N_horizon*con_dt- 2.5*np.sin(x_tship[2] + 3.141592*0.5),
                             v_x_tship, v_y_tship])
             ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
@@ -189,9 +190,10 @@ def main():
         I = 18.35
         head_dist = 1.0        
         disturbance = (1 - np.exp(-10*i))*np.array([U_wave_force + U_wind_force, V_wave_force + V_wind_force, N_wave_force + N_wind_force])
+        disturbance = disturbances_list[i] 
         disturbance_head = np.array([disturbance[0]*np.cos(psi) - disturbance[1]*np.sin(psi) - disturbance[2]*head_dist*np.sin(psi), disturbance[0]*np.sin(psi) + disturbance[1]*np.cos(psi) + disturbance[2]*head_dist*np.cos(psi), 0.0])
         # disturbances_list.append(disturbance)
-        disturbance = disturbances_list[i] 
+        # print(disturbance)
         # print(disturbance)
         # disturbance = np.array([0.0,0.0,0.0])
         # disturbance_head = np.array([0.0,0.0,0.0])
@@ -233,7 +235,10 @@ def main():
     print(f'Computation time in feedback phase in ms:    \
             min {np.min(t_feedback):.3f} median {np.median(t_feedback):.3f} max {np.max(t_feedback):.3f}')
 
-    # np.save('disturbances.npy', disturbances_list)
+    # np.savetxt('disturbances.txt', disturbances_list)
+    # np.savetxt('simX.txt', simX)
+    # np.savetxt('simX_tship.txt', simX_tship)
+    # np.savetxt('DOB.txt', dob_save)
 
     ocp_solver = None
     plot_iter = 5

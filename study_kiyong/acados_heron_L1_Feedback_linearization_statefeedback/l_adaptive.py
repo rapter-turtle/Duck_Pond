@@ -17,7 +17,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, MPC_control)
     dist = 0.3 # 30cm
     head_dist = 1.0
 
-    w_cutoff = 3
+    w_cutoff = 2
 
 
     # set up states & controls
