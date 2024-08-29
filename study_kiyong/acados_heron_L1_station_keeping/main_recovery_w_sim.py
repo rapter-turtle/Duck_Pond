@@ -6,6 +6,9 @@ from l_adaptive import*
 import numpy as np
 
 
+dayeon = 1004
+kiyong = 3004
+
 def main():
 
     Fmax = 60
@@ -44,9 +47,9 @@ def main():
     t_preparation = np.zeros((int(T_final/con_dt)))
     t_feedback = np.zeros((int(T_final/con_dt)))
 
-    param_estim = np.array([0.0, 0.0])
-    param_filtered = np.array([0.0, 0.0])
-    state_estim = np.array([0.0, 0.0])
+    param_estim = np.array([0.0, 0.0, 0.0, 0.0])
+    param_filtered = np.array([0.0, 0.0, 0.0, 0.0])
+    state_estim = np.array([0.0, 0.0,0.0, 0.0])
     MPC_thruster = np.array([0.0,0.0])
 
 
@@ -83,15 +86,15 @@ def main():
             v_y_tship = x_tship[3]*np.sin(x_tship[2])
 
             for j in range(N_horizon):
-                yref = np.array([x_tship[0]+v_x_tship*j*con_dt, 
-                                x_tship[1]+v_y_tship*j*con_dt,
-                                v_x_tship, v_y_tship, 0, 0])
+                yref = np.array([0.0, 
+                                0.0,
+                                0.0, 0.0, 0, 0])
                 ocp_solver.cost_set(j, "yref", yref)
 
 
-            yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt, 
-                            x_tship[1]+v_y_tship*N_horizon*con_dt,
-                            v_x_tship, v_y_tship])
+            yref_N = np.array([0.0, 
+                            0.0,
+                            0.0, 0.0])
             ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
             dist = 2.5
@@ -201,7 +204,7 @@ def main():
         
         # simulate system
         L = 0.6
-        L1_XN = np.array([-param_filtered[0]*M, -param_filtered[1]*M])
+        L1_XN = np.array([-param_filtered[2]*M, -param_filtered[3]*M])
         # L1_XN = np.array([state_feedback[2], state_feedback[3]])
         # print(L1_XN)
 

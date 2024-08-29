@@ -50,15 +50,15 @@ def CLF_QP(state,param, weight, lamda):
         V_dot = 2*(head_xn - param[0])*head_xn_dot + 2*(head_yn - param[1])*head_yn_dot
         V_dotdot =  2*(head_xn - param[0])*head_xn_dotdot + 2*(head_yn - param[1])*head_yn_dotdot + 2*head_xn_dot**2 + 2*head_yn_dot**2
 
-        # print("Head : ",V)
-        return -(V + (lamda[0] + lamda[1])*V_dot + lamda[0]*lamda[1]*V_dotdot) + x[2] # Example inequality constraint
+        print("Head : ",V)
+        return -(V + (lamda[0] + lamda[1])*V_dot + lamda[0]*lamda[1]*V_dotdot + x[2]) 
 
 
 
     x0 = [0, 0, 0]
 
     # Define the bounds
-    bounds = [(-15, 15), (-15, 15), (None, None)]  # Bounds for x0, x1, and x2
+    bounds = [(-25, 25), (-25, 25), (None, None)]  # Bounds for x0, x1, and x2
 
     # Define the constraints
     # eq_constraints = [example_eq_constraint]

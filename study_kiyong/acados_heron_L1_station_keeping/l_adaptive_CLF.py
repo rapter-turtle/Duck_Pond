@@ -31,8 +31,8 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, MPC_control)
 
     CLF_control = CLF_QP(state,np.array([0,0]),np.array([1,1,10000]), np.array([0.1, 0.2]))
 
-    n1  = MPC_control[0]
-    n2  = MPC_control[1]
+    n1  = CLF_control[0]
+    n2  = CLF_control[1]
 
 
     f_usv = np.array([(-(Xu + Xuu*np.sqrt(u*u))*u)/M,
