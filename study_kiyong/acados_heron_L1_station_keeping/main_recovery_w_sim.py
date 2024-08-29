@@ -2,7 +2,7 @@ from plot_asv import *
 from gen_ref import *
 from acados_setting import *
 from recovery_simulator import*
-from l_adaptive import*
+from l_adaptive_CLF import*
 import numpy as np
 
 
@@ -15,12 +15,12 @@ def main():
     N_horizon = 10
     con_dt = 0.2
     Tf = int(N_horizon*con_dt)
-    T_final = 50
+    T_final = 100
     simulation_dt = 0.05
 
-    x_tship = np.array([10.0, 10.0, 0.1, 0]) # x,y,psi,u
+    x_tship = np.array([300.0, 300.0, 0.1, 0]) # x,y,psi,u
 
-    x0 = np.array([0.0, 0.0, 0.0, 0, 0, 0])
+    x0 = np.array([-5.0, -5.0, 0.0, 0, 0, 0])
 
     head_dist = 1.0
     head_point = np.array([x0[0] + head_dist*np.cos(x0[2]), 
@@ -147,16 +147,18 @@ def main():
 
         #################################### Disturbance ####################################
         wind_direction = 0.1#100*3.141592/180
-        wind_speed = 5.0
+        wind_speed = 4.0
         psi = simX[i,2]
         un = simX[i,3]
         vn = simX[i,4]
 
         ## Wave Disturbance ## 
         # wave_disturbance(disturbance_state, wave_direction, wind_speed, omega, lamda, Kw, sigmaF1, sigmaF2, dt):
-        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, wind_speed, 0.8, 0.1, 3.0, 5, 1.0, simulation_dt)
-        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, wind_speed, 0.8, 0.1, 1.0, 1, 0.1, simulation_dt)
-        
+        # disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, wind_speed, 0.8, 0.1, 3.0, 5, 1.0, simulation_dt)
+        # disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, wind_speed, 0.8, 0.1, 1.0, 1, 0.1, simulation_dt)
+        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, wind_speed, 0.8, 0.1, 3.0, 2, 0.1, simulation_dt)
+        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, wind_speed, 0.8, 0.1, 1.0, 0.5, 0.1, simulation_dt)
+                
         X_wave_force = XY_wave_force*np.cos(wind_direction - psi)
         Y_wave_force = XY_wave_force*np.sin(wind_direction - psi)
 
@@ -193,10 +195,10 @@ def main():
         I = 18.35
         head_dist = 1.0        
         disturbance = (1 - np.exp(-10*i))*np.array([U_wave_force + U_wind_force, V_wave_force + V_wind_force, N_wave_force + N_wind_force])
-        disturbance_head = np.array([disturbance[0]*np.cos(psi) - disturbance[1]*np.sin(psi) - disturbance[2]*head_dist*np.sin(psi), disturbance[0]*np.sin(psi) + disturbance[1]*np.cos(psi) + disturbance[2]*head_dist*np.cos(psi), 0.0])
+        disturbance = disturbances_list[i] 
         # disturbances_list.append(disturbance)
-        # disturbance = disturbances_list[i] 
-        # print(disturbance)
+        disturbance_head = np.array([disturbance[0]*np.cos(psi) - disturbance[1]*np.sin(psi) - disturbance[2]*head_dist*np.sin(psi), disturbance[0]*np.sin(psi) + disturbance[1]*np.cos(psi) + disturbance[2]*head_dist*np.cos(psi), 0.0])
+
         # disturbance = np.array([0.0,0.0,0.0])
         # disturbance_head = np.array([0.0,0.0,0.0])
         ##########################################################################################
@@ -237,7 +239,11 @@ def main():
     print(f'Computation time in feedback phase in ms:    \
             min {np.min(t_feedback):.3f} median {np.median(t_feedback):.3f} max {np.max(t_feedback):.3f}')
 
+    np.savetxt('simX_K.txt', simX)
+    np.savetxt('simX_tship_K.txt', simX_tship)
+    np.savetxt('DOB_K.txt', dob_save)
     # np.save('disturbances.npy', disturbances_list)
+
 
     ocp_solver = None
     plot_iter = 5

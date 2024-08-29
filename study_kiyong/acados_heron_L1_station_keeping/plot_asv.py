@@ -135,8 +135,10 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
         ax_big.plot(rotated_coords[:, 0], rotated_coords[:, 1], 'b-')
         ax_big.fill(rotated_coords[:, 0], rotated_coords[:, 1], 'blue', alpha=0.2)
         ax_big.scatter(tship[frame,0], tship[frame,1], color='red')  # 중심점 표시
-        ax_big.set_xlim(tship[frame,0]-15, tship[frame,0]+8)  # Adjust these limits as needed
-        ax_big.set_ylim(tship[frame,1]-10, tship[frame,1]+5)  # Adjust these limits as needed
+        # ax_big.set_xlim(tship[frame,0]-15, tship[frame,0]+8)  # Adjust these limits as needed
+        # ax_big.set_ylim(tship[frame,1]-10, tship[frame,1]+5)  # Adjust these limits as needed
+        ax_big.set_xlim(-1, 1)  # Adjust these limits as needed
+        ax_big.set_ylim(-1, 1)  # Adjust these limits as needed        
         ax_big.grid(True)
         FS = 14
 
@@ -166,7 +168,7 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
         # ax_speed.autoscale(enable=True, axis='y', tight=True)   
 
         # Plot CBF 1    
-        ax_speed.plot(t[0:frame], tship[0:frame,0] - (states[0:frame,0] + np.cos(tship[0:frame,2])), 'k', linewidth=2, label='X error') 
+        ax_speed.plot(t[0:frame], (states[0:frame,0] + np.cos(states[0:frame,2])), 'k', linewidth=2, label='X error') 
         # ax_speed.plot(t[0:frame], states[0:frame,0], 'r', linewidth=2, label='Own ship X') 
         ax_speed.set_xlabel("Time", fontsize=FS)
         ax_speed.set_title("X", fontsize=FS)
@@ -194,7 +196,7 @@ def animateASV_recovery(states, inputs, tship, mpc_result, con_pos, t, Fmax, dis
         # ax_rot_speed.autoscale(enable=True, axis='y', tight=True)     
 
         # Plot CBF 2
-        ax_rot_speed.plot(t[0:frame], tship[0:frame,1] - (states[0:frame,1] + np.sin(tship[0:frame,2])), 'k', linewidth=2, label='Y error') 
+        ax_rot_speed.plot(t[0:frame], (states[0:frame,1] + np.sin(states[0:frame,2])), 'k', linewidth=2, label='Y error') 
         # ax_rot_speed.plot(t[0:frame], states[0:frame,1], 'r', linewidth=2, label='Own ship Y') 
         ax_rot_speed.set_xlabel("Time", fontsize=FS)
         ax_rot_speed.set_title("Y", fontsize=FS)

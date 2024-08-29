@@ -29,7 +29,6 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, MPC_control)
     v    = state[4]
     r    = state[5]
 
-    CLF_control = CLF_QP(state,np.array([0,0]),np.array([1,1,100]), np.array([0.1,0.2]))
 
     n1  = 0.0#CLF_control[0]
     n2  = 0.0#CLF_control[1]
@@ -40,7 +39,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, MPC_control)
           (- (Nr + Nrrr*r*r)*r - Nv*v)/I
           ])
 
-    virtual_state = np.array([0.0,0.0,
+    virtual_state = np.array([xn + head_dist*np.cos(psi),yn + head_dist*np.sin(psi),
                               u*np.cos(psi) - v*np.sin(psi) - head_dist*r*np.sin(psi),
                               u*np.sin(psi) + v*np.cos(psi) + head_dist*r*np.cos(psi)])
 
@@ -64,13 +63,13 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, MPC_control)
     x_error = state_estim - virtual_state 
 
     
-    adaptive_control = param_filtered[2:4] + nominal_control[2:4] - virtual_control[2:4] - state_feedback
-
+    adaptive_control = param_filtered[2:4] + nominal_control[2:4] - virtual_control[2:4] - state_feedback*0.5
+    print(state_feedback)
     L1_thruster = np.array([0.5*(M*np.cos(psi) + I*np.sin(psi)/(head_dist*dist))*adaptive_control[0] + 0.5*(M*np.sin(psi) - I*np.cos(psi)/(head_dist*dist))*adaptive_control[1],
                             0.5*(M*np.cos(psi) - I*np.sin(psi)/(head_dist*dist))*adaptive_control[0] + 0.5*(M*np.sin(psi) + I*np.cos(psi)/(head_dist*dist))*adaptive_control[1]
                             ])    
 
-    xdot = param_estim + param_filtered + nominal_control - state_feedback_estim
+    xdot = param_estim + param_filtered + nominal_control - state_feedback_estim*0.5
 
     x_t_plus = xdot*dt + state_estim
     
