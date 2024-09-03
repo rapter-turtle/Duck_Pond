@@ -10,7 +10,7 @@ import numpy as np
 import math
 import time  # 시간 측정을 위해 추가
 
-offset = np.array([353140.0, 4026030.0])
+offset = np.array([353140.0, 4026040.0])
 
 # Define the waypoints for the figure-eight trajectory
 waypoints = np.array([
@@ -49,12 +49,14 @@ Kd_distance = 0.1
 def ekf_callback(msg):
     """Callback to update states from EKF estimated state."""
     global x, y, p, u, v, r, states
+    print("a")
     x, y, p, u, v, r = msg.data[:6]
     states = np.array([x - offset[0], y - offset[1], p, u, v, r, n1, n2])
     #states = np.array([x + offset[0], y + offset[1], p, u, v, r, n1, n2])
     current_position.position.x = x
     current_position.position.y = y
     current_position.orientation.z = p
+    # print(states)
 """
 def yaw_discontinuity(ref):
     # Handle yaw angle discontinuities.
@@ -81,19 +83,19 @@ def pid_control(target, current, integral, prev_error, Kp, Ki, Kd):
 
 def main():
     global current_goal_index, angle_integral, distance_integral, prev_angle_error, prev_distance_error
-
-    rospy.init_node('position_based_navigation')
+    print(1)
+    print(1)
     pub_drive = rospy.Publisher('/cmd_drive', Drive, queue_size=10)
     pub_distance = rospy.Publisher('/distance_to_goal', Float64MultiArray, queue_size=10)  # 새로운 토픽
     rospy.Subscriber('/ekf/estimated_state', Float64MultiArray, ekf_callback)
     rate = rospy.Rate(10)  # 10Hz
-
+    print(1)
     drive_msg = Drive()
     goal_tolerance = 1.0  # tolerance(m)
 
     while not rospy.is_shutdown():
         #start_time = time.time()  # 루프 시작 시간 기록
-
+        print("b")
         goal_position = waypoints[current_goal_index]
 
         # distance between target point & current point
@@ -138,10 +140,15 @@ def main():
         
         rate.sleep()
 
-        print(distance_to_goal, angle_to_goal)
+        #print(distance_to_goal, angle_to_goal)
 
 if __name__ == "__main__":
     try:
+        print("ff")
+        rospy.init_node('heron_pid', anonymous=True)
+        # rospy.init_node('position_based_navigation')
+        print("ff")
         main()
+        print("ff")
     except rospy.ROSInterruptException:
         pass
