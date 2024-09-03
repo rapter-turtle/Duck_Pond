@@ -10,7 +10,7 @@ import numpy as np
 import math
 import time  # 시간 측정을 위해 추가
 
-offset = np.array([353125.249598, 4026050.041195])
+offset = np.array([353140.0, 4026030.0])
 
 # Define the waypoints for the figure-eight trajectory
 waypoints = np.array([
