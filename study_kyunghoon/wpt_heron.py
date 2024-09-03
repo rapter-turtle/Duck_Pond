@@ -14,14 +14,12 @@ offset = np.array([353125.249598, 4026050.041195])
 
 # Define the waypoints for the figure-eight trajectory
 waypoints = np.array([
+    [0.0, 10.0] + offset,
+    [-10.0, 5.0] + offset,
     [0.0, 0.0] + offset,
-    [5.0, -5.0] + offset,
-    [10.0, 0.0] + offset,
-    [5.0, 5.0] + offset,
-    [0.0, 0.0] + offset,
-    [-5.0, -5.0] + offset,
-    [-10.0, 0.0] + offset,
-    [-5.0, 5.0] + offset
+    [10.0, -5.0] + offset,
+    [0.0, -10.0] + offset,
+    [0.0, 0.0] + offset
 ])
 
 # Initial states and inputs
