@@ -66,7 +66,7 @@ filtered_um = zeros(4, num_steps);
 time = 0:dt:(total_time-dt); % Time vector
 
 % Initial condition
-x(:, 1) = [0; 0; 0; -l; 20; 0]; % Initial position and velocity
+x(:, 1) = [1; 0; 0; -l; 20; 0]; % Initial position and velocity
 x(:, 2) = x(:, 1);
 x_abs(:, 1) = x(:, 1); % Initial position and velocity
 x_abs(:, 2) = x_abs(:, 1);
@@ -119,12 +119,16 @@ for k = 2:num_steps-1
                      x(1, k)*cos(x(6, k)) - x(2, k)*sin(x(6, k)) - x(3, k)*l*sin(x(6, k)) + disturbance(1);
                      x(1, k)*sin(x(6, k)) + x(2, k)*cos(x(6, k)) + x(3, k)*l*cos(x(6, k)) + disturbance(2)];
 
-    s1 = virtual_state(1, k) + virtual_state(2, k) + virtual_state(3, k) + virtual_state(4, k);
+    s1 = x(3,k) - virtual_state(3, k)*virtual_state(3, k) - virtual_state(4, k)*virtual_state(4, k);
     s2 = x(6,k) + x(3,k);
 
     tau_r = -x(3,k) + f_usv(2)/l - 100*sat(s2,-1,1) - virtual_state(3, k)*virtual_state(3, k) - virtual_state(4, k)*virtual_state(4, k) ;
-    tau_u = 0;%(-tau_r*(-l*sin(x(6,k)+l*cos(x(6,k)))) - virtual_state(3,k) - virtual_state(4,k) - 10*sat(s1,-1,1))/(cos(x(6,k)) + sin(x(6,k)));;
-
+    
+    B = 1/(2*virtual_state(3, k)*cos(x(6,k)) + 2*virtual_state(4, k)*sin(x(6,k)));
+    f2 = [-l*sin(x(6,k))*tau_r ; l*cos(x(6,k))*tau_r];
+    bef = [-2*virtual_state(3,k), -2*virtual_state(3,k)];
+    
+    tau_u = B*(x(3,k) + bef*f2 + 10*sat(s1,-1,1) + s1);
 
     % Virtual control
     x_abs(:,k) = [x(1,k) + disturbance(1)*cos(x(6,k)) + disturbance(2)*sin(x(6,k));
