@@ -42,7 +42,7 @@ cutoff = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simulation parameters
 dt = 0.01; % Time step (seconds)
-total_time = 100; % Total simulation time (seconds)
+total_time = 0.5; % Total simulation time (seconds)
 num_steps = total_time / dt; % Number of simulation steps
 
 % Initialize state vectors
@@ -66,7 +66,7 @@ filtered_um = zeros(4, num_steps);
 time = 0:dt:(total_time-dt); % Time vector
 
 % Initial condition
-x(:, 1) = [1; 0; 0; -l; 20; 0]; % Initial position and velocity
+x(:, 1) = [0; 0; 0; 10-l; 0; 0]; % Initial position and velocity
 x(:, 2) = x(:, 1);
 x_abs(:, 1) = x(:, 1); % Initial position and velocity
 x_abs(:, 2) = x_abs(:, 1);
@@ -96,11 +96,12 @@ Bum_disturbance = [0, 0;
 
 s1 = 0;
 s2 = 0;
+lamda = 0.3;
 
 % Simulation loop (Euler method)
 for k = 2:num_steps-1
     % Disturbance
-    xy_dis = [500*sin(0.5*dt*k);500*cos(0.5*dt*k);200*cos(0.1*dt*k)/l];
+    xy_dis = [20*sin(0.5*dt*k);50+50*cos(0.5*dt*k);30+50*cos(0.1*dt*k)/l];
     disturbance = [0; 0; xy_dis(1)*cos(x(6,k)) + xy_dis(2)*sin(x(6,k)); -xy_dis(1)*sin(x(6,k)) + xy_dis(2)*cos(x(6,k)); xy_dis(3)];
     disturbance_list(:,k) = [disturbance(1:2) ; xy_dis(1) - xy_dis(3)*sin(x(6,k)); xy_dis(2) + xy_dis(3)*cos(x(6,k))];
 
@@ -119,16 +120,23 @@ for k = 2:num_steps-1
                      x(1, k)*cos(x(6, k)) - x(2, k)*sin(x(6, k)) - x(3, k)*l*sin(x(6, k)) + disturbance(1);
                      x(1, k)*sin(x(6, k)) + x(2, k)*cos(x(6, k)) + x(3, k)*l*cos(x(6, k)) + disturbance(2)];
 
-    s1 = x(3,k) - virtual_state(3, k)*virtual_state(3, k) - virtual_state(4, k)*virtual_state(4, k);
-    s2 = x(6,k) + x(3,k);
+    sr = x(6,k) + x(3,k);
+    s1 = x(6,k) + x(3,k) + virtual_state(3,k)*virtual_state(3,k) + virtual_state(4,k)*virtual_state(4,k);
+    
 
-    tau_r = -x(3,k) + f_usv(2)/l - 100*sat(s2,-1,1) - virtual_state(3, k)*virtual_state(3, k) - virtual_state(4, k)*virtual_state(4, k) ;
+    % tau_r = -x(3,k) - lamda*sr + f_usv(2)/l - 200*sat(sr,-1,1) + virtual_state(3,k)*virtual_state(3,k) + virtual_state(4,k)*virtual_state(4,k);
+    % 
+    % B = 2*(cos(x(6,k))*virtual_state(3,k) + virtual_state(4,k)*sin(x(6,k)));
+    % f2 = -l*sin(x(6,k))*tau_r + l*cos(x(6,k))*tau_r;
+    % 
+    % tau_u = -B*((-1-3*lamda+(1+lamda)*(1+lamda))*x(3,k) + lamda*lamda*x(6,k) - lamda*(virtual_state(3,k)*virtual_state(3,k) + virtual_state(4,k)*virtual_state(4,k)) + f2 + 500*sat(s1,-1,1) + lamda*s1);
+
+    tau_r = f_usv(2)/l + virtual_state(1,k)*virtual_state(1,k) + virtual_state(2,k)*virtual_state(2,k);
     
-    B = 1/(2*virtual_state(3, k)*cos(x(6,k)) + 2*virtual_state(4, k)*sin(x(6,k)));
-    f2 = [-l*sin(x(6,k))*tau_r ; l*cos(x(6,k))*tau_r];
-    bef = [-2*virtual_state(3,k), -2*virtual_state(3,k)];
+    B = 1/(2*(cos(x(6,k))*virtual_state(1,k) + virtual_state(2,k)*sin(x(6,k))))
+    f2 = 2*(-l*sin(x(6,k))*virtual_state(1,k) + l*cos(x(6,k))*virtual_state(2,k))*tau_r;
     
-    tau_u = B*(x(3,k) + bef*f2 + 10*sat(s1,-1,1) + s1);
+    tau_u = -B*(x(3,k) + virtual_state(1,k)*virtual_state(1,k) + virtual_state(2,k)*virtual_state(2,k) + 2*virtual_state(3,k)*virtual_state(3,k) + 2*virtual_state(4,k)*virtual_state(4,k) + 2*virtual_state(1,k)*virtual_state(3,k) + 2*virtual_state(2,k)*virtual_state(4,k) + f2 + 200*sat(s1,-1,1) + lamda*s1);
 
     % Virtual control
     x_abs(:,k) = [x(1,k) + disturbance(1)*cos(x(6,k)) + disturbance(2)*sin(x(6,k));
@@ -186,7 +194,7 @@ fontSize_T = 18;
 
 figure;
 subplot(3,2,1);
-plot(time, virtual_state(1,:), 'DisplayName', 'Estimated'); % Label for the first line
+plot(time, virtual_state(3,:), 'DisplayName', 'Estimated'); % Label for the first line
 title('Head Point Position X', 'FontSize', fontSize_T);
 xlabel('Time(s)', 'FontSize', fontSize);
 ylabel('X(m)', 'FontSize', fontSize);
@@ -195,7 +203,7 @@ set(gca, 'FontSize', axisfontSize);
 
 
 subplot(3,2,2);
-plot(time, virtual_state(2,:), 'DisplayName', 'Estimated'); % Label for the first line
+plot(time, virtual_state(4,:), 'DisplayName', 'Estimated'); % Label for the first line
 title('Head Point Position Y', 'FontSize', fontSize_T);
 xlabel('Time(s)', 'FontSize', fontSize);
 ylabel('Y(m)', 'FontSize', fontSize);
@@ -271,66 +279,66 @@ set(gca, 'FontSize', axisfontSize);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Simulation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Define the ship polygon
-ship_length = 7; % Length of the ship
-ship_width = 3; % Width of the ship
-ship_shape = [-ship_length/2 + ship_width, -ship_width/2; 
-              ship_length/2, 0; 
-              -ship_length/2 + ship_width, ship_width/2; 
-              -ship_length/2 - ship_width, ship_width/2; 
-              -ship_length/2 - ship_width, -ship_width/2];
-
-% Create a figure for animation
-figure;
-hold on;
-axis equal;
-xlabel('X Position');
-ylabel('Y Position');
-title('No control');
-xlim([-30, 30]); % Set the X-axis limits
-ylim([-30, 30]); % Set the Y-axis limits
-grid on;
-legend('Own ship');
-
-
-% Set up the video writer
-video = VideoWriter('L1.avi'); % Create a video writer object
-video.FrameRate = 30; % Set the frame rate
-open(video); % Open the video file
-
-% Animation loop
-for k = 1:10:num_steps
-    % Compute ship's current position and orientation
-    X = x(4, k);
-    Y = x(5, k);
-    psi = x(6, k);
-
-    % Rotate and translate the ship shape
-    R = [cos(psi), -sin(psi); sin(psi), cos(psi)];
-    ship_position = (R * ship_shape')';
-    ship_position(:, 1) = ship_position(:, 1) + X;
-    ship_position(:, 2) = ship_position(:, 2) + Y;
-
-    % Plot the ship
-    ship_plot = fill(ship_position(:, 1), ship_position(:, 2), 'r', 'FaceAlpha', 0.5, 'DisplayName', 'Own Ship');
-
-    % Capture the current frame
-    frame = getframe(gcf);
-    writeVideo(video, frame);
-
-    % Pause to create animation effect
-    pause(0.01);
-
-    % Remove the current plot to update the next frame
-    if k < num_steps
-        delete(ship_plot);
-    end
-end
-
-hold off;
-
-% Close the video file
-close(video);
+% % Define the ship polygon
+% ship_length = 7; % Length of the ship
+% ship_width = 3; % Width of the ship
+% ship_shape = [-ship_length/2 + ship_width, -ship_width/2; 
+%               ship_length/2, 0; 
+%               -ship_length/2 + ship_width, ship_width/2; 
+%               -ship_length/2 - ship_width, ship_width/2; 
+%               -ship_length/2 - ship_width, -ship_width/2];
+% 
+% % Create a figure for animation
+% figure;
+% hold on;
+% axis equal;
+% xlabel('X Position');
+% ylabel('Y Position');
+% title('No control');
+% xlim([-30, 30]); % Set the X-axis limits
+% ylim([-30, 30]); % Set the Y-axis limits
+% grid on;
+% legend('Own ship');
+% 
+% 
+% % Set up the video writer
+% video = VideoWriter('L1.avi'); % Create a video writer object
+% video.FrameRate = 30; % Set the frame rate
+% open(video); % Open the video file
+% 
+% % Animation loop
+% for k = 1:10:num_steps
+%     % Compute ship's current position and orientation
+%     X = x(4, k);
+%     Y = x(5, k);
+%     psi = x(6, k);
+% 
+%     % Rotate and translate the ship shape
+%     R = [cos(psi), -sin(psi); sin(psi), cos(psi)];
+%     ship_position = (R * ship_shape')';
+%     ship_position(:, 1) = ship_position(:, 1) + X;
+%     ship_position(:, 2) = ship_position(:, 2) + Y;
+% 
+%     % Plot the ship
+%     ship_plot = fill(ship_position(:, 1), ship_position(:, 2), 'r', 'FaceAlpha', 0.5, 'DisplayName', 'Own Ship');
+% 
+%     % Capture the current frame
+%     frame = getframe(gcf);
+%     writeVideo(video, frame);
+% 
+%     % Pause to create animation effect
+%     pause(0.01);
+% 
+%     % Remove the current plot to update the next frame
+%     if k < num_steps
+%         delete(ship_plot);
+%     end
+% end
+% 
+% hold off;
+% 
+% % Close the video file
+% close(video);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Stamp trace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
