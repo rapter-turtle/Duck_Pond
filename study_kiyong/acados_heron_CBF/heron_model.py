@@ -90,8 +90,8 @@ def export_heron_model() -> AcadosModel:
 
 
     # dynamics
-    f_expl = vertcat(un*cos(psi) - vn*sin(psi) - head_dist*r*sin(psi),
-                     un*sin(psi) + vn*cos(psi) + head_dist*r*cos(psi),
+    f_expl = vertcat(un*cos(psi) - vn*sin(psi) ,
+                     un*sin(psi) + vn*cos(psi) ,
                      r,
                      ( (n1+n2) - Xu*un - Xuu*sqrt(un*un+eps)*un )/M,
                      ( -Yv*vn - Yvv*sqrt(vn*vn+eps)*vn - Yr*r )/M,

@@ -3,7 +3,7 @@ from gen_ref import *
 from acados_setting import *
 from recovery_simulator import*
 from l_adaptive import*
-from CBF import *
+from CBF2 import *
 import numpy as np
 
 def main():
@@ -12,7 +12,7 @@ def main():
     N_horizon = 10
     con_dt = 0.2
     Tf = int(N_horizon*con_dt)
-    T_final = 100
+    T_final = 70
     simulation_dt = 0.05
 
     x_tship = np.array([10.0, 10.0, 0.1, 1]) # x,y,psi,u
@@ -42,13 +42,14 @@ def main():
     t_preparation = np.zeros((int(T_final/con_dt)))
     t_feedback = np.zeros((int(T_final/con_dt)))
 
-    param_estim = np.zeros((2))
+    param_estim = np.zeros((3))
     param_filtered = np.zeros((2))
-    state_estim = np.array([0.0, 0.0])
+    state_estim = np.array([0.0,0.0, 0.0])
 
 
     l1_control = np.zeros((2))
     DOB = np.zeros((2))
+    con = np.zeros((3))
     disturbance_state = np.zeros((6))
     disturbance_u = 0.0
     disturbance_v = 0.0
@@ -74,16 +75,29 @@ def main():
             v_x_tship = x_tship[3]*np.cos(x_tship[2])
             v_y_tship = x_tship[3]*np.sin(x_tship[2])
 
+            # for j in range(N_horizon):
+            #     yref = np.array([x_tship[0]+v_x_tship*j*con_dt, 
+            #                     x_tship[1]+v_y_tship*j*con_dt,
+            #                     x_tship[2], 0, 0, 0, 0, 0, 0, 0])
+            #     ocp_solver.cost_set(j, "yref", yref)
+
+
+            # yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt, 
+            #                 x_tship[1]+v_y_tship*N_horizon*con_dt,
+            #                 x_tship[2], 0, 0, 0, 0, 0])
+            # ocp_solver.cost_set(N_horizon, "yref", yref_N)
+
             for j in range(N_horizon):
-                yref = np.array([x_tship[0]+v_x_tship*j*con_dt, 
-                                x_tship[1]+v_y_tship*j*con_dt,
-                                x_tship[2], 0, 0, 0, 0, 0, 0, 0])
+                yref = np.array([x_tship[0]+v_x_tship*j*con_dt - 2.5*np.cos(x_tship[2] + 3.141592*0.5), 
+                                x_tship[1]+v_y_tship*j*con_dt - 2.5*np.sin(x_tship[2] + 3.141592*0.5),
+                                x_tship[2], v_x_tship, v_y_tship, 0, 0, 0, 0, 0])
+                                
                 ocp_solver.cost_set(j, "yref", yref)
 
 
-            yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt, 
-                            x_tship[1]+v_y_tship*N_horizon*con_dt,
-                            x_tship[2], 0, 0, 0, 0, 0])
+            yref_N = np.array([x_tship[0]+v_x_tship*N_horizon*con_dt- 2.5*np.cos(x_tship[2] + 3.141592*0.5), 
+                            x_tship[1]+v_y_tship*N_horizon*con_dt- 2.5*np.sin(x_tship[2] + 3.141592*0.5),
+                            x_tship[2], v_x_tship, v_y_tship, 0, 0, 0])
             ocp_solver.cost_set(N_horizon, "yref", yref_N)
 
             dist = 2.5
@@ -126,24 +140,24 @@ def main():
 
 
         ##### L1 adaptive #####   
-        state_estim, param_estim, param_filtered, L1_thruster = L1_control(simX[i, :], state_estim, param_filtered, simulation_dt, param_estim)
+        state_estim, param_estim, thrust = DOB_CBF(simX[i, :], state_estim, simulation_dt, param_estim)
         extra_control = np.array([0.0,0.0])
-        extra_control = L1_thruster
+        # extra_control = L1_thruster
         # ##### L1 adaptive #####
 
 
 
         #################################### Disturbance ####################################
         wind_direction = 100*3.141592/180
-        wind_speed = 5.0
+        wind_speed = 4.0
         psi = simX[i,2]
         un = simX[i,3]
         vn = simX[i,4]
 
         ## Wave Disturbance ## 
         # wave_disturbance(disturbance_state, wave_direction, wind_speed, omega, lamda, Kw, sigmaF1, sigmaF2, dt):
-        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, wind_speed, 0.8, 0.1, 3.0, 5, 1.0, simulation_dt)
-        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, wind_speed, 0.8, 0.1, 1.0, 1, 0.1, simulation_dt)
+        disturbance_state[:3], XY_wave_force = wave_disturbance(disturbance_state[:3], wind_direction, wind_speed, 0.1, 0.1, 0.5, 2, 0.1, simulation_dt)
+        disturbance_state[3:6], N_wave_force = wave_disturbance(disturbance_state[3:6], wind_direction, wind_speed, 0.1, 0.1, 0.1, 0.5, 0.1, simulation_dt)
         
         X_wave_force = XY_wave_force*np.cos(wind_direction - psi)
         Y_wave_force = XY_wave_force*np.sin(wind_direction - psi)
@@ -189,7 +203,7 @@ def main():
         head_dist = 1.0        
         disturbance = np.array([U_wave_force + U_wind_force, V_wave_force + V_wind_force, N_wave_force + N_wind_force])
         disturbance_head = np.array([disturbance[0]*np.cos(psi) - disturbance[1]*np.sin(psi) - disturbance[2]*head_dist*np.sin(psi), disturbance[0]*np.sin(psi) + disturbance[1]*np.cos(psi) + disturbance[2]*head_dist*np.cos(psi), 0.0])
-        disturbance = np.array([0.0,0.0,0.0])
+        # disturbance = np.array([0.0,0.0,0.0])
         # print("Disturbance : ",[X_wind_force, Y_wind_force])
         # print("Estimated   : ",param_estim*M)
         # print("head point : ", [, Y_wind_force])
@@ -198,11 +212,11 @@ def main():
         
         # simulate system
         L = 0.6
-        L1_XN = np.array([-param_filtered[0]*M, -param_filtered[1]*M])
+        L1_XN = np.array([param_estim[0]*M, param_estim[1]*M])
         # dob_save[i,:] = np.hstack((disturbance_head, L1_thruster, L1_XN, DOB))
         dob_save[i,:] = np.hstack((disturbance_head, extra_control, L1_XN, DOB))
         simU[i, :] = ocp_solver.get(0, "u")
-        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[i,:], simulation_dt, disturbance ,extra_control )
+        simX[i+1, :], x_tship = recover_simulator(simX[i, :], x_tship, simU[i,:], simulation_dt, disturbance ,thrust, param_estim )
 
         simX_tship[i+1, :] = x_tship
 

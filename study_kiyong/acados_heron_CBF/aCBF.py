@@ -33,16 +33,16 @@ def CBF_QP(state, control_input, param, weight, ll, param_estim):
         psi = state[2]
         
         ll = np.array([310,6])
-        u_dot = ((x[0] + x[1]) - Xu*u - Xuu*np.sqrt(u*u)*u)/M
-        v_dot = (-Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r)/M
-        r_dot = ((-x[0]+x[1])*dist - Nr*r - Nrrr*r*r*r - Nv*v)/I
+        u_dot = ((x[0] + x[1]) + param_estim[0] - Xu*u - Xuu*np.sqrt(u*u)*u)/M
+        v_dot = ( param_estim[1] -Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r)/M
+        r_dot = ((-x[0]+x[1])*dist +param_estim[2]- Nr*r - Nrrr*r*r*r - Nv*v)/I
 
 
         V = param[0]*(xn + head_dist*np.cos(psi)) + param[1]*(yn + head_dist*np.sin(psi)) + param[2]
         V_dot = param[0]*(u*np.cos(psi) - v*np.sin(psi) - r*head_dist*np.sin(psi)) + param[1]*(u*np.sin(psi) + v*np.cos(psi) + r*head_dist*np.cos(psi))
         V_dotdot = param[0]*(u_dot*np.cos(psi) - u*r*np.sin(psi) - v_dot*np.sin(psi) - v*r*np.cos(psi) - r_dot*head_dist*np.sin(psi) - r*r*head_dist*np.cos(psi)) + param[1]*(u_dot*np.sin(psi) + u*r*np.cos(psi) + v_dot*np.cos(psi) - v*r*np.sin(psi) + r_dot*head_dist*np.cos(psi) - r*r*head_dist*np.sin(psi))
   
-        print(V_dotdot + (ll[0] + ll[1])*V_dot + ll[0]*ll[1]*V)
+        # print(V_dotdot + (ll[0] + ll[1])*V_dot + ll[0]*ll[1]*V)
         return (V_dotdot + (ll[0] + ll[1])*V_dot + ll[0]*ll[1]*V + x[2])# Example inequality constraint
 
 

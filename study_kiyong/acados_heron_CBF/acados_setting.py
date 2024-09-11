@@ -143,8 +143,8 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
     ocp.cost.cost_type = 'NONLINEAR_LS'
     ocp.cost.cost_type_e = 'NONLINEAR_LS'
 
-    # Q_mat = 2*np.diag([1, 1, 20, 30, 30, 500, 1e-4, 1e-4])
-    Q_mat = 2*np.diag([2, 2, 0, 5, 5, 2, 1e-4, 1e-4])
+    Q_mat = 2*np.diag([5, 5, 10, 15, 15, 50, 1e-4, 1e-4])
+    # Q_mat = 2*np.diag([2, 2, 0, 5, 5, 2, 1e-4, 1e-4])
     R_mat = 2*np.diag([1e-3, 1e-3])
 
     ocp.cost.W = scipy.linalg.block_diag(Q_mat, R_mat)
@@ -218,6 +218,7 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
     # For CBF
     ocp.constraints.uh = 1e10*np.ones(1)
     ocp.constraints.lh = -1e10*np.ones(1)
+    # ocp.constraints.lh = 0*np.ones(1)
 
     # For CLF
     # ocp.constraints.uh = 0*np.ones(1)
@@ -249,8 +250,8 @@ def setup_recovery(x0, Fmax, N_horizon, Tf):
 
     # ocp.constraints.lbx = np.array([-1, -1, -1, -Fmax, -Fmax])
     # ocp.constraints.ubx = np.array([2, 2, 1, Fmax, Fmax])
-    ocp.constraints.lbx = np.array([-5, -5, -5, -Fmax, -Fmax])
-    ocp.constraints.ubx = np.array([5, 5, 5, Fmax, Fmax])
+    ocp.constraints.lbx = np.array([-5, -5, -5, -10*Fmax, -10*Fmax])
+    ocp.constraints.ubx = np.array([5, 5, 5, 10*Fmax, 10*Fmax])
     ocp.constraints.idxbx = np.array([3, 4, 5, 6, 7])
 
     ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM' # FULL_CONDENSING_QPOASES

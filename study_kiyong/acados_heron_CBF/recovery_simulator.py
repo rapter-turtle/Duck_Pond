@@ -3,7 +3,7 @@ from gen_ref import *
 from acados_setting import *
 from CBF import *
 
-def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control):
+def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control, param_estim):
 
     # constants
     M = 37.758 # Mass [kg]
@@ -34,22 +34,21 @@ def recover_simulator(ship, tship, control_input, dt, disturbance, extra_control
     n2_extra = extra_control[1]
 
 
-    param = np.array([ 0.10033467, -1.0 ,6.48410098]) 
-    # param = np.array([ 0.10033467, -1.0 ,11.5])
-    con = CBF_QP(ship, np.array([n1+n1_extra, n2+n2_extra]), param, np.array([1, 1, 100000000]), np.array([0.2, 0.1]))
+    # con = np.array([n1, n2])
     # print("slack : ",con)
+    # print(np.array([n1, n2]))
 
     # dynamics
     xdot = np.array([u*cos(psi) - v*sin(psi),
                      u*sin(psi) + v*cos(psi),
                      r,
-                     ((con[0]+con[1])-(Xu + Xuu*np.sqrt(u*u))*u + disturbance[0])/M ,
+                     ((extra_control[0]+extra_control[1])-(Xu + Xuu*np.sqrt(u*u))*u + disturbance[0])/M ,
                      ( -Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r + disturbance[1])/M,
-                     ((-con[0]+con[1])*dist - (Nr + Nrrr*r*r)*r - Nv*v + disturbance[2])/I,
+                     ((-extra_control[0]+extra_control[1])*dist - (Nr + Nrrr*r*r)*r - Nv*v + disturbance[2])/I,
                      n1d,
                      n2d
                      ])
-    # # dynamics
+    # dynamics
     # xdot = np.array([u*cos(psi) - v*sin(psi),
     #                  u*sin(psi) + v*cos(psi),
     #                  r,
