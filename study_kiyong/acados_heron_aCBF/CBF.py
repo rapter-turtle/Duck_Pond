@@ -32,7 +32,7 @@ def CBF_QP(state, control_input, param, weight, ll, param_estim):
         yn = state[1]
         psi = state[2]
         
-        ll = np.array([0.5,0.5])
+        ll = np.array([0.1,0.1])
         u_dot = ((x[0] + x[1]) - Xu*u - Xuu*np.sqrt(u*u)*u)/M
         v_dot = (-Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r)/M
         r_dot = ((-x[0]+x[1])*dist - Nr*r - Nrrr*r*r*r - Nv*v)/I
