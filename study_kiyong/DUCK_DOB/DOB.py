@@ -1,7 +1,7 @@
 import numpy as np
 import math 
 
-def DOB(state, state_estim, dt, param_estim, MPC_control):
+def DOB(state, state_estim, dt, param_estim, MPC_control, param_filtered):
 
  
     M = 37.758 # Mass [kg]
@@ -21,13 +21,13 @@ def DOB(state, state_estim, dt, param_estim, MPC_control):
     # set up states & controls
     xn  = state[0]
     yn  = state[1]
-    psi  = state[2]
+    psi  = -state[2]
     u    = state[3]
     v    = state[4]
     r    = state[5]
 
-    n1  = MPC_control[0]
-    n2  = MPC_control[1]
+    n1  = 0.0#MPC_control[0]
+    n2  = 0.0#MPC_control[1]
 
 
     f_usv = np.array([(-(Xu + Xuu*np.sqrt(u*u))*u)/M,
@@ -51,20 +51,23 @@ def DOB(state, state_estim, dt, param_estim, MPC_control):
     x_error = state_estim - virtual_state 
 
     
-    adaptive_control = nominal_control[2:4]   #- virtual_control[2:4]
-    
 
-    xdot = param_estim + nominal_control + virtual_control
+    xdot = param_estim + virtual_control
 
     x_t_plus = xdot*dt + state_estim
     
+    w_cutoff = 0.5
+    before_param_filtered = param_filtered
+    param_filtered = before_param_filtered*math.exp(-w_cutoff*dt) - param_estim*(1-math.exp(-w_cutoff*dt))
 
-    gain = -1.0
+#     gain = -1.0
+
+    gain = -1
     pi = (1/gain)*(np.exp(gain*dt)-1.0)
     param_estim = -np.exp(gain*dt)*x_error/pi
     
 
-    return x_t_plus, param_estim
+    return x_t_plus, param_estim, param_filtered
 
 
 
