@@ -5,7 +5,7 @@ from heron_msgs.msg import Drive
 import math
 import time
 import numpy as np
-from l_adaptive import*
+from dob import*
 
 station_keeping_point = np.array([353148, 4026039])
 
@@ -14,6 +14,7 @@ class L1_LQR:
         # ROS settings
         self.rate = rospy.Rate(10)  # 10 Hz for ROS loop rate
         self.ekf_sub = rospy.Subscriber('/ekf/estimated_state', Float64MultiArray, self.ekf_callback)
+        # self.thrust_sub = rospy.Subscriber('/cmd_drive', Drive, self.thrust_callback)
         self.thrust_pub = rospy.Publisher('/cmd_drive', Drive)
         self.estim_pub = rospy.Publisher('/l1_data', Float64MultiArray)
         # self.mpcvis_pub = rospy.Publisher('/mpc_vis', MPCTraj)  
@@ -30,6 +31,7 @@ class L1_LQR:
 
         self.con_dt = 0.1 # control sampling time
         self.ii = 0.0
+        self.last_time =0.0
 
         self.deried_traj_straight = np.array([0.0, 0.0,0.0, 0.0])
         self.deried_traj_circle = np.array([0.0, 0.0,0.0, 0.0])
@@ -65,6 +67,12 @@ class L1_LQR:
         self.states = np.array([cte[0], cte[1], self.p, self.u, self.v, self.r, self.n1, self.n2])
         # print(self.p-wpt_psi)
         
+    # def thrust_callback(self, msg):# - frequency = gps callback freq. 
+              
+    #     self.n1 = msg.left
+    #     self.n2 = msg.right
+    #     # print(self.p-wpt_psi)
+        
 
 
     def yaw_discontinuity(self, ref):
@@ -89,7 +97,10 @@ class L1_LQR:
         k = 0 # -> 현재 시간을 index로 표시 -> 그래야 ref trajectory설정가능(******** todo ********)
 
         while not rospy.is_shutdown():
-           
+            current_time = time.time()
+            self.con_dt = current_time - self.last_time  # Compute real dt
+            self.last_time = current_time  # Update last_time to current time
+
 
                # Go straight
             vx = 0.5
@@ -110,14 +121,14 @@ class L1_LQR:
 
             # print("state_estimation : ",self.state_estim)
             # print("state_error", x_error)
-            # print("param_estimation : ",self.param_estim)
-            print("Control input : ", L1_thruster)
+            print("param_estimation : ",self.param_estim)
+            # print("Control input : ", L1_thruster)
             
             # Publish the control inputs (e.g., thrust commands)
             drive_msg = Drive()
             drive_msg.left = self.force_to_heron_command(self.n1,1)
             drive_msg.right = self.force_to_heron_command(self.n2,2)                        
-            self.thrust_pub.publish(drive_msg)  
+            # self.thrust_pub.publish(drive_msg)  
 
             l1_msg = Float64MultiArray()
             l1_msg.data = [self.state_estim[0], self.state_estim[1], self.state_estim[2], self.state_estim[3], 

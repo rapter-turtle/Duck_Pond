@@ -17,7 +17,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, deried_traj)
     dist = 0.3 # 30cm
     head_dist = 1.0
 
-    w_cutoff = 3.0
+    w_cutoff = 0.5
 
 
     # set up states & controls
@@ -60,14 +60,14 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim, deried_traj)
     x_error = state_estim - virtual_state 
 
     
-    adaptive_control = param_filtered[2:4] - virtual_control[2:4] - state_feedback[2:4]
+    adaptive_control = np.array([0,0,0.0,0.0,0.0])#param_filtered[2:4] - virtual_control[2:4] - state_feedback[2:4]
 #     adaptive_control = - state_feedback[2:4]- virtual_control[2:4]
 
     L1_thruster = np.array([0.5*(M*np.cos(psi) + I*np.sin(psi)/(head_dist*dist))*adaptive_control[0] + 0.5*(M*np.sin(psi) - I*np.cos(psi)/(head_dist*dist))*adaptive_control[1],
                             0.5*(M*np.cos(psi) - I*np.sin(psi)/(head_dist*dist))*adaptive_control[0] + 0.5*(M*np.sin(psi) + I*np.cos(psi)/(head_dist*dist))*adaptive_control[1]
                             ])    
 
-    xdot = param_estim + param_filtered - state_feedback
+    xdot = param_estim + virtual_control - x_error
 
     x_t_plus = xdot*dt + state_estim
     
