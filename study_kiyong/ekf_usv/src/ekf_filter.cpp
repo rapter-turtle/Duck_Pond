@@ -25,7 +25,7 @@ using Eigen::Vector2d;
 #define PI 3.1415926535897931
 #define DEF_DEG2RAD 3.1415926535897931 / 180.0
 #define DEF_RAD2DEG 180.0 / 3.1415926535897931
-#define DEF_BIAS_HDG (0)*DEF_DEG2RAD
+#define DEF_BIAS_HDG 5*DEF_DEG2RAD
 #define nx 6
 #define ngps 2
 #define nimu 1
@@ -88,12 +88,12 @@ public:
         // process noise - u, v, r
         Q_ << 0.0001, 0, 0,
               0, 0.0001, 0,
-              0, 0, 0.000001;
+              0, 0, 0.00001;
 
-        R_gps_ << 0.000001, 0,
-                  0, 0.000001;
+        R_gps_ << 0.0001, 0,
+                  0, 0.0001;
                   
-        R_imu_ << 0.00000001;
+        R_imu_ << 0.0000001;
 
         R_.setZero();
         E_.setZero();
