@@ -31,7 +31,6 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
     n2  = state[7]
 
 
-
     f_usv = np.array([((n1+n2)-(Xu + Xuu*np.sqrt(u*u))*u)/M,
           ( -Yv*v - Yvv*np.sqrt(v*v)*v - Yr*r)/M,
           ((-n1+n2)*dist - (Nr + Nrrr*r*r)*r - Nv*v)/I
@@ -46,7 +45,7 @@ def L1_control(state, state_estim, param_filtered, dt, param_estim):
 
     x_error = state_estim - virtual_state 
     
-    adaptive_control = param_filtered 
+    adaptive_control = param_filtered
     
     L1_thruster = np.array([0.5*(M*np.cos(psi) + I*np.sin(psi)/(head_dist*dist))*adaptive_control[0] + 0.5*(M*np.sin(psi) - I*np.cos(psi)/(head_dist*dist))*adaptive_control[1],
                             0.5*(M*np.cos(psi) - I*np.sin(psi)/(head_dist*dist))*adaptive_control[0] + 0.5*(M*np.sin(psi) + I*np.cos(psi)/(head_dist*dist))*adaptive_control[1]
