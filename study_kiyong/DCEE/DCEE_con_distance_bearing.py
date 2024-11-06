@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from scipy.optimize import minimize
 
 # Simulation parameters
 time_step = 0.1  # Time step is 0.1s
-total_time = 5  # 5 seconds total
+total_time = 3  # 5 seconds total
 time = np.arange(0, total_time, time_step)  # Time vector
 
 # True values for s1 and s2 (unknown to the controller)
@@ -40,13 +41,10 @@ posterior = np.ones((len(s1_range), len(s2_range)))
 mean_s1_values = []
 mean_s2_values = []
 covariance_values = []
+positions = [x_k.copy()]
 
-# Perform the Bayesian update over the time steps
+# Perform the Bayesian update and control over time steps
 for t in time:
-    # Simulate x_k moving in a sine wave pattern
-    x_k[0] = np.sin(0.1 * t)
-    x_k[1] = np.sin(0.1 * t + np.pi / 4)
-
     # Observed angle (z_obs) based on the true s1 and s2
     z_obs = np.arctan((x_k[0] - true_s1) / (x_k[1] - true_s2))
 
@@ -79,8 +77,34 @@ for t in time:
     mean_s2_values.append(mean_s2)
     covariance_values.append(covariance_matrix)
 
+    # Define the cost function for optimizing control input
+    def cost_function(u_k, x_k, mean_s1, mean_s2, covariance_matrix, time_step=0.1):
+        # Predict the next position based on control input
+        x_k1 = x_k + u_k * time_step
+        # Cost includes distance to the estimated mean position and trace of covariance matrix
+        distance_cost = np.linalg.norm(x_k1 - np.array([mean_s1, mean_s2]))**2
+        trace_Q = np.trace(covariance_matrix)  # Trace of the covariance matrix as uncertainty
+        return distance_cost + trace_Q
+
+    # Initial guess for the control input
+    u0 = np.array([0.0, 0.0])
+
+    # Bounds for control inputs (for x1_dot and x2_dot)
+    bounds = [(-1.0, 1.0), (-1.0, 1.0)]
+
+    # Run optimization to find the best control input
+    result = minimize(cost_function, u0, args=(x_k, mean_s1, mean_s2, covariance_matrix), method='SLSQP', bounds=bounds)
+    u_k = result.x  # Optimal control input
+
+    # Update position based on control input
+    x_k = x_k + u_k * time_step
+    positions.append(x_k.copy())
+
     print(t)
-    
+
+
+# Convert position list to a numpy array for easy plotting
+positions = np.array(positions)
 
 # Plot the final posterior distribution
 plt.figure(figsize=(8, 6))
@@ -118,6 +142,17 @@ plt.plot(time, cov_s1s2_values, label='Covariance of $s_1$ and $s_2$', color='pu
 plt.xlabel('Time (s)')
 plt.ylabel('Covariance')
 plt.title('Covariance of $s_1$ and $s_2$ Over Time')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Plot the trajectory of the agent
+plt.figure(figsize=(8, 6))
+plt.plot(positions[:, 0], positions[:, 1], label='Agent Trajectory')
+plt.scatter([true_s1], [true_s2], color='red', label='True Source', marker='x')
+plt.xlabel('$x_1$')
+plt.ylabel('$x_2$')
+plt.title('Trajectory of the Agent and True Source Position')
 plt.legend()
 plt.grid(True)
 plt.show()

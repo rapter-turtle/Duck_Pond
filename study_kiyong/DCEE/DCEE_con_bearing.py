@@ -1,20 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from scipy.optimize import minimize
 
 # Simulation parameters
 time_step = 0.1  # Time step is 0.1s
-total_time = 5  # 5 seconds total
+total_time = 10  # 3 seconds total
 time = np.arange(0, total_time, time_step)  # Time vector
 
 # True values for s1 and s2 (unknown to the controller)
-true_s1 = 1.0
-true_s2 = 2.0
+true_s1 = -2.0
+true_s2 = 7.0
 
 # Bayesian inference setup
 # We'll search for the values of s1 and s2 over a grid
-s1_range = np.linspace(-2.0, 3.0, 100)  # Possible values for s1
-s2_range = np.linspace(-2.0, 3.0, 100)  # Possible values for s2
+s1_range = np.linspace(-5.0, 20.0, 100)  # Possible values for s1
+s2_range = np.linspace(-5.0, 20.0, 100)  # Possible values for s2
 
 # Initial conditions
 x_k = np.array([0.0, 0.0])  # Initial position [x1, x2]
@@ -24,15 +25,6 @@ def likelihood_angle(s1, s2, z_obs, x1_obs, x2_obs, sigma=0.1):
     z_pred = np.arctan((x1_obs - s1) / (x2_obs - s2))
     return norm.pdf(z_obs, loc=z_pred, scale=sigma)
 
-# Define the likelihood function for distance observation (z2_obs)
-def likelihood_distance(s1, s2, z2_obs, x1_obs, x2_obs, sigma=0.1):
-    z2_pred = np.sqrt((x1_obs - s1)**2 + (x2_obs - s2)**2)
-    return norm.pdf(z2_obs, loc=z2_pred, scale=sigma)
-
-# Define the distance function z2
-def distance(x1, x2, s1, s2):
-    return np.sqrt((x1 - s1)**2 + (x2 - s2)**2)
-
 # Initialize posterior as a uniform distribution
 posterior = np.ones((len(s1_range), len(s2_range)))
 
@@ -40,25 +32,18 @@ posterior = np.ones((len(s1_range), len(s2_range)))
 mean_s1_values = []
 mean_s2_values = []
 covariance_values = []
+positions = [x_k.copy()]
 
-# Perform the Bayesian update over the time steps
+# Perform the Bayesian update and control over time steps
 for t in time:
-    # Simulate x_k moving in a sine wave pattern
-    x_k[0] = np.sin(0.1 * t)
-    x_k[1] = np.sin(0.1 * t + np.pi / 4)
-
     # Observed angle (z_obs) based on the true s1 and s2
     z_obs = np.arctan((x_k[0] - true_s1) / (x_k[1] - true_s2))
 
-    # Observed distance (z2_obs) between current position and true source
-    z2_obs = distance(x_k[0], x_k[1], true_s1, true_s2)
-
-    # Update the posterior with the new observations (both angle and distance)
+    # Update the posterior with the angle observation only
     for i, s1 in enumerate(s1_range):
         for j, s2 in enumerate(s2_range):
             likelihood_angle_value = likelihood_angle(s1, s2, z_obs, x_k[0], x_k[1])
-            likelihood_distance_value = likelihood_distance(s1, s2, z2_obs, x_k[0], x_k[1])
-            posterior[i, j] *= likelihood_angle_value * likelihood_distance_value
+            posterior[i, j] *= likelihood_angle_value
 
     # Normalize the posterior after each step
     posterior /= np.sum(posterior)
@@ -79,8 +64,33 @@ for t in time:
     mean_s2_values.append(mean_s2)
     covariance_values.append(covariance_matrix)
 
-    print(t)
-    
+    # Define the cost function for optimizing control input
+    def cost_function(u_k, x_k, mean_s1, mean_s2, covariance_matrix, time_step=0.1):
+        # Predict the next position based on control input
+        x_k1 = x_k + u_k * time_step
+        # Cost includes distance to the estimated mean position and trace of covariance matrix
+        distance_cost = np.linalg.norm(x_k1 - np.array([mean_s1, mean_s2]))**2
+        trace_Q = np.trace(np.abs(covariance_matrix))  # Trace of the covariance matrix as uncertainty
+        return distance_cost + trace_Q
+
+    # Initial guess for the control input
+    u0 = np.array([0.0, 0.0])
+
+    # Bounds for control inputs (for x1_dot and x2_dot)
+    bounds = [(-0.5, 0.5), (-0.5, 0.5)]
+
+    # Run optimization to find the best control input
+    result = minimize(cost_function, u0, args=(x_k, mean_s1, mean_s2, covariance_matrix), method='SLSQP', bounds=bounds)
+    u_k = result.x  # Optimal control input
+
+    # Update position based on control input
+    x_k = x_k + u_k * time_step
+    positions.append(x_k.copy())
+
+    print(f"Time: {t}, Position: {x_k}")
+
+# Convert position list to a numpy array for easy plotting
+positions = np.array(positions)
 
 # Plot the final posterior distribution
 plt.figure(figsize=(8, 6))
@@ -118,6 +128,17 @@ plt.plot(time, cov_s1s2_values, label='Covariance of $s_1$ and $s_2$', color='pu
 plt.xlabel('Time (s)')
 plt.ylabel('Covariance')
 plt.title('Covariance of $s_1$ and $s_2$ Over Time')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Plot the trajectory of the agent
+plt.figure(figsize=(8, 6))
+plt.plot(positions[:, 0], positions[:, 1], label='Agent Trajectory')
+plt.scatter([true_s1], [true_s2], color='red', label='True Source', marker='x')
+plt.xlabel('$x_1$')
+plt.ylabel('$x_2$')
+plt.title('Trajectory of the Agent and True Source Position')
 plt.legend()
 plt.grid(True)
 plt.show()
