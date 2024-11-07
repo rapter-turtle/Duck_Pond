@@ -9,18 +9,18 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Simulation parameters
 time_step = 0.1  # Time step is 0.1s
-total_time = 40  # Total simulation time in seconds
+total_time = 100  # Total simulation time in seconds
 time = np.arange(0, total_time, time_step)  # Time vector
 
 # True values for s1, s2, and V (unknown to the controller)
 true_s1 = 19.0
 true_s2 = 5.0
-true_V = 20.0
+true_V = 0.5
 
 # Bayesian inference setup
 s1_range = torch.linspace(-5.0, 20.0, 500, device=device)  # Dense grid for s1
 s2_range = torch.linspace(-5.0, 20.0, 500, device=device)  # Dense grid for s2
-V_range = torch.linspace(0.0, 50.0, 100, device=device)  # Dense grid for V
+V_range = torch.linspace(0.0, 1.0, 500, device=device)  # Dense grid for V
 
 # Create grids for s1, s2, and V for vectorized operations
 s1_grid, s2_grid, V_grid = torch.meshgrid(s1_range, s2_range, V_range, indexing='ij')
@@ -46,22 +46,23 @@ loop_times = []  # Store calculation time for each loop
 
 # Define the likelihood function for the measurement z = V / (distance^2)
 def likelihood_measurement(s1, s2, V, z_obs, x1_obs, x2_obs, sigma=0.1):
-    distance_squared = (x1_obs - s1)**2 + (x2_obs - s2)**2
-    z_pred = V / distance_squared  # Predicted measurement
+    distance_squared = ((x1_obs - s1)**2 + (x2_obs - s2)**2)**0.5
+    z_pred = 1 / (distance_squared + true_V)**2  # Predicted measurement
     return torch.exp(-0.5 * ((z_obs - z_pred) / sigma) ** 2) / (sigma * torch.sqrt(torch.tensor(2 * np.pi)))
 
 # Perform the Bayesian update and control over time steps
 for t in time:
     # Observed measurement (z_obs) based on the true values
-    distance_squared = (x_k[0] - true_s1)**2 + (x_k[1] - true_s2)**2
-    z_obs = true_V / distance_squared  # Observed measurement based on true values
+    distance_squared = ((x_k[0] - true_s1)**2 + (x_k[1] - true_s2)**2)**0.5
+    z_obs = 1 / (distance_squared + true_V)**2  # Observed measurement based on true values
 
     # Update the posterior with the measurement
-    distance_squared_grid = (x_k[0] - s1_grid)**2 + (x_k[1] - s2_grid)**2
-    z_pred_grid = V_grid / distance_squared_grid  # Predicted measurement across the grid
+    distance_squared_grid = ((x_k[0] - s1_grid)**2 + (x_k[1] - s2_grid)**2)**0.5
+    z_pred_grid = 1 / (distance_squared_grid + V_grid)**2  # Predicted measurement across the grid
     likelihood = torch.exp(-0.5 * ((z_obs - z_pred_grid) / 0.1) ** 2) / (0.1 * torch.sqrt(torch.tensor(2 * np.pi)))
     posterior *= likelihood
     posterior /= posterior.sum()  # Normalize posterior
+
 
     # Calculate the mean of s1, s2, and V using weighted average
     mean_s1 = (s1_grid * posterior).sum().item()
